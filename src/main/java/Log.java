@@ -9,18 +9,17 @@ import java.io.FileWriter;
 * ruta: Ruta del archivo
 * tLog: Thread que escribe en el archivo
 */
-public class Log() extends Thread {
+//CORREGIR!!!!
+public class Log implements Runnable{
   
   private File archivo;
   private long horaInicial;
   private String ruta;
-  private Thread tlog;
   
   //constructor
-  public Log(String ruta, long horaInicial, Thread tlog){
+  public Log(String ruta, long horaInicial){
     this.ruta = ruta;
     this.horaInicial = horaInicial;
-    this.tlog = tlog;
   }
   
   @Override 

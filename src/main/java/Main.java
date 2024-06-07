@@ -6,20 +6,65 @@ import java.util.ArrayList;
   
   
   public static void main(String[] args) {
-    //Hilo hilo = new Hilo("Hilo");
     private int contador = 1;
+    
     private ArrayList<Thread> hilos = new ArrayList<Thread>();
     
-    Thread tlog = new Thread("hiloLog");
-    
+    FabricaDeHilos miFabrica=new FabricaDeHilos();
+    Monitor miMonitor=new Monitor();
+    //Procesador procesador = new Procesador();
 
-    for(int i = 0; i < NUM_HILOS; i++){
+    Log log = new Log("log.txt", System.currentTimeMillis());
+
+    GeneradorDeImagenes generadorDeImagenes = new GeneradorDeImagenes("generadorDeImagenes",miMonitor,log);
+
+    Receptor receptorIzq = new Receptor("receptorIzq",miMonitor,log);
+    Receptor receptorDer = new Receptor("receptorDer",miMonitor,log);
+
+    CargaDeImagenes cargaDeImagenesIzq = new CargaDeImagenes("cargaDeImagenesIzq",miMonitor,log);
+    CargaDeImagenes cargaDeImagenesDer = new CargaDeImagenes("cargaDeImagenesDer",miMonitor,log);
+
+    TransferirAjustador transferirAjustadorIzq = new TransferirAjustador("transferirAjustadorIzq",miMonitor,log);
+    TransferirAjustador transferirAjustadorDer = new TransferirAjustador("transferirAjustadorDer",miMonitor,log);
+    
+    AjustadorDeCalidad ajustadorDeCalidadIzq = new AjustadorDeCalidad("ajustadorDeCalidadIzq",miMonitor,log);
+    AjustadorDeCalidad ajustadorDeCalidadDer = new AjustadorDeCalidad("ajustadorDeCalidadDer",miMonitor,log);
+
+    TransferirRecortador transferirRecortadorIzq = new TransferirRecortador("transferirRecortadorIzq",miMonitor,log);
+    TransferirRecortador transferirRecortadorDer = new TransferirRecortador("transferirRecortadorDer",miMonitor,log);
+
+    Recortador recortadorIzq = new Recortador("recortadorIzq",miMonitor,log);
+    Recortador recortadorDer = new Recortador("recortadorDer",miMonitor,log);
+
+    Exportador exportador = new Exportador("exportador",miMonitor,log);
+    
+    miFabrica.newThread(log).start();
+    miFabrica.newThread(generadorDeImagenes).start();
+    miFabrica.newThread(receptorIzq).start();
+    miFabrica.newThread(receptorDer).start();
+
+    miFabrica.newThread(cargaDeImagenesIzq).start();
+    miFabrica.newThread(cargaDeImagenesDer).start();
+
+    miFabrica.newThread(transferirAjustadorIzq).start();
+    miFabrica.newThread(transferirAjustadorDer).start();
+    
+    miFabrica.newThread(ajustadorDeCalidadIzq).start();
+    miFabrica.newThread(ajustadorDeCalidadDer).start();
+
+    miFabrica.newThread(transferirRecortadorIzq).start();
+    miFabrica.newThread(transferirRecortadorDer).start();
+
+    miFabrica.newThread(recortadorIzq).start();
+    miFabrica.newThread(recortadorDer).start();
+
+    miFabrica.newThread(exportador).start();
+
+    /*for(int i = 0; i < NUM_HILOS; i++){
       hilos.add(newThread("hilo - " + contador));
       contador++;
       hilos.get(hilos.size()-1).start();
-    }
-    
-    Log log = new Log("log.txt", System.currentTimeMillis(), tlog);
+    }*/
 
     Politica politica = elegirPolitica();
     

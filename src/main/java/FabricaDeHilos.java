@@ -7,21 +7,16 @@ import java.util.concurrent.ThreadFactory;
   * counter: Contador de hilos
   * name: Nombre del hilo
   */
-public class Hilo implements ThreadFactory{
+public class FabricaDeHilos implements ThreadFactory{
 
   private int counter;
-  private String name;
+  
 
   // constructor
-  public Hilo(String name){
+  public FabricaDeHilos(){
     counter = 0;
-    this.name = name;
   }
 
-  // Metodo que retorna el nombre del hilo
-  public String getName(){
-    return this.name;
-  }
 
   // Metodo que retorna el contador
   public int getCounter(){
@@ -31,7 +26,8 @@ public class Hilo implements ThreadFactory{
   // Metodo que crea un nuevo hilo
   @Override
   public Thread newThread(Runnable r){
-    Thread t = new Thread(r, name + counter);
+    
+    Thread t = new Thread(r, r.getNombre() + counter);
     counter++;    //aumenta el contador de hilos
     return t;     //retorna el hilo creado
   }
