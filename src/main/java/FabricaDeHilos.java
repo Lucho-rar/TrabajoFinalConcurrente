@@ -1,4 +1,3 @@
-import java.io.*;
 import java.util.concurrent.ThreadFactory;
 
 /**
@@ -26,8 +25,8 @@ public class FabricaDeHilos implements ThreadFactory{
   // Metodo que crea un nuevo hilo
   @Override
   public Thread newThread(Runnable r){
-    
-    Thread t = new Thread(r, r.getNombre() + counter);
+    String nombre= ((Procesador)r).getNombre() + counter;
+    Thread t = new Thread(r,nombre);
     counter++;    //aumenta el contador de hilos
     return t;     //retorna el hilo creado
   }

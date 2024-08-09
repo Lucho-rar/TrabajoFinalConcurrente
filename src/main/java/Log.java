@@ -1,5 +1,8 @@
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.util.concurrent.*;
+
 
 /**
 * Clase Log  
@@ -10,44 +13,37 @@ import java.io.FileWriter;
 * tLog: Thread que escribe en el archivo
 */
 //CORREGIR!!!!
-public class Log implements Runnable{
+public class Log {
   
   private File archivo;
   private long horaInicial;
   private String ruta;
+  private Semaphore mutex;
   
   //constructor
   public Log(String ruta, long horaInicial){
     this.ruta = ruta;
     this.horaInicial = horaInicial;
+    this.crearLog();
+    
   }
   
-  @Override 
-  public void run(){
-    this.crearLog();
-    boolean condicion = true;
-    while(condicion){
-      try{
-        
-        //Thread.sleep(1000);
-      }catch(InterruptedException e){
-        System.out.println("error al escribir en el log");
-      }
-      this.escribirLog(tlog);
-    }
-  }
 
   // Método para crear el log
   private void crearLog() {
     archivo = new File(ruta);  //chequea si el archivo existe en la ruta
-    if (archivo.exists()&& !archivo.isDirectory()){
-      archivo.delete();  //si existe lo borra para que comience de cero
-    } 
-    archivo.createNewFile();  //si no existe lo crea
+    try {
+      if (archivo.exists()&& !archivo.isDirectory()){
+        archivo.delete();  //si existe lo borra para que comience de cero
+      } 
+      archivo.createNewFile();  //si no existe lo crea
+     } catch (Exception e) {
+        e.printStackTrace();
+     }
   }
   
-  // Método para escribir en el log
-  private void escribirLog(Thread hilo) {
+  // Método para escribir en el log la data de un hilo
+  /*private void escribirLog(Thread hilo) {
     FileWriter fw = new FileWriter(archivo, true); //agrega al final el nuevo texto cada vez que se llama
     long horaFinal = System.currentTimeMillis();
     fw.write("Hilo: " + hilo.getName() + "\n");
@@ -56,6 +52,21 @@ public class Log implements Runnable{
     fw.write("\n");
     fw.flush();
     fw.close();
+  }*/
+
+  public void escribirArchivo(String texto){
+    try {
+        mutex.acquire();
+        FileWriter fw = new FileWriter(archivo, true); //agrega al final el nuevo texto cada vez que se llama
+        fw.write(texto);
+        fw.write("\n");
+        fw.flush();
+        fw.close();
+     } catch (Exception e) {
+        e.printStackTrace();
+     }
+     finally {
+        mutex.release();
+     }
   }
-  
 }

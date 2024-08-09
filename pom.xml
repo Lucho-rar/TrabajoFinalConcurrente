@@ -1,4 +1,17 @@
 <project>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version> <!-- Asegúrate de tener una versión compatible -->
+        <configuration>
+          <source>1.8</source> <!-- Aquí se especifica Java 8 como fuente -->
+          <target>1.8</target> <!-- Aquí se especifica Java 8 como objetivo -->
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
   <modelVersion>4.0.0</modelVersion>
   <groupId>mygroupid</groupId>
   <artifactId>myartifactid</artifactId>
@@ -13,7 +26,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-math3</artifactId>
-      <version>3.1.1</version>
+      <version>3.6.1</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

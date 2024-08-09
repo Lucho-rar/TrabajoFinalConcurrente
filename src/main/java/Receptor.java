@@ -4,10 +4,15 @@ public class Receptor extends Procesador implements Runnable {
   //private Log miLog;
   //private Monitor miMonitor;
 
-  public Receptor(String nombre_hilo, Monitor monitor, Log log) {
-    super(nombre_hilo,monitor,log);
+  public Receptor(String nombre_hilo, Monitor monitor, Log log, int transicion) {
+    super(nombre_hilo,monitor,log, transicion);
+    // setTransicion(transicion);
   }
   
   @Override
-  public void run(){}
+  public void run(){
+    while(true){
+    this.miMonitor.dispararTransicion(this.getTransicion1());
+    }
+  }
 }
