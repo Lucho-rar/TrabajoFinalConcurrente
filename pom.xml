@@ -6,9 +6,23 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version> <!-- Asegúrate de tener una versión compatible -->
         <configuration>
+          <mainClass>Main</mainClass>
           <source>1.8</source> <!-- Aquí se especifica Java 8 como fuente -->
           <target>1.8</target> <!-- Aquí se especifica Java 8 como objetivo -->
         </configuration>
+      </plugin>
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>3.2.0</version>
+      </plugin>
+      <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>3.0.0</version>
+          <configuration>
+              <mainClass>Main</mainClass>
+          </configuration>
       </plugin>
     </plugins>
   </build>
