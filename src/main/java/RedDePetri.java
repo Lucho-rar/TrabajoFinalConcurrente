@@ -117,10 +117,19 @@ public class RedDePetri {
     if (isSensibilizada(transicion)) {
       // transicionesSensibilizadas[transicion] = 0; //actualiza el marcado de la
       // transicion
-      RealMatrix transicionADisparar = getTransicionMatrix(transicion);
-
+     // private final RealMatrix matrizIncidenciaEntradaMatrix = MatrixUtils.createRealMatrix(matrizIncidenciaEntrada);
+      RealMatrix misTransicionesDisparadas = MatrixUtils.createRealMatrix(incidencia.getColumnDimension(),1);
+      misTransicionesDisparadas.setEntry(transicion,0,1);
+      
       for (int i = 0; i < getCantidadPlazas(); i++) {
-        marcadoActualMatrix.getColumnMatrix(i).add(incidencia.multiply(transicionADisparar));
+        System.out.printf("transicion:%d   \n\r",  transicion);
+
+        System.out.printf("misTransicionesDisparadas (%d x %d),  \n\r", misTransicionesDisparadas.getRowDimension(),misTransicionesDisparadas.getColumnDimension());
+        System.out.printf(" marcadoActualMatrix (%d x %d),  \n\r",  marcadoActualMatrix.getRowDimension(), marcadoActualMatrix.getColumnDimension());
+        System.out.printf(" incidencia (%d x %d),  \n\r",  incidencia.getRowDimension(), incidencia.getColumnDimension());
+        //[1x19]                                + [19x15] * [15x1]
+
+        marcadoActualMatrix.add(((incidencia.copy()).multiply(misTransicionesDisparadas)).transpose());
         // marcadoActual[i] = marcadoActual[i] +
         // incidencia.multiply(transicionesADisparar);
         /*
@@ -147,18 +156,32 @@ public class RedDePetri {
   }
 
   public RealMatrix getTransicionesSensibilizadas() {
+    RealMatrix transicionesSensibilizadasMatrix = MatrixUtils.createRealMatrix(new double[1][15]);
     int aux_p;
     int cant_t = transicionesSensibilizadasMatrix.getColumnDimension();
     int cant_p = marcadoActualMatrix.getColumnDimension();
-    RealMatrix transicionesSensibilizadasMatrix = MatrixUtils.createRealMatrix(new double[1][15]);
-
-    for (int i = 0; i < cant_t; i++) {
+    
+    transicionesSensibilizadasMatrix.setEntry(0, 0, 1);//La t0 siempre está sensibilizada porque no tiene plazas de entrada
+    /*Aclaracion: i comienza en 1 porque excluimos el caso de la transicion t0 que siempre está sensibilizada
+    */
+    for (int i = 1; i < cant_t; i++) {
       aux_p = 0;
-      while (aux_p < cant_p && (matrizIncidenciaEntradaMatrix.getEntry(i, aux_p) == 0)
-          || (marcadoActualMatrix.getEntry(0, aux_p) - matrizIncidenciaEntradaMatrix.getEntry(i, aux_p)) >= 0) {
-        aux_p++;
+
+      while (aux_p < cant_p && (matrizIncidenciaEntradaMatrix.getEntry(i, aux_p) == 0)) {
+            if((marcadoActualMatrix.getEntry(0, aux_p) - matrizIncidenciaEntradaMatrix.getEntry(i, aux_p)) >= 0){
+              aux_p++;
+            }else{
+              
+              break;
+            }
+        System.out.printf("aux_p %d , cant_t %d, cant_p %d, i %d\n\r",aux_p,cant_t,cant_p, i);
+        // System.out.printf("matrizIncidenciaEntradaMatrix.getEntry(i, aux_t) %f\n\r",matrizIncidenciaEntradaMatrix.getEntry(i, aux_t));
+        // System.out.printf("marcadoActualMatrix.getEntry(0, aux_t) %f\n\r",marcadoActualMatrix.getEntry(0, aux_t));
+        
+        
       }
       if (aux_p == cant_p) {
+
         transicionesSensibilizadasMatrix.setEntry(0, i, 1);
       } else {
         transicionesSensibilizadasMatrix.setEntry(0, i, 0);
