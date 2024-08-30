@@ -1,8 +1,9 @@
 
 //import java.util.concurrent.*;
-import org.apache.commons.math3.linear.RealMatrix;
 //import org.apache.commons.math3.linear.MatrixUtils;
-import java.util.*;
+import java.util.Collection;
+
+import org.apache.commons.math3.linear.RealMatrix;
 
 /**
  * Clase Monitor
@@ -48,6 +49,8 @@ public class Monitor {
     rdp = redp;
     miPolitica = mp;
     miCola = new Cola2();
+    m = new double[15];
+    //colaNoDisparados=new double[15];
     // inicializacion de colas
     /*
      * cola_cargaImagenes=new Cola();
@@ -97,9 +100,41 @@ public class Monitor {
         if (k) {
           miPolitica.actualizarContadorTransicion(transicion);
           sensibilizadas = rdp.getTransicionesSensibilizadas();
-          colaNoDisparados = miCola.quienesEstan();
-          m = sensibilizadas.operate(colaNoDisparados);
 
+          /*for (double[] row : sensibilizadas.getData()) {  // Obtener cada fila como un array
+            for (double value : row) {  // Recorrer cada valor en la fila
+                  System.out.print(value + " ");
+              }
+              // Imprimir una nueva línea después de cada fila
+              System.out.println();
+            }
+          System.out.println();*/
+
+          colaNoDisparados = miCola.quienesEstan();
+
+          /*System.out.println();
+          System.out.println(Arrays.toString(colaNoDisparados));
+          System.out.println();*/
+          
+          //m = sensibilizadas.operate(colaNoDisparados);
+
+          for (int i = 0; i < colaNoDisparados.length; i++) {
+            // Aplicar la operación AND a cada elemento en la fila correspondiente
+            m[i] = (sensibilizadas.getEntry(0, i) == 1.0 && colaNoDisparados[i] == 1.0) ? 1.0 : 0.0;
+          }
+ /*         for(int i=0; i<sensibilizadas.getColumnDimension();i++){
+            if(sensibilizadas.getEntry(0,i)==1&&colaNoDisparados[i]==1){
+              m[i]=1;
+              }
+              else{
+               System.out.printf("valor de i %s",i); 
+              m[i]=0;
+              }
+            }*/
+          
+
+          
+          
           if (recorrer(m)) {
             transicionElegida = miPolitica.cual(m); // esto nos debería entregar un entero
             miCola.desencolar(transicionElegida);

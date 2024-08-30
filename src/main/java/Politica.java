@@ -1,5 +1,11 @@
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
+import java.util.Set;
 
 public class Politica {
   private int tipoDePolitica;
@@ -211,6 +217,9 @@ private Integer[][] contadorIzq = new Integer[3][2];
     //int tamano=m.length;
     //int posicionM=0;
     //List<ArrayList<Integer>> lista= new ArrayList<ArrayList<Integer>>();
+    /*System.out.println();
+    System.out.println(Arrays.toString(m));
+    System.out.println();*/
     List<ArrayList<Integer>> lista = new ArrayList<>();
     //posicion 0 van izq, posicion 1 van derecho, posicion 2 van ultimo
     lista.add(new ArrayList<Integer>());
@@ -253,11 +262,19 @@ private Integer[][] contadorIzq = new Integer[3][2];
     }
 
     Random random = new Random();
-    
-    int eleccionTipoSegmento=random.nextInt(lista.size()); //[0,list.size())
-    int posTransicion=lista.get(eleccionTipoSegmento).size();
+    int listSize =0 ;
+    // System.out.printf("lista.size() %s\n",lista.size());
+    if (lista.size() == 0){
+      listSize = 1;
+    }else{
+      listSize = lista.size();
+    }
+    int eleccionTipoSegmento=random.nextInt(listSize); //[0,list.size())
+    // System.out.printf("eleccionTipoSegmento %s\n",eleccionTipoSegmento);
+    int posTransicion=(lista.get(eleccionTipoSegmento)).size();
+    // System.out.printf("postransicion ANTES %s\n",posTransicion);
     posTransicion=random.nextInt(posTransicion);
-
+    // System.out.printf("postransicion DESPUES %s\n",posTransicion);
     return lista.get(eleccionTipoSegmento).get(posTransicion);
   }
   

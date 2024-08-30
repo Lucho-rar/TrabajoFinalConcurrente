@@ -89,6 +89,7 @@ public class Main {
 
     hilos.forEach((hilo) -> hilo.start());
 
+    
     /*
      * miMonitor.setHilos(hilos);
      * 
