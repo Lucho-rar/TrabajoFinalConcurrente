@@ -234,7 +234,7 @@ public class RedDePetri {
 
   private void actualizarContadorInvariante(int transicionDisparada){
     try{
-
+		//Todo actualiza mal el contador de proxima transicion
       for (int i=0; i<contadorInvariantes[0].length;i++){
           if(transicionDisparada==14 && contadorInvariantes[0][i]==14){
             //System.out.println("estoy aca");

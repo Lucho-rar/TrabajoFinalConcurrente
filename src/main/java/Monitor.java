@@ -117,7 +117,7 @@ public class Monitor {
           System.out.println();*/
           
           //m = sensibilizadas.operate(colaNoDisparados);
-
+		
           for (int i = 0; i < colaNoDisparados.length; i++) {
             // Aplicar la operación AND a cada elemento en la fila correspondiente
             m[i] = (sensibilizadas.getEntry(0, i) == 1.0 && colaNoDisparados[i] == 1.0) ? 1.0 : 0.0;
@@ -158,7 +158,6 @@ public class Monitor {
             k = false;
           }
         } else {
-          mutex.release();
           miCola.encolar(transicion);
         }
         // ODO: ver cuáles transiciones están en la cola y compararlas (&&) con estas
@@ -174,10 +173,12 @@ public class Monitor {
          */
 
       }
-      mutex.release();
     } catch (InterruptedException e) {
       e.printStackTrace();
       mutex.release();
+    }
+    finally {
+    	mutex.release();
     }
 
   }
