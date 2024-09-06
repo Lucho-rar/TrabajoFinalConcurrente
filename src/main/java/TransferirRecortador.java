@@ -13,5 +13,5 @@ public class TransferirRecortador extends Procesador implements Runnable {
     this.miMonitor.dispararTransicion(this.getTransicion1());
     }
   }
-
+	
 }

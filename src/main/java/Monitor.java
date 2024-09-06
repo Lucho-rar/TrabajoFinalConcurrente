@@ -2,6 +2,8 @@
 //import java.util.concurrent.*;
 //import org.apache.commons.math3.linear.MatrixUtils;
 import java.util.Collection;
+import java.util.Set;
+import java.util.ArrayList;
 
 import org.apache.commons.math3.linear.RealMatrix;
 
@@ -44,12 +46,14 @@ public class Monitor {
   private RealMatrix sensibilizadas;
   private double[] colaNoDisparados;
   private double[] m;
+  private  ArrayList<Procesador> arrayProcesadores;
 
   public Monitor(RedDePetri redp, Politica mp) {
     rdp = redp;
     miPolitica = mp;
     miCola = new Cola2();
     m = new double[15];
+    arrayProcesadores=new ArrayList<Procesador>();
     //colaNoDisparados=new double[15];
     // inicializacion de colas
     /*
@@ -71,14 +75,14 @@ public class Monitor {
      * p18 = new Semaphore (1);
      */
 
-    mutex = new MySemaphore(1);
+    mutex = new MySemaphore();
     // hilos = new HashMap<String,Thread>();
   }
 
   // Para disparar una transición, primero debe adquirirse el semáforo del monitor
   public void dispararTransicion(int transicion) {
     // return mutex;
-    Collection<Thread> temphilos;
+    Set<Thread> temphilos;
     try {
       mutex.acquire();
 
@@ -142,23 +146,29 @@ public class Monitor {
             // hilos
             // que intentaron hacer acquire. Luego, utilizar notify para despertar a ese
             // hilo.
-            if (mutex.hasQueuedThreads()) {
+            if (mutex.hasQueuedThreads() > 0) {
               temphilos = mutex.getMyQueuedThreads();
-              for (Runnable thread : temphilos) {
-                if (((Procesador) thread).perteneceTransicion(transicionElegida)) {
-                  thread.notify();
-                  break;
+              String nombreHilo;
+             
+              for (Thread thread : temphilos) {
+                nombreHilo=thread.getName();
+                for (Procesador proc : arrayProcesadores ){
+                   if (nombreHilo == proc.getNombreHilo() && proc.perteneceTransicion(transicionElegida) ) {
+                	 mutex.release();
+                     thread.interrupt();
+                     //break;
+                   }
                 }
-
               }
-
             }
-
+            mutex.release();
           } else {
             k = false;
+            mutex.release();
           }
         } else {
           miCola.encolar(transicion);
+          mutex.release();
         }
         // ODO: ver cuáles transiciones están en la cola y compararlas (&&) con estas
 
@@ -177,9 +187,9 @@ public class Monitor {
       e.printStackTrace();
       mutex.release();
     }
-    finally {
+    /*finally {
     	mutex.release();
-    }
+    }*/
 
   }
 
@@ -190,6 +200,10 @@ public class Monitor {
       }
     }
     return false;
+  }
+  
+  public void setArrayProcesadores(ArrayList<Procesador> arrayProcesadores) {
+	  this.arrayProcesadores = arrayProcesadores;
   }
   /*
    * public void setHilos(HashMap<String,Thread> hilos){

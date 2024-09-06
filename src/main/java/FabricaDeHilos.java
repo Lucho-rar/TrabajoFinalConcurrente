@@ -26,6 +26,7 @@ public class FabricaDeHilos implements ThreadFactory{
   @Override
   public Thread newThread(Runnable r){
     String nombre= ((Procesador)r).getNombre() + counter;
+    ((Procesador)r).setNombreHilo(nombre);
     Thread t = new Thread(r,nombre);
     counter++;    //aumenta el contador de hilos
     return t;     //retorna el hilo creado
