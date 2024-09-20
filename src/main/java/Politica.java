@@ -166,12 +166,13 @@ private Integer[][] contadorIzq = new Integer[3][2];
   */
   public int elegirPolitica(){
     int salida;
-    Scanner scanner = new Scanner(System.in);
-    System.out.println("Elige un numero de politica: \n");
-    System.out.println("1. Balanceada \n");
-    System.out.println("2. Izquierda favorecida \n");
-    salida = scanner.nextInt();
-    scanner.close();
+    //Scanner scanner = new Scanner(System.in);
+    //System.out.println("Elige un numero de politica: \n");
+    //System.out.println("1. Balanceada \n");
+    //System.out.println("2. Izquierda favorecida \n");
+    //salida = scanner.nextInt();
+    salida = 1;
+    //scanner.close();
     
     //falta manejo de errores
     return salida;
@@ -228,13 +229,19 @@ private Integer[][] contadorIzq = new Integer[3][2];
 
     for (int i = 0; i < m.length; i++){
       if(m[i] == 1){
-        if(i == 14 || i == 0 || i == 13){
-          lista.get(2).add(i);
+        if(i == 14 || i == 13){
+          //segmento ultimo
+          return i;
         } else if (i % 2 == 0){
+          //segmentos derechos
           lista.get(0).add(i);
-        } else {
-          lista.get(1).add(i);
+        } else if (i == 0) {
+          lista.get(2).add(i);
         }
+        else {
+          //segmentos izq
+          lista.get(1).add(i);
+        } 
       }
     } 
     
@@ -262,10 +269,17 @@ private Integer[][] contadorIzq = new Integer[3][2];
      
       if(lista.get(pos).size()==0){
         lista.remove(pos);
-      }else{
+      }
+      else{
          pos++;
       }
     }
+    
+    /*System.out.println();
+    for (ArrayList<Integer> sublista : lista) {
+        System.out.println("Tamaño lista:" + sublista.size());
+    }
+    System.out.println();*/
 
     Random random = new Random();
     int listSize =0 ;

@@ -11,8 +11,10 @@ import org.apache.commons.math3.linear.RealMatrix;
  * - int[] transicionesSensibilizadas
  */
 public class RedDePetri {
-  private double matrizIncidenciaEntrada[][] = {
-      // T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14
+	
+	private static int contador = 0;
+  private double matrizIncidenciaEntrada[][] = {//W-
+     //T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14
       { 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // P0
       { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // P1
       { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // P2
@@ -33,6 +35,52 @@ public class RedDePetri {
       { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, // P17
       { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 } // P18
   };
+  
+  private double matrizIncidenciaSalida[][] = {//W+
+     //T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14
+      { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // P0
+      { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // P1
+      { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // P2
+      { 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, // P3
+      { 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // P4
+      { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // P5
+      { 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // P6
+      { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 }, // P7
+      { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // P8
+      { 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0 }, // P9
+      { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 }, // P10
+      { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 }, // P11
+      { 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0 }, // P12
+      { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0 }, // P13
+      { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 }, // P14
+      { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 }, // P15
+      { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0 }, // P16
+      { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 }, // P17
+      { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 } // P18
+  };
+  /*
+    // T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14
+    { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  // P0
+    { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  // P1
+    { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  // P2
+    { 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },  // P3
+    { 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  // P4
+    { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  // P5
+    { 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  // P6
+    { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },  // P7
+    { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  // P8
+    { 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0 },  // P9
+    { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 },  // P10
+    { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 },  // P11
+    { 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0 },  // P12
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0 },  // P13
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },  // P14
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 },  // P15
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0 },  // P16
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 },  // P17
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }   // P18
+*/
+
 
   private double matrizIncidencia[][] = {
       // T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14
@@ -99,8 +147,10 @@ public class RedDePetri {
   // private final RealMatrix marcadoInicialMatrix =
   // MatrixUtils.createRealMatrix(marcadoInicial);
   private final RealMatrix matrizIncidenciaEntradaMatrix = MatrixUtils.createRealMatrix(matrizIncidenciaEntrada);
-  private final RealMatrix incidencia = MatrixUtils.createRealMatrix(matrizIncidencia);
-
+  private final RealMatrix matrizIncidenciaSalidaMatrix = MatrixUtils.createRealMatrix(matrizIncidenciaSalida);
+  //private final RealMatrix incidencia = MatrixUtils.createRealMatrix(matrizIncidencia);
+  private final RealMatrix incidencia = matrizIncidenciaSalidaMatrix.copy().subtract(matrizIncidenciaEntradaMatrix);
+  
   private RealMatrix marcadoActualMatrix = MatrixUtils.createRealMatrix(marcadoActual);
   private RealMatrix transicionesSensibilizadasMatrix = MatrixUtils.createRealMatrix(transicionesSensibilizadas);
 
@@ -121,6 +171,8 @@ public class RedDePetri {
     // System.out.printf("transicion a disparar: %d", transicion);
     // System.out.println();
     // System.out.println();
+	  
+	  RealMatrix sensibilizadasCopy;
 
     if (isSensibilizada(transicion)) {
       // transicionesSensibilizadas[transicion] = 0; //actualiza el marcado de la
@@ -148,13 +200,24 @@ public class RedDePetri {
       //System.out.println("TRANSICION A DISPARAR: " + transicion);
       //System.out.println();
       	
-
+      	sensibilizadasCopy = getTransicionesSensibilizadas();
+      	
         marcadoActualMatrix = marcadoActualMatrix.add(((incidencia.copy()).multiply(misTransicionesDisparadas)).transpose());
         
-        //System.out.println("MOSTRAR MARCADO PLAZAS");
-        for(int i=0;i<15;i++){
+        
+        
+        /*for(int i=0;i<19;i++){
         	double marcado = marcadoActualMatrix.getEntry(0, i);
         	if(marcado < 0) {
+        		for (double[] row : sensibilizadasCopy.getData()) {  // Obtener cada fila como un array
+                    for (double value : row) {  // Recorrer cada valor en la fila
+                            System.out.print(value + " ");
+                        }
+                        // Imprimir una nueva línea después de cada fila
+                        System.out.println();
+                    }
+                    System.out.println();
+        		System.out.println("Transicion disparada: " + transicion);
         		System.out.println();
         		System.out.println("PLAZA " + i + ": " + marcado);
         		System.out.println();
@@ -162,9 +225,8 @@ public class RedDePetri {
         	else {
         		System.out.println("PLAZA " + i + ": " + marcado);
         	}
-          
-        }
-        
+        }*/
+       
         
         /*for (double[] row : marcadoActualMatrix.getData()) {  // Obtener cada fila como un array
             for (double value : row) {  // Recorrer cada valor en la fila
@@ -210,19 +272,19 @@ public class RedDePetri {
     transicionesSensibilizadasMatrix.setEntry(0, 0, 1);//La t0 siempre está sensibilizada porque no tiene plazas de entrada
     /*Aclaracion: i comienza en 1 porque excluimos el caso de la transicion t0 que siempre está sensibilizada
     */
-    for (int i = 1; i < cant_t; i++) {
+    for (int aux_t = 1; aux_t < cant_t; aux_t++) {
       aux_p = 0;  // aux_p no puede llegar a 19 (plazas) por la condicion del while
     
       while (aux_p < cant_p ) {
         //System.out.println(aux_p);
             //1-la plaza tiene que ser una plaza de entrada de la transicion
             //2- el marcado actual tiene que ser mayor que el peso del arco de entrada
-            if(matrizIncidenciaEntradaMatrix.getEntry(aux_p, i) != 0){
-              if((marcadoActualMatrix.getEntry(0, aux_p) - matrizIncidenciaEntradaMatrix.getEntry(aux_p, i)) > 0){
+            if(matrizIncidenciaEntradaMatrix.getEntry(aux_p, aux_t) != 0){
+              if((marcadoActualMatrix.getEntry(0, aux_p) - matrizIncidenciaEntradaMatrix.getEntry(aux_p, aux_t)) >= 0){
                   //La transición está sensibilizada
-                transicionesSensibilizadasMatrix.setEntry(0, i, 1);
+                transicionesSensibilizadasMatrix.setEntry(0, aux_t, 1);
               }else{
-                transicionesSensibilizadasMatrix.setEntry(0, i, 0);
+                transicionesSensibilizadasMatrix.setEntry(0, aux_t, 0);
                 break;
                 }
             }

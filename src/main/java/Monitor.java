@@ -85,8 +85,13 @@ public class Monitor {
   public void dispararTransicion(int transicion) {
     // return mutex;
     Set<Thread> temphilos;
+    
     try {
       mutex.acquire();
+    }
+    catch (InterruptedException e) {
+    	throw new RuntimeException(e);
+    }
 
       // currentThread().getName();
       int transicionElegida;
@@ -112,6 +117,15 @@ public class Monitor {
         k = rdp.dispararTransicion(transicion);
         if (k) {
           miPolitica.actualizarContadorTransicion(transicion);
+          
+          /*if(transicion == 13) {
+        	  System.out.println();
+        	  System.out.println("CONTADOR TRANSICION 11: " + miPolitica.getContadorTransicion(11));
+        	  System.out.println("CONTADOR TRANSICION 12: " + miPolitica.getContadorTransicion(12));
+        	  System.out.println("CONTADOR TRANSICION 13: " + miPolitica.getContadorTransicion(13));
+        	  System.out.println("CANTIDAD TOKENS PLAZA 16: " + rdp.getCantidadTokensPlaza(16));
+        	  System.out.println();
+          }*/
           sensibilizadas = rdp.getTransicionesSensibilizadas();
 
           /*for (double[] row : sensibilizadas.getData()) {  // Obtener cada fila como un array
@@ -170,15 +184,13 @@ public class Monitor {
                 }
               }
             }*/
-            mutex.release();
+            return;
           } else {
             k = false;
-            mutex.release();
           }
         } else {
           mutex.release();
           miCola.encolar(transicion);
-          mutex.acquire();
           k = true;
         }
         // ODO: ver cuáles transiciones están en la cola y compararlas (&&) con estas
@@ -193,19 +205,16 @@ public class Monitor {
          * }
          */
       }
-    } catch (InterruptedException e) {
-      e.printStackTrace();
       mutex.release();
-    }
     /*finally {
     	mutex.release();
     }*/
 
   }
 
-  private boolean recorrer(double[] m) {
+  public boolean recorrer(double[] m) {
     for (int i = 0; i < m.length; i++) {
-      if (m[i] != 0) {
+      if (m[i] == 1.0) {
         return true;
       }
     }

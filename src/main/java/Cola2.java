@@ -49,11 +49,11 @@ public class Cola2  {
     //System.out.println("DESENCOLE HILO: " + transicion + ", POR EL HILO " + Thread.currentThread().getName());
     
       //lista[transicion] = 0;
-    if(colaTransiciones.get(transicion).availablePermits() == 0) {
+    //if(colaTransiciones.get(transicion).availablePermits() == 0) {
     	colaTransiciones.get(transicion).release();
         //System.out.println("LA TRANSICION " + transicion + " TIENE " + colaTransiciones.get(transicion).availablePermits() + " PERMISOS.");
         //System.out.println();
-    }
+    //}
       
 
     //}//catch (InterruptedException e){
