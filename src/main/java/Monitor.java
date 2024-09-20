@@ -3,6 +3,7 @@
 //import org.apache.commons.math3.linear.MatrixUtils;
 import java.util.Collection;
 import java.util.Set;
+import java.util.concurrent.Semaphore;
 import java.util.ArrayList;
 
 import org.apache.commons.math3.linear.RealMatrix;
@@ -39,7 +40,7 @@ public class Monitor {
    */
 
   // private Semaphore mutex;
-  private MySemaphore mutex;
+  private Semaphore mutex;
 
   // private HashMap<String,Thread> hilos;
 
@@ -54,6 +55,7 @@ public class Monitor {
     miCola = new Cola2();
     m = new double[15];
     arrayProcesadores=new ArrayList<Procesador>();
+    mutex = new Semaphore(1, true);
     //colaNoDisparados=new double[15];
     // inicializacion de colas
     /*
@@ -75,7 +77,7 @@ public class Monitor {
      * p18 = new Semaphore (1);
      */
 
-    mutex = new MySemaphore();
+    //mutex = new MySemaphore();
     // hilos = new HashMap<String,Thread>();
   }
 
@@ -89,6 +91,13 @@ public class Monitor {
       // currentThread().getName();
       int transicionElegida;
       Boolean k = true;
+      
+      /*System.out.println();
+      if(!mutex.hasQueuedThreads()) {
+    	  System.out.println("NO HAY HILOS");
+        miCola.mostrarListasEspera();
+      }
+      System.out.println();*/
 
       while (k) {
         // sensibilizadas=rdp.getTransicionesSensibilizadas();
@@ -146,7 +155,7 @@ public class Monitor {
             // hilos
             // que intentaron hacer acquire. Luego, utilizar notify para despertar a ese
             // hilo.
-            if (mutex.hasQueuedThreads() > 0) {
+            /*if (mutex.hasQueuedThreads() > 0) {
               temphilos = mutex.getMyQueuedThreads();
               String nombreHilo;
              
@@ -160,15 +169,17 @@ public class Monitor {
                    }
                 }
               }
-            }
+            }*/
             mutex.release();
           } else {
             k = false;
             mutex.release();
           }
         } else {
-          miCola.encolar(transicion);
           mutex.release();
+          miCola.encolar(transicion);
+          mutex.acquire();
+          k = true;
         }
         // ODO: ver cuáles transiciones están en la cola y compararlas (&&) con estas
 
@@ -181,7 +192,6 @@ public class Monitor {
          * }
          * }
          */
-
       }
     } catch (InterruptedException e) {
       e.printStackTrace();
@@ -204,6 +214,10 @@ public class Monitor {
   
   public void setArrayProcesadores(ArrayList<Procesador> arrayProcesadores) {
 	  this.arrayProcesadores = arrayProcesadores;
+  }
+  
+  public double cantidadTokensPlaza(int plaza) {
+	 return rdp.getCantidadTokensPlaza(plaza);
   }
   /*
    * public void setHilos(HashMap<String,Thread> hilos){

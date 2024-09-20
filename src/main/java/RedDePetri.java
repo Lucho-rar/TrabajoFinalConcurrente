@@ -129,6 +129,15 @@ public class RedDePetri {
       RealMatrix misTransicionesDisparadas = MatrixUtils.createRealMatrix(incidencia.getColumnDimension(),1);
       misTransicionesDisparadas.setEntry(transicion,0,1);
       
+      /*for (double[] row : misTransicionesDisparadas.getData()) {  // Obtener cada fila como un array
+          for (double value : row) {  // Recorrer cada valor en la fila
+                  System.out.print(value + " ");
+              }
+              // Imprimir una nueva línea después de cada fila
+              System.out.println();
+          }
+          System.out.println();*/
+      
       //for (int i = 0; i < getCantidadPlazas(); i++) {
         //System.out.printf("transicion:%d   \n\r",  transicion);
 
@@ -136,8 +145,35 @@ public class RedDePetri {
         //System.out.printf(" marcadoActualMatrix (%d x %d),  \n\r",  marcadoActualMatrix.getRowDimension(), marcadoActualMatrix.getColumnDimension());
         //System.out.printf(" incidencia (%d x %d),  \n\r",  incidencia.getRowDimension(), incidencia.getColumnDimension());
         //[1x19]                                + [19x15] * [15x1]
+      //System.out.println("TRANSICION A DISPARAR: " + transicion);
+      //System.out.println();
+      	
 
         marcadoActualMatrix = marcadoActualMatrix.add(((incidencia.copy()).multiply(misTransicionesDisparadas)).transpose());
+        
+        //System.out.println("MOSTRAR MARCADO PLAZAS");
+        for(int i=0;i<15;i++){
+        	double marcado = marcadoActualMatrix.getEntry(0, i);
+        	if(marcado < 0) {
+        		System.out.println();
+        		System.out.println("PLAZA " + i + ": " + marcado);
+        		System.out.println();
+        	}
+        	else {
+        		System.out.println("PLAZA " + i + ": " + marcado);
+        	}
+          
+        }
+        
+        
+        /*for (double[] row : marcadoActualMatrix.getData()) {  // Obtener cada fila como un array
+            for (double value : row) {  // Recorrer cada valor en la fila
+                    System.out.print(value + " ");
+                }
+                // Imprimir una nueva línea después de cada fila
+                System.out.println();
+            }
+            System.out.println();*/
         // marcadoActual[i] = marcadoActual[i] +
         // incidencia.multiply(transicionesADisparar);
         /*
@@ -182,7 +218,7 @@ public class RedDePetri {
             //1-la plaza tiene que ser una plaza de entrada de la transicion
             //2- el marcado actual tiene que ser mayor que el peso del arco de entrada
             if(matrizIncidenciaEntradaMatrix.getEntry(aux_p, i) != 0){
-              if((marcadoActualMatrix.getEntry(0, aux_p) - matrizIncidenciaEntradaMatrix.getEntry(aux_p, i)) >= 0){
+              if((marcadoActualMatrix.getEntry(0, aux_p) - matrizIncidenciaEntradaMatrix.getEntry(aux_p, i)) > 0){
                   //La transición está sensibilizada
                 transicionesSensibilizadasMatrix.setEntry(0, i, 1);
               }else{
@@ -192,7 +228,22 @@ public class RedDePetri {
             }
 
             aux_p++;
+         /*
+       int numPlazas = incidenciaTotal.getRowDimension();
 
+        // Recorrer todas las plazas para verificar la condición de sensibilización
+        for (int i = 0; i < numPlazas; i++) {
+            double incidencia = incidenciaTotal.getEntry(i, transicion);
+
+            // Si la incidencia es negativa, verificar que el marcado sea suficiente
+            if (incidencia < 0 && marcadoActual[i] < Math.abs(incidencia)) {
+                return false; // No hay suficientes tokens en la plaza P_i para disparar la transición
+            }
+        }
+
+        return true; // Todas las condiciones de sensibilización se cumplen
+          * 
+          * */
             
         //System.out.printf("aux_p %d , cant_t %d, cant_p %d, i %d\n\r",aux_p,cant_t,cant_p, i);
         // System.out.printf("matrizIncidenciaEntradaMatrix.getEntry(i, aux_t) %f\n\r",matrizIncidenciaEntradaMatrix.getEntry(i, aux_t));
@@ -303,5 +354,9 @@ public class RedDePetri {
 
   public double[] getPlaza(int numero) {
     return incidencia.getRow(numero);
+  }
+  
+  public double getCantidadTokensPlaza(int plaza) {
+	  return marcadoActualMatrix.getEntry(0, plaza);
   }
 }

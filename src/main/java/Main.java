@@ -103,6 +103,8 @@ public class Main {
     // Monitor miMonitor=new Monitor(redp, politica, hilos);
 	miMonitor.setArrayProcesadores(arrayProcesadores);
 	
+	System.out.println("cantidad hilos: " + hilos.size());
+	
     hilos.forEach((hilo) -> hilo.start());
 
     

@@ -236,7 +236,13 @@ private Integer[][] contadorIzq = new Integer[3][2];
           lista.get(1).add(i);
         }
       }
-    }   
+    } 
+    
+    /*System.out.println();
+    for (ArrayList<Integer> sublista : lista) {
+        System.out.println(sublista);
+    }
+    System.out.println();*/
      //elimina los segmentos que no están sensiblizados (iz, der o ult)
 
 

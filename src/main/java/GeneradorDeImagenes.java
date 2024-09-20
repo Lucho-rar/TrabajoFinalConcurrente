@@ -8,7 +8,7 @@ public class GeneradorDeImagenes extends Procesador implements Runnable{
   
   public void run(){
     while(true){
-    this.miMonitor.dispararTransicion(this.getTransicion1());
+    	this.miMonitor.dispararTransicion(this.getTransicion1());
     }
   }
 }
