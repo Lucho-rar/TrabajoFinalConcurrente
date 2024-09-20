@@ -166,13 +166,12 @@ private Integer[][] contadorIzq = new Integer[3][2];
   */
   public int elegirPolitica(){
     int salida;
-    //Scanner scanner = new Scanner(System.in);
-    //System.out.println("Elige un numero de politica: \n");
-    //System.out.println("1. Balanceada \n");
-    //System.out.println("2. Izquierda favorecida \n");
-    //salida = scanner.nextInt();
-    salida = 1;
-    //scanner.close();
+    Scanner scanner = new Scanner(System.in);
+    System.out.println("Elige un numero de politica: \n");
+    System.out.println("1. Balanceada \n");
+    System.out.println("2. Izquierda favorecida \n");
+    salida = scanner.nextInt();
+    scanner.close();
     
     //falta manejo de errores
     return salida;
