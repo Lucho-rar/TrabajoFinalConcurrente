@@ -12,7 +12,7 @@ public class AjustadorDeCalidad extends Procesador implements Runnable {
   public void run(){
     while(true){
     this.miMonitor.dispararTransicion(this.getTransicion1());
-     
+    this.listaImagenDestino.encolar(listaImagenOrigen.desencolar(), getTransicion1());
     }
   }
   

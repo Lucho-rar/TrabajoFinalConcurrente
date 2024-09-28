@@ -18,7 +18,7 @@ public class Log {
   private File archivo;
   private long horaInicial;
   private String ruta;
-  private Semaphore mutex;
+  private Semaphore mutex = new Semaphore(1);
   
   //constructor
   public Log(String ruta, long horaInicial){

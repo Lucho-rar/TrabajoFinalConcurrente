@@ -47,15 +47,15 @@ public class Monitor {
   private RealMatrix sensibilizadas;
   private double[] colaNoDisparados;
   private double[] m;
-  private  ArrayList<Procesador> arrayProcesadores;
+  private Log log;
 
-  public Monitor(RedDePetri redp, Politica mp) {
+  public Monitor(RedDePetri redp, Politica mp, Log log) {
     rdp = redp;
     miPolitica = mp;
     miCola = new Cola2();
     m = new double[15];
-    arrayProcesadores=new ArrayList<Procesador>();
     mutex = new Semaphore(1, true);
+    this.log = log;
     //colaNoDisparados=new double[15];
     // inicializacion de colas
     /*
@@ -83,8 +83,6 @@ public class Monitor {
 
   // Para disparar una transición, primero debe adquirirse el semáforo del monitor
   public void dispararTransicion(int transicion) {
-    // return mutex;
-    Set<Thread> temphilos;
     
     try {
       mutex.acquire();
@@ -221,12 +219,12 @@ public class Monitor {
     return false;
   }
   
-  public void setArrayProcesadores(ArrayList<Procesador> arrayProcesadores) {
-	  this.arrayProcesadores = arrayProcesadores;
-  }
-  
   public double cantidadTokensPlaza(int plaza) {
 	 return rdp.getCantidadTokensPlaza(plaza);
+  }
+  
+  public void contadorInvariantes(Imagen imagen) {
+	  rdp.actualizarContadorInvariante(imagen);
   }
   /*
    * public void setHilos(HashMap<String,Thread> hilos){

@@ -15,11 +15,16 @@ public class Exportador extends Procesador implements Runnable {
   public void run(){
     while(true){
     this.miMonitor.dispararTransicion(this.getTransicion1());
+    this.listaImagenDestino.encolar(listaImagenOrigen.desencolar(), getTransicion1());
     this.miMonitor.dispararTransicion(transicion2);
+    Imagen aux=this.listaImagenDestino.desencolar();
+    aux.agregarTransicion(transicion2);
+    this.miMonitor.contadorInvariantes(aux);
     }
   }
   @Override
   public boolean perteneceTransicion(int transicion){
     return this.getTransicion1()==transicion||this.transicion2==transicion;
   }
+  
 }

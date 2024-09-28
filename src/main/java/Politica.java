@@ -298,15 +298,15 @@ private Integer[][] contadorIzq = new Integer[3][2];
   }
   
   private int izquierdaFavorecida(double[] m){
-    int elegido = balanceada(m);
-    
-    if(elegido == 9 || elegido == 10){
-      if(Math.random()>0.8){
-        return 10;
-      }else{
-        return 9;
-      }
+    if(m[9] == 1 && m[10] == 1) {
+        if(Math.random()>0.8){
+          return 10; //Transicion 10
+        }else{
+          return 9; //Transicion 9
+        }
     }
+    
+    int elegido = balanceada(m);
 
     return elegido;
   }

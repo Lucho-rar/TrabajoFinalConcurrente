@@ -10,6 +10,8 @@ public class GeneradorDeImagenes extends Procesador implements Runnable{
     while(true){
     	if(this.miMonitor.cantidadTokensPlaza(0) < 5) {
     		this.miMonitor.dispararTransicion(this.getTransicion1());
+        this.listaImagenDestino.encolar(new Imagen(), this.getTransicion1());
+        //actualizar el recorrido de imagen 
     	}
     }
   }
