@@ -1,10 +1,14 @@
+import java.util.ArrayList;
+
 public abstract class Procesador {
 
-  private String nombre;
-  private String nombre_hilo;
+  protected String nombre;
+  protected String nombre_hilo;
   protected Monitor miMonitor;
-  private Log miLog;
-  private int transicion1;
+  protected Log miLog;
+  protected int transicion1;
+  protected Cola listaImagenOrigen;
+  protected Cola listaImagenDestino;
     
 
   public Procesador(String nombre,Monitor monitor, Log log, int transicion){
@@ -13,6 +17,8 @@ public abstract class Procesador {
     this.nombre = nombre;
     this.transicion1=transicion;
     this.nombre_hilo="";
+    listaImagenOrigen=null;
+    listaImagenDestino=null;
   }
   
   public String getNombre(){
@@ -38,5 +44,25 @@ public abstract class Procesador {
     return this.transicion1==transicion;
   }
   
+  
+  public void setOrigen(Cola origen) {
+	  this.listaImagenOrigen = origen;
+  }
+   public void setDestino(Cola destino){
+      this.listaImagenDestino=destino;
+   }
+   
+   
+   public void operar(int transicion) {
+	   if(!this.listaImagenOrigen.estaVacia()) {
+		   this.listaImagenDestino.encolar(this.listaImagenOrigen.desencolar(),transicion);
+	   }else {
+		   miLog.escribirArchivo("Error. Lista origen vacía transicion:"+transicion);
+	   }
+	   
+	   
+	   
+   
+   }
 
 }

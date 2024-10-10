@@ -9,7 +9,8 @@ public class Recortador extends Procesador implements Runnable {
   @Override
   public void run(){
     while(true){
-    this.miMonitor.dispararTransicion(this.getTransicion1());
+    this.miMonitor.dispararTransicion(this.getTransicion1(),this);
+    //this.listaImagenDestino.encolar(listaImagenOrigen.desencolar(), getTransicion1());
     }
   }
 

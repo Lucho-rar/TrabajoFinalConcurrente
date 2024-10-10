@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
@@ -106,14 +108,29 @@ public class RedDePetri {
   };
 
   private int matrizIvariantesTransicion[][] = {
-      { 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1 },
-      { 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1 },
-      { 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1 },
-      { 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1 },
-      { 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1 },
-      { 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1 },
-      { 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1 },
-      { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1 }
+       //T0->T1->T3->T5->T7->T9->T11->T13->T14
+      { 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1 }, //1
+
+      //T0->T1->T3->T5->T7->T10->T12->T13->T14
+      { 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1 }, //2
+
+      //T0->T1->T3->T6->T8->T9->T11->T13->T14
+      { 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1 }, //3
+
+      //T0->T1->T3->T6->T8->T10->T12->T13->T14
+      { 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1 }, //4
+
+      //T0->T2->T4->T5->T7->T9->T11->T13->T14
+      { 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1 }, //5
+
+      //T0->T2->T4->T5->T7->T10->T12->T13->T14
+      { 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1 }, //6
+
+      //T0->T2->T4->T6->T8->T9->T11->T13->T14
+      { 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1 }, //7
+
+      //T0->T2->T4->T6->T8->T10->T12->T13->T14
+      { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1 }  //8
   };
 
   private int matrizInvariantesPlaza[][] = {
@@ -133,15 +150,14 @@ public class RedDePetri {
    * };
    */
   private double[][] marcadoActual = {
-      { 1, 1, 0, 3, 0, 1, 0, 1, 0, 2, 0, 1, 0, 1, 0, 0, 0, 0, 1 } // P0-18
+      { 0, 1, 0, 3, 0, 1, 0, 1, 0, 2, 0, 1, 0, 1, 0, 0, 0, 0, 1 } // P0-18
   };
 
   private double[][] transicionesSensibilizadas = {
-      { 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } // T0-14
+      { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } // T0-14
   };
   
   private int[][] contadorInvariantes = {
-    { 2, 2, 2, 2, 1, 1, 1, 1 }, //transición en la que comienza el invariante
     { 0, 0, 0, 0, 0, 0, 0, 0 } //contador de cada invariante completado
   };
   // private final RealMatrix marcadoInicialMatrix =
@@ -153,8 +169,13 @@ public class RedDePetri {
   
   private RealMatrix marcadoActualMatrix = MatrixUtils.createRealMatrix(marcadoActual);
   private RealMatrix transicionesSensibilizadasMatrix = MatrixUtils.createRealMatrix(transicionesSensibilizadas);
+  
+  private Log log;
+  
+  private Cola2 colaImagenes;
 
-  public RedDePetri() {
+  public RedDePetri(Log log) {
+	  this.log = log;
     // transicionesSensibilizadas = {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   }
   
@@ -180,76 +201,12 @@ public class RedDePetri {
      // private final RealMatrix matrizIncidenciaEntradaMatrix = MatrixUtils.createRealMatrix(matrizIncidenciaEntrada);
       RealMatrix misTransicionesDisparadas = MatrixUtils.createRealMatrix(incidencia.getColumnDimension(),1);
       misTransicionesDisparadas.setEntry(transicion,0,1);
-      
-      /*for (double[] row : misTransicionesDisparadas.getData()) {  // Obtener cada fila como un array
-          for (double value : row) {  // Recorrer cada valor en la fila
-                  System.out.print(value + " ");
-              }
-              // Imprimir una nueva línea después de cada fila
-              System.out.println();
-          }
-          System.out.println();*/
-      
-      //for (int i = 0; i < getCantidadPlazas(); i++) {
-        //System.out.printf("transicion:%d   \n\r",  transicion);
-
-        //System.out.printf("misTransicionesDisparadas (%d x %d),  \n\r", misTransicionesDisparadas.getRowDimension(),misTransicionesDisparadas.getColumnDimension());
-        //System.out.printf(" marcadoActualMatrix (%d x %d),  \n\r",  marcadoActualMatrix.getRowDimension(), marcadoActualMatrix.getColumnDimension());
-        //System.out.printf(" incidencia (%d x %d),  \n\r",  incidencia.getRowDimension(), incidencia.getColumnDimension());
-        //[1x19]                                + [19x15] * [15x1]
-      //System.out.println("TRANSICION A DISPARAR: " + transicion);
-      //System.out.println();
-      	
+            	
       	sensibilizadasCopy = getTransicionesSensibilizadas();
       	
         marcadoActualMatrix = marcadoActualMatrix.add(((incidencia.copy()).multiply(misTransicionesDisparadas)).transpose());
+                
         
-        
-        
-        /*for(int i=0;i<19;i++){
-        	double marcado = marcadoActualMatrix.getEntry(0, i);
-        	if(marcado < 0) {
-        		for (double[] row : sensibilizadasCopy.getData()) {  // Obtener cada fila como un array
-                    for (double value : row) {  // Recorrer cada valor en la fila
-                            System.out.print(value + " ");
-                        }
-                        // Imprimir una nueva línea después de cada fila
-                        System.out.println();
-                    }
-                    System.out.println();
-        		System.out.println("Transicion disparada: " + transicion);
-        		System.out.println();
-        		System.out.println("PLAZA " + i + ": " + marcado);
-        		System.out.println();
-        	}
-        	else {
-        		System.out.println("PLAZA " + i + ": " + marcado);
-        	}
-        }*/
-       
-        
-        /*for (double[] row : marcadoActualMatrix.getData()) {  // Obtener cada fila como un array
-            for (double value : row) {  // Recorrer cada valor en la fila
-                    System.out.print(value + " ");
-                }
-                // Imprimir una nueva línea después de cada fila
-                System.out.println();
-            }
-            System.out.println();*/
-        // marcadoActual[i] = marcadoActual[i] +
-        // incidencia.multiply(transicionesADisparar);
-        /*
-         * if(transicionADisparar[i] == 1){
-         * marcadoActual[i]++;
-         * }
-         * if(transicionADisparar[i] == -1){
-         * marcadoActual[i]--;
-         * }
-         */
-      //}
-
-      actualizarContadorInvariante(transicion);
-
       return true;
     }
 
@@ -329,26 +286,59 @@ public class RedDePetri {
 
     return transicionesSensibilizadasMatrix;
   }
-  
+  /*
   private int proximaTransicion( int invarianteTransicion, int posicionActual) throws Exception{
-   int pos=posicionActual;
+   int pos=posicionActual+1;
+   
+   //log.escribirArchivo("El invariante de transición es: " + (invarianteTransicion+1));
+   //log.escribirArchivo("La posición actual es: " + posicionActual);
 
     while(pos<matrizIvariantesTransicion[invarianteTransicion].length && matrizIvariantesTransicion[invarianteTransicion][pos]!=1){
       pos++;
     }
     
     if(pos!=matrizIvariantesTransicion[invarianteTransicion].length){
-      return pos;
+    	//log.escribirArchivo("La próxima posición es: " + pos);
+    	return pos;
     }else{
       //no lo encontró. hay error . no debería entrar aquí. 
       throw new Exception("error transicion inicial");
     }
+  }*/
+  private boolean comprobarInvariante(int posInvariante,Imagen imagen ){
+    ArrayList<Integer> invariante=imagen.getInvariante();
+    ///0->2->4->5->7->9->11->13->14->
+    for(int i =0; i<invariante.size();i++) {
+    	if(matrizIvariantesTransicion[posInvariante][invariante.get(i)]!=1) {
+    		return false;
+    	}
+    }
+    return true;
   }
-
-  private void actualizarContadorInvariante(int transicionDisparada){
+  
+  
+  public void actualizarContadorInvariante(Imagen imagen){
     try{
+     
+      for(int i=0;i<matrizIvariantesTransicion.length;i++) {
+    	  if(comprobarInvariante(i, imagen)) {
+    		  contadorInvariantes[0][i]++;
+    		  break;
+    	  }
+      }
+      //log.escribirArchivo(imagen.imprimirRecorrido());
+      
+	    for (int j = 0; j < contadorInvariantes[0].length; j++) {
+	        int valor = contadorInvariantes[0][j];
+	        String texto = "El invariante: " + (j+1) + " se completó " + valor + " veces.";
+	        
+	        log.escribirArchivo(texto);
+	    }
+	    
+	    // Imprimir una nueva línea después de cada fila
+	    log.escribirArchivo("");
 		//Todo actualiza mal el contador de proxima transicion
-      for (int i=0; i<contadorInvariantes[0].length;i++){
+      /*for (int i=0; i<contadorInvariantes[0].length;i++){
           if(transicionDisparada==14 && contadorInvariantes[0][i]==14){
             //System.out.println("estoy aca");
             contadorInvariantes[0][i] = proximaTransicion(i, 0);//matrizIvariantesTransicion[i][posicion donde tengo el primer 1]
@@ -356,7 +346,7 @@ public class RedDePetri {
           }else if(contadorInvariantes[0][i]==transicionDisparada){
               //corresponde actualizar el recorrido de la invariante
               //System.out.println("estoy en el else if");
-              contadorInvariantes[0][i] = proximaTransicion(i, contadorInvariantes[0][i]++);
+              contadorInvariantes[0][i] = proximaTransicion(i, contadorInvariantes[0][i]);
           }else{
             //System.out.println("estoy en el else");
           }

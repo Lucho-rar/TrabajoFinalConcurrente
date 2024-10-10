@@ -47,44 +47,20 @@ public class Monitor {
   private RealMatrix sensibilizadas;
   private double[] colaNoDisparados;
   private double[] m;
-  private  ArrayList<Procesador> arrayProcesadores;
+  private Log log;
 
-  public Monitor(RedDePetri redp, Politica mp) {
+  public Monitor(RedDePetri redp, Politica mp, Log log) {
     rdp = redp;
     miPolitica = mp;
     miCola = new Cola2();
     m = new double[15];
-    arrayProcesadores=new ArrayList<Procesador>();
     mutex = new Semaphore(1, true);
-    //colaNoDisparados=new double[15];
-    // inicializacion de colas
-    /*
-     * cola_cargaImagenes=new Cola();
-     * cola_cargaAjustador=new Cola();
-     * cola_recortador=new Cola();
-     * cola_exportador=new Cola();
-     */
-
-    // inicializacion de recursos compartidos / semaforos
-    /*
-     * p1=new Semaphore(1);
-     * p3=new Semaphore(3);
-     * p5=new Semaphore(1);
-     * p7=new Semaphore(1);
-     * p9=new Semaphore(2);
-     * p11=new Semaphore(1);
-     * p13 = new Semaphore (1);
-     * p18 = new Semaphore (1);
-     */
-
-    //mutex = new MySemaphore();
-    // hilos = new HashMap<String,Thread>();
+    this.log = log;
+    
   }
 
   // Para disparar una transición, primero debe adquirirse el semáforo del monitor
-  public void dispararTransicion(int transicion) {
-    // return mutex;
-    Set<Thread> temphilos;
+  public void dispararTransicion(int transicion, Procesador procesador) {
     
     try {
       mutex.acquire();
@@ -115,9 +91,14 @@ public class Monitor {
          */
 
         k = rdp.dispararTransicion(transicion);
-        if (k) {
+        if (k) { 
+          procesador.operar(transicion);
           miPolitica.actualizarContadorTransicion(transicion);
-          
+          String salida="";
+         // for(int i=0;i<15;i++) {
+        //	  salida+="t"+i+": "+miPolitica.getContadorTransicion(i)+" ";
+         // }
+          //log.escribirArchivo(salida);//////////////////////
           /*if(transicion == 13) {
         	  System.out.println();
         	  System.out.println("CONTADOR TRANSICION 11: " + miPolitica.getContadorTransicion(11));
@@ -149,6 +130,24 @@ public class Monitor {
             // Aplicar la operación AND a cada elemento en la fila correspondiente
             m[i] = (sensibilizadas.getEntry(0, i) == 1.0 && colaNoDisparados[i] == 1.0) ? 1.0 : 0.0;
           }
+          
+          String salida1="sensi=";
+          String salida2="NDisp=";
+          String salida3="m    =";
+          int contador=0;
+         /* for(int i=0;i<15;i++) {
+        	  salida1+=(int)sensibilizadas.getEntry(0, i)+", ";
+        	  salida2+=(int)colaNoDisparados[i]+", ";
+        	  salida3+=(int)m[i]+", ";
+        	  contador+=m[i];
+          }
+          log.escribirArchivo(salida1);
+          log.escribirArchivo(salida2);
+          log.escribirArchivo(salida3);
+          if(contador>1) {
+        	  log.escribirArchivo("M tiene más de 1: "+contador);
+          }*/
+          
  /*         for(int i=0; i<sensibilizadas.getColumnDimension();i++){
             if(sensibilizadas.getEntry(0,i)==1&&colaNoDisparados[i]==1){
               m[i]=1;
@@ -164,6 +163,7 @@ public class Monitor {
           
           if (recorrer(m)) {
             transicionElegida = miPolitica.cual(m); // esto nos debería entregar un entero
+           
             miCola.desencolar(transicionElegida);
             // debemos utilizar del semaphore el método getQueuedThreads() para obtener los
             // hilos
@@ -184,6 +184,7 @@ public class Monitor {
                 }
               }
             }*/
+            
             return;
           } else {
             k = false;
@@ -221,17 +222,19 @@ public class Monitor {
     return false;
   }
   
-  public void setArrayProcesadores(ArrayList<Procesador> arrayProcesadores) {
-	  this.arrayProcesadores = arrayProcesadores;
-  }
-  
   public double cantidadTokensPlaza(int plaza) {
 	 return rdp.getCantidadTokensPlaza(plaza);
+  }
+  
+  public void contadorInvariantes(Imagen imagen) {
+	  rdp.actualizarContadorInvariante(imagen);
+      this.log.escribirArchivo("cantidad de veces que se decidió entre t9 y t10:"+this.miPolitica.getContador_decisiones());
   }
   /*
    * public void setHilos(HashMap<String,Thread> hilos){
    * this.hilos=hilos;
    * }
    */
+  
 
 }

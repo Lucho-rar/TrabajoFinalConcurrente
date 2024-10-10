@@ -57,6 +57,10 @@ private Integer[][] contadorIzq = new Integer[3][2];
   private ArrayList<Set<Integer>> segUltimo=new ArrayList<Set<Integer>>();
   private Integer[] contadorUltimoSegmento = new Integer[3];
   
+  private  Integer[] borrarRecorrido1= {0,1,3,5,7,9,11,13,14};
+  private int pos=0;
+  private int contador_decisiones=0;
+  
   public Politica(){
     
     this.tipoDePolitica = elegirPolitica();
@@ -93,6 +97,13 @@ private Integer[][] contadorIzq = new Integer[3][2];
     SegDer.add(new HashSet<>(Arrays.asList(10, 12)));
 
     segUltimo.add(new HashSet<>(Arrays.asList(0, 13, 14)));
+  }
+  
+  public int getContador_decisiones() {
+	  return contador_decisiones;
+  }
+  public void setContador_decisiones(int c) {
+	  contador_decisiones=c;
   }
   /*
   public Politica (int tipoDePolitica) {
@@ -143,27 +154,7 @@ private Integer[][] contadorIzq = new Integer[3][2];
     }
   }
   
-  /*
-  public int getContadorSegmento(int segmento){
-    
-    1-si el segmento es 0, retorna el contador de la transicion cero ya que no es parte del último segmento
-    2-si pide segmento 7, devuelve la suma de los contadores de 13 y 14
-    
-  
-    switch(segmento ){
-        case 0: return contadorUltimoSegmento[0];
-        case 1: return contadorIzq[0][0]+contadorIzq[0][1];
-        case 2: return contadorDer[0][0]+contadorDer[0][1];
-        case 3: return contadorIzq[1][0]+contadorIzq[1][1];
-        case 4: return contadorDer[1][0]+contadorDer[1][1];
-        case 5: return contadorIzq[2][0]+contadorIzq[2][1];
-        case 6: return contadorDer[2][0]+contadorDer[2][1];
-        case 7: return contadorUltimoSegmento[1]+contadorUltimoSegmento[2];
-        default: return -1;
-    }
-    
-  }
-  */
+ 
   public int elegirPolitica(){
     int salida;
     Scanner scanner = new Scanner(System.in);
@@ -176,13 +167,63 @@ private Integer[][] contadorIzq = new Integer[3][2];
     //falta manejo de errores
     return salida;
   }
-
+/*
   public int cual(double[] m){
     switch(tipoDePolitica){
         case 1: return balanceada(m);
         case 2: return izquierdaFavorecida(m);
       default: return -1;
     }
+  }
+  */
+  public int cual(double[] m){
+	    switch(tipoDePolitica){
+	        case 1: return  balanceada(m);
+	        case 2: return izquierdaFavorecida(m);
+	      default: return -1;
+	    }
+	  }
+  
+  
+  public int recorridoB(double[] m) {
+	  
+	  
+	  int posible= balanceada(m);
+	  if(posible==borrarRecorrido1[pos]) {
+		  if(this.pos==8) {
+			  //reinicia
+			  this.pos=0;
+			  System.out.println( "T"+this.borrarRecorrido1[8]);
+			  //return this.borrarRecorrido1[8];
+		  }else {
+			  this.pos++;
+			  System.out.println(  "T"+this.borrarRecorrido1[pos-1]);
+			  //return this.borrarRecorrido1[pos-1];
+		  }
+		  
+	  }else {
+		  
+	  }
+	  if(m[borrarRecorrido1[pos]]==1) {
+		  if(this.pos==8) {
+		  //reinicia
+		  this.pos=0;
+		  System.out.println( "T"+this.borrarRecorrido1[8]);
+		  return this.borrarRecorrido1[8];
+	  }else {
+		  this.pos++;
+		  System.out.println(  "T"+this.borrarRecorrido1[pos-1]);
+		  return this.borrarRecorrido1[pos-1];
+	  }
+		  
+	  }else {
+		  
+		  
+		  
+	  }
+	  
+	  return 0;
+	  
   }
 
   private int balanceada(double[] m){
@@ -222,10 +263,22 @@ private Integer[][] contadorIzq = new Integer[3][2];
     System.out.println();*/
     List<ArrayList<Integer>> lista = new ArrayList<>();
     //posicion 0 van izq, posicion 1 van derecho, posicion 2 van ultimo
+    int salida=0;
+   
+    Random random1 = new Random();
+    while(true) {
+    	salida=random1.nextInt(15);
+    	if(m[salida]==1) {
+    		return salida;
+    	}
+    }
+    
+    
+   
+    /*lista.add(new ArrayList<Integer>());
     lista.add(new ArrayList<Integer>());
     lista.add(new ArrayList<Integer>());
-    lista.add(new ArrayList<Integer>());
-
+    
     for (int i = 0; i < m.length; i++){
       if(m[i] == 1){
         if(i == 14 || i == 13){
@@ -235,6 +288,7 @@ private Integer[][] contadorIzq = new Integer[3][2];
           //segmentos derechos
           lista.get(0).add(i);
         } else if (i == 0) {
+        	
           lista.get(2).add(i);
         }
         else {
@@ -242,7 +296,7 @@ private Integer[][] contadorIzq = new Integer[3][2];
           lista.get(1).add(i);
         } 
       }
-    } 
+    } */
     
     /*System.out.println();
     for (ArrayList<Integer> sublista : lista) {
@@ -263,7 +317,7 @@ private Integer[][] contadorIzq = new Integer[3][2];
     //     }
     //   }
     // }
-    int pos=0;
+   /* int pos=0;
     while(pos<lista.size()){ //obtener lista depurada, 
      
       if(lista.get(pos).size()==0){
@@ -280,7 +334,7 @@ private Integer[][] contadorIzq = new Integer[3][2];
     }
     System.out.println();*/
 
-    Random random = new Random();
+    /*Random random = new Random();
     int listSize =0 ;
     // System.out.printf("lista.size() %s\n",lista.size());
     if (lista.size() == 0){
@@ -294,19 +348,24 @@ private Integer[][] contadorIzq = new Integer[3][2];
     // System.out.printf("postransicion ANTES %s\n",posTransicion);
     posTransicion=random.nextInt(posTransicion);
     // System.out.printf("postransicion DESPUES %s\n",posTransicion);
-    return lista.get(eleccionTipoSegmento).get(posTransicion);
+    return lista.get(eleccionTipoSegmento).get(posTransicion);*/
+  
+ 
   }
   
   private int izquierdaFavorecida(double[] m){
-    int elegido = balanceada(m);
-    
-    if(elegido == 9 || elegido == 10){
-      if(Math.random()>0.8){
-        return 10;
-      }else{
-        return 9;
-      }
+	  
+    if(m[9] == 1 && m[10] == 1) {
+    	contador_decisiones++;
+        if(Math.random()>0.8){
+          return 10; //Transicion 10
+        }else{
+          return 9; //Transicion 9
+        }
     }
+    //m[9] = 0;
+    //m[10] = 0;
+    int elegido = balanceada(m);
 
     return elegido;
   }

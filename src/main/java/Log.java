@@ -18,7 +18,7 @@ public class Log {
   private File archivo;
   private long horaInicial;
   private String ruta;
-  private Semaphore mutex;
+  private Semaphore mutex = new Semaphore(1);
   
   //constructor
   public Log(String ruta, long horaInicial){
@@ -54,7 +54,7 @@ public class Log {
     fw.close();
   }*/
 
-  public void escribirArchivo(String texto){
+	public void escribirArchivo(String texto){
     try {
         mutex.acquire();
         FileWriter fw = new FileWriter(archivo, true); //agrega al final el nuevo texto cada vez que se llama

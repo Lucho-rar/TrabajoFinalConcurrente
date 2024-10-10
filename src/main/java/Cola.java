@@ -19,12 +19,13 @@ public class Cola  {
   }
 
   //Método para agregar una imagen a la cola
-  public void encolar(Imagen img){
+  public void encolar(Imagen img, int transicion){
     try{
       mutex.acquire(); //acquire del semaforo
     }catch (InterruptedException e){
        System.out.println("error al encolar");
     }
+    img.agregarTransicion(transicion);
     lista.add(img); //agrega a la lista
     mutex.release(); //release del semaforo
   }
