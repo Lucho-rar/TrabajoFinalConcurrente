@@ -195,7 +195,7 @@ public class RedDePetri {
 	  
 	  RealMatrix sensibilizadasCopy;
 
-    if (isSensibilizada(transicion)) {
+    if (isSensibilizada(transicion)		) {
       // transicionesSensibilizadas[transicion] = 0; //actualiza el marcado de la
       // transicion
      // private final RealMatrix matrizIncidenciaEntradaMatrix = MatrixUtils.createRealMatrix(matrizIncidenciaEntrada);

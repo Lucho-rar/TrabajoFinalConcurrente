@@ -46,7 +46,9 @@ public class Monitor {
 
   private RealMatrix sensibilizadas;
   private double[] colaNoDisparados;
-  private double[] m;
+  private double[] m;         //t0
+  //private long tiempos[]= {500,0,0,500,200,0,0,200,1000,0,0,1000,1000,0,0};	
+  private long tiempos[]= {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};	
   private Log log;
 
   public Monitor(RedDePetri redp, Politica mp, Log log) {
@@ -54,9 +56,21 @@ public class Monitor {
     miPolitica = mp;
     miCola = new Cola2();
     m = new double[15];
-    mutex = new Semaphore(1, true);
+    mutex = new Semaphore(1, false);
     this.log = log;
     
+  }
+  public void dormirTiempo(int transicion) {
+	  if(this.tiempos[transicion]>0) {
+		try {
+			Thread.currentThread().sleep(tiempos[transicion]);
+			log.escribirArchivo("hilo dormido: "+Thread.currentThread().getName());
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}   
+	  }
+	  
   }
 
   // Para disparar una transición, primero debe adquirirse el semáforo del monitor
@@ -92,6 +106,8 @@ public class Monitor {
 
         k = rdp.dispararTransicion(transicion);
         if (k) { 
+          //Aquí ponemos el tiempo para el hilo?
+        	 dormirTiempo(transicion);
           procesador.operar(transicion);
           miPolitica.actualizarContadorTransicion(transicion);
           String salida="";
