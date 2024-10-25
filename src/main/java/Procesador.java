@@ -57,7 +57,7 @@ public abstract class Procesador {
 	   if(!this.listaImagenOrigen.estaVacia()) {
 		   this.listaImagenDestino.encolar(this.listaImagenOrigen.desencolar(),transicion);
 	   }else {
-		   miLog.escribirArchivo("Error. Lista origen vacía transicion:"+transicion);
+		   miLog.escribirArchivo("Error. Lista origen vacía transicion:"+transicion+" hilo: "+Thread.currentThread().getName());
 	   }
 	   
 	   

@@ -1,8 +1,10 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
-
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 //import target.*;
 /**
  * Clase Red de Petri a representar
@@ -173,15 +175,28 @@ public class RedDePetri {
   private Log log;
   
   private Cola2 colaImagenes;
+  
+  //TimeStamps
+  //VectorEsperandoBooleando
+  
+  private long  timeStamps[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+  private long alfa[]= {20,0,0,20,20,0,0,20,20,0,0,20,20,0,20};
+  private long beta[]= {4000,0,0,4000,4000,0,0,4000,4000,0,0,4000,4000,0,4000};
+  
+  private boolean esperando[]=new boolean[15];
 
   public RedDePetri(Log log) {
+	  //establecer timestamp inicial 
+	  //llamar al método setNuevoTimeStamp()
+	  Arrays.fill(esperando, false);
+	  this.actualizarTimeStamp(null, null);
 	  this.log = log;
     // transicionesSensibilizadas = {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   }
   
   public Boolean dispararTransicion(int transicion) {
     // ODO: REVISAR PARA EL CASO DEL EXPORTADOR YA QUE ESE HILO TIENE ASOCIADO 2
-    // TRANSICIONES
+    // TRANSICIONESf
     // ODO: LLAMAR METODO PARA OBTENER TRANSICIONES SENSIBILIZADAS Y VER SI LA QUE
     // QUIERO DISPARAR ESTa SENSIBILIZADA
     // ODO: EL METODO DEBE DEVOLVER UN VALOR BOOLEANO QUE INDICA SI LA TRANSICION SE
@@ -196,16 +211,15 @@ public class RedDePetri {
 	  RealMatrix sensibilizadasCopy;
 
     if (isSensibilizada(transicion)		) {
+    	log.escribirArchivo("disparé transicion:"+transicion);
       // transicionesSensibilizadas[transicion] = 0; //actualiza el marcado de la
       // transicion
      // private final RealMatrix matrizIncidenciaEntradaMatrix = MatrixUtils.createRealMatrix(matrizIncidenciaEntrada);
-      RealMatrix misTransicionesDisparadas = MatrixUtils.createRealMatrix(incidencia.getColumnDimension(),1);
-      misTransicionesDisparadas.setEntry(transicion,0,1);
-            	
-      	sensibilizadasCopy = getTransicionesSensibilizadas();
-      	
-        marcadoActualMatrix = marcadoActualMatrix.add(((incidencia.copy()).multiply(misTransicionesDisparadas)).transpose());
-                
+     RealMatrix misTransicionesDisparadas = MatrixUtils.createRealMatrix(incidencia.getColumnDimension(),1);
+     misTransicionesDisparadas.setEntry(transicion,0,1);
+     sensibilizadasCopy = getTransicionesSensibilizadas();
+     marcadoActualMatrix = marcadoActualMatrix.add(((incidencia.copy()).multiply(misTransicionesDisparadas)).transpose());
+     actualizarTimeStamp( sensibilizadasCopy, this.getTransicionesSensibilizadas());
         
       return true;
     }
@@ -219,6 +233,162 @@ public class RedDePetri {
      * s: mis transiciones disparadas
      */
   }
+  
+  public Boolean dispararTransicionConTiempo(int transicion, Semaphore mutexMonitor) {
+	 /* String salida="timeStamp={";
+	  for(int i=0;i<this.timeStamps.length;i++) {
+		  salida+=this.timeStamps[i]+",";
+	  }
+	  salida+="}";
+	  log.escribirArchivo(salida);
+	  */
+	    // ODO: REVISAR PARA EL CASO DEL EXPORTADOR YA QUE ESE HILO TIENE ASOCIADO 2
+	    // TRANSICIONES
+	    // ODO: LLAMAR METODO PARA OBTENER TRANSICIONES SENSIBILIZADAS Y VER SI LA QUE
+	    // QUIERO DISPARAR ESTa SENSIBILIZADA
+	    // ODO: EL METODO DEBE DEVOLVER UN VALOR BOOLEANO QUE INDICA SI LA TRANSICION SE
+	    // PUDO DISPARAR O NO
+	    
+	    // ACTUALIZAR EL MARCADO ACTUAL Y ACTUALIZAR LAS TRANSICIONES SENSIBILIZADAS
+
+	    // System.out.printf("transicion a disparar: %d", transicion);
+	    // System.out.println();
+	    // System.out.println();
+		  
+		  RealMatrix sensibilizadasCopy;
+		  
+	    if (isSensibilizada(transicion)		) {
+	    	
+	      // transicionesSensibilizadas[transicion] = 0; //actualiza el marcado de la
+	      // transicion
+	     // private final RealMatrix matrizIncidenciaEntradaMatrix = MatrixUtils.createRealMatrix(matrizIncidenciaEntrada);
+	    	long tiempoActual=System.currentTimeMillis();
+	    	
+	    	//log.escribirArchivo("tiempo actual:"+tiempoActual+" TiempoTransicion:"+this.timeStamps[transicion]+" Transicion: "+transicion);
+	    	
+	    	if(testVentanaTiempo(tiempoActual,transicion)) {
+	    		log.escribirArchivo("Entre."+" Transicion: "+transicion);
+	    		//está en ventana de tiempo.
+	    		if(!esperando[transicion]) {
+	    			//log.escribirArchivo("llegue al esperando transicion:"+transicion+" hilo: "+Thread.currentThread().getName());
+	    			//setear el nuevo timestamp
+	    			this.setNuevoTimeStamp(transicion);
+	    			RealMatrix misTransicionesDisparadas = MatrixUtils.createRealMatrix(incidencia.getColumnDimension(),1);
+	    		 misTransicionesDisparadas.setEntry(transicion,0,1);
+	    		 sensibilizadasCopy = getTransicionesSensibilizadas();
+	    		 marcadoActualMatrix = marcadoActualMatrix.add(((incidencia.copy()).multiply(misTransicionesDisparadas)).transpose());
+	    		 //hay que actualizar las marcas de tiempo de las transiciones que cambiaron de sensibilización 
+	    		 actualizarTimeStamp( sensibilizadasCopy, this.getTransicionesSensibilizadas());
+	    		
+	    		  return true;	
+	    		}else {
+	    			//está esperando
+	    			return false;
+	    		}
+	    		     
+	    		
+	    	}else {
+	    		 //si es menor que alfa, seteo esperando en true, lo duermo lo que le falta (timestamp+alfa-ahora). 
+	    		//si es mayor que beta, ya 
+	    		if(antesDeLaVentana(tiempoActual,transicion)) {
+	    			//set esperando
+	    			log.escribirArchivo("antes de la ventana de tiempo "+transicion);
+	    			setEsperando(transicion);
+	    			long tiempoDormir=this.timeStamps[transicion]+alfa[transicion]-tiempoActual;
+	    			//mutexMonitor.release();
+	    			try {
+						TimeUnit.MILLISECONDS.sleep(tiempoDormir);
+						//mutexMonitor.acquire();
+						resetEsperando(transicion);
+						
+		    			
+		    			RealMatrix misTransicionesDisparadas = MatrixUtils.createRealMatrix(incidencia.getColumnDimension(),1);
+		    			misTransicionesDisparadas.setEntry(transicion,0,1);
+		    			sensibilizadasCopy = getTransicionesSensibilizadas();
+		    			marcadoActualMatrix = marcadoActualMatrix.add(((incidencia.copy()).multiply(misTransicionesDisparadas)).transpose());
+		    			//hay que actualizar las marcas de tiempo de las transiciones que cambiaron de sensibilización 
+		    			actualizarTimeStamp( sensibilizadasCopy, this.getTransicionesSensibilizadas());
+		    			return true;
+						
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						return false;
+					}
+	    			
+	    			
+	    			
+	    		}else {
+	    			return false;
+	    		}
+	    		//devuelve 
+	    		
+	    	}
+	        
+	        
+	    
+	    }
+
+	    return false;
+	    /*
+	     * mk= mi+W.S
+	     * mk: proximo marcado
+	     * mi: marcado actual
+	     * w: matriz incidencia
+	     * s: mis transiciones disparadas
+	     */
+	  }
+  public boolean testVentanaTiempo(long actual,int transicion) {
+	//alfa<ahora-timestamp<beta
+	  //obtiene el instantnow
+	  //tiene que verificar si el tiempo actual está entre el alpha y beta asociado a la transición
+	  
+	  
+	   
+	  return (actual>this.timeStamps[transicion]+alfa[transicion])&&(actual<timeStamps[transicion]+beta[transicion]);
+  }
+  public void setNuevoTimeStamp(int transicion) {
+	  this.timeStamps[transicion]=System.currentTimeMillis();
+  }
+	public void actualizarTimeStamp(RealMatrix previoDisparo, RealMatrix posteriorDisparo) {
+		if(previoDisparo!=null&&posteriorDisparo!=null) {
+			for(int i=0;i< previoDisparo.getColumnDimension();i++) {
+				if(posteriorDisparo.getEntry(0,i)-previoDisparo.getEntry(0,i)==1) {
+					setNuevoTimeStamp(i);
+				} 
+				 
+			}
+			
+			
+		}else {
+			//lleno con la marca actual de tiempo
+			for(int i=0;i< this.timeStamps.length;i++) {
+				if(this.isSensibilizada(i)) {
+					setNuevoTimeStamp(i);
+				} 
+				 
+			}
+		}
+	  
+  }
+
+	public boolean antesDeLaVentana(long actual, int transicion) {
+		return actual<this.timeStamps[transicion]+alfa[transicion];
+	}
+	
+	public void setEsperando(int transicion) {
+		this.esperando[transicion]=true;
+	}
+	public void resetEsperando(int transicion) {
+		this.esperando[transicion]=false;
+	}
+  //setNuevoTimeStamp()
+ /* antesDeLaVentana()
+  setEsperando()
+  calculoDeVectorEstado()
+  resetEsperando()
+  actualizaSensibilizado()
+  */
 
   public RealMatrix getTransicionesSensibilizadas() {
     RealMatrix transicionesSensibilizadasMatrix = MatrixUtils.createRealMatrix(new double[1][15]);
@@ -382,6 +552,7 @@ public class RedDePetri {
     transicionesSensibilizadasMatrix = getTransicionesSensibilizadas();
     return transicionesSensibilizadasMatrix.getEntry(0, transicion) == 1;
   }
+
 
   /*
    * public double[][] getMarcadoActual(){

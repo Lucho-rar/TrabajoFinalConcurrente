@@ -1,10 +1,15 @@
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.time.Instant;
 
 public class Main {
   // private static final int NUM_HILOS = 14;
 
   public static void main(String[] args) {
+	  
+	  
+	  System.out.println(System.currentTimeMillis());
     // int contador = 1;
 
     ArrayList<Thread> hilos = new ArrayList<Thread>();

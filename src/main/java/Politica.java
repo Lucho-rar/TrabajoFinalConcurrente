@@ -60,6 +60,7 @@ private Integer[][] contadorIzq = new Integer[3][2];
   private  Integer[] borrarRecorrido1= {0,1,3,5,7,9,11,13,14};
   private int pos=0;
   private int contador_decisiones=0;
+  private boolean tiempo;
   
   public Politica(){
     
@@ -97,6 +98,8 @@ private Integer[][] contadorIzq = new Integer[3][2];
     SegDer.add(new HashSet<>(Arrays.asList(10, 12)));
 
     segUltimo.add(new HashSet<>(Arrays.asList(0, 13, 14)));
+    
+    this.tiempo=true;
   }
   
   public int getContador_decisiones() {
@@ -132,7 +135,9 @@ private Integer[][] contadorIzq = new Integer[3][2];
       default: break;
     }
   }
-  
+  public boolean getTiempo() {
+	  return this.tiempo;
+  }
   public int getContadorTransicion(int transicion){
     switch(transicion){
       case 0: return contadorUltimoSegmento[0];
