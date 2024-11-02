@@ -14,44 +14,7 @@ public class Politica {
   //private Set<Integer>[] SegIzq = new Set<Integer>[3];
   // private Set<Integer>[3] SegDer={{2,4},{6,8},{10,12}}; //SB(2) SD(4) Y SF(6)
   private ArrayList<Set<Integer>> SegDer = new ArrayList<>();
-  /*
-
-
-  Set<Integer> miarray=new Set[3];
   
-
-  private Set<Integer>[] SegDer = new Set[3];
-    {
-        SegDer[0] = new HashSet<>(Arrays.asList(2, 4));
-        SegDer[1] = new HashSet<>(Arrays.asList(6, 8));
-        SegDer[2] = new HashSet<>(Arrays.asList(10, 12));
-    }
-  */
- /*
- ArrayList<Set<Integer>> list = new ArrayList<>();
-list.add(Set.of(1, 3));
-list.add(Set.of(5, 7));
-list.add(Set.of(9, 11));
-
-Set<Integer> set1 = new HashSet<>();
-set1.add(1);
-set1.add(3);
-SegIzq.add(set1);
-
-Set<Integer> set2 = new HashSet<>();
-set2.add(5);
-set2.add(7);
-SegIzq.add(set2);
-
-Set<Integer> set3 = new HashSet<>();
-set3.add(9);
-set3.add(11);
-SegIzq.add(set3);
-
-
-private Integer[][] contadorIzq = new Integer[3][2];
-
- */
   private Integer[][] contadorIzq = new Integer[3][2];
   private Integer[][] contadorDer = new Integer[3][2];
   private ArrayList<Set<Integer>> segUltimo=new ArrayList<Set<Integer>>();
@@ -60,10 +23,15 @@ private Integer[][] contadorIzq = new Integer[3][2];
   private  Integer[] borrarRecorrido1= {0,1,3,5,7,9,11,13,14};
   private int pos=0;
   private int contador_decisiones=0;
-  private boolean tiempo;
+  private int decisionT9=0;
+  private int decisionT10=0;
+  private boolean conTiempo; 
+  private  Scanner scanner;
   
   public Politica(){
-    
+	  scanner=new Scanner(System.in);
+	this.conTiempo=elegirTipoTiempo();  
+	 
     this.tipoDePolitica = elegirPolitica();
     //foreach(int i in contadorIzq)i=0;
     for (Integer[] row : contadorIzq) {
@@ -81,13 +49,7 @@ private Integer[][] contadorIzq = new Integer[3][2];
     for (int i = 0; i < contadorUltimoSegmento.length; i++) {
         contadorUltimoSegmento[i] = 0;
     }
-    /*
-    for (Integer[] row : contadorIzq) {
-    for (int i = 0; i < row.length; i++) {
-        row[i] = 0;
-    }
-}
-    */
+  
     
     SegIzq.add(new HashSet<>(Arrays.asList(1, 3)));
     SegIzq.add(new HashSet<>(Arrays.asList(5, 7)));
@@ -99,8 +61,12 @@ private Integer[][] contadorIzq = new Integer[3][2];
 
     segUltimo.add(new HashSet<>(Arrays.asList(0, 13, 14)));
     
-    this.tiempo=true;
+   
+    
   }
+  public boolean getConTiempo() {
+	  return conTiempo;
+  };
   
   public int getContador_decisiones() {
 	  return contador_decisiones;
@@ -108,13 +74,7 @@ private Integer[][] contadorIzq = new Integer[3][2];
   public void setContador_decisiones(int c) {
 	  contador_decisiones=c;
   }
-  /*
-  public Politica (int tipoDePolitica) {
-    this.tipoDePolitica = tipoDePolitica;
-    foreach(int i in contadorIzq)i=0;
-    foreach(int i in contadorDer)i=0;
-  }
-  */
+  
   public void actualizarContadorTransicion(int transicion){
     switch(transicion){
       case 0: contadorUltimoSegmento[0]++; break;
@@ -135,9 +95,9 @@ private Integer[][] contadorIzq = new Integer[3][2];
       default: break;
     }
   }
-  public boolean getTiempo() {
+  /*public boolean getTiempo() {
 	  return this.tiempo;
-  }
+  }*/
   public int getContadorTransicion(int transicion){
     switch(transicion){
       case 0: return contadorUltimoSegmento[0];
@@ -159,29 +119,35 @@ private Integer[][] contadorIzq = new Integer[3][2];
     }
   }
   
- 
+  public boolean elegirTipoTiempo(){
+	    int salida;
+	    scanner.reset();
+	   
+	    System.out.println("Elige ejecución con o sin tiempo: \n");
+	    System.out.println("1. Con tiempo \n");
+	    System.out.println("2. Sin tiempo \n");
+	    salida = scanner.nextInt();
+	    	    
+	    
+	    //falta manejo de errores
+	    return salida==1;
+	  }
+
   public int elegirPolitica(){
+	  scanner.reset();
     int salida;
-    Scanner scanner = new Scanner(System.in);
     System.out.println("Elige un numero de politica: \n");
     System.out.println("1. Balanceada \n");
     System.out.println("2. Izquierda favorecida \n");
     salida = scanner.nextInt();
-    scanner.close();
     
+    scanner.close();
     //falta manejo de errores
     return salida;
   }
-/*
+
   public int cual(double[] m){
-    switch(tipoDePolitica){
-        case 1: return balanceada(m);
-        case 2: return izquierdaFavorecida(m);
-      default: return -1;
-    }
-  }
-  */
-  public int cual(double[] m){
+	  
 	    switch(tipoDePolitica){
 	        case 1: return  balanceada(m);
 	        case 2: return izquierdaFavorecida(m);
@@ -190,46 +156,7 @@ private Integer[][] contadorIzq = new Integer[3][2];
 	  }
   
   
-  public int recorridoB(double[] m) {
-	  
-	  
-	  int posible= balanceada(m);
-	  if(posible==borrarRecorrido1[pos]) {
-		  if(this.pos==8) {
-			  //reinicia
-			  this.pos=0;
-			  System.out.println( "T"+this.borrarRecorrido1[8]);
-			  //return this.borrarRecorrido1[8];
-		  }else {
-			  this.pos++;
-			  System.out.println(  "T"+this.borrarRecorrido1[pos-1]);
-			  //return this.borrarRecorrido1[pos-1];
-		  }
-		  
-	  }else {
-		  
-	  }
-	  if(m[borrarRecorrido1[pos]]==1) {
-		  if(this.pos==8) {
-		  //reinicia
-		  this.pos=0;
-		  System.out.println( "T"+this.borrarRecorrido1[8]);
-		  return this.borrarRecorrido1[8];
-	  }else {
-		  this.pos++;
-		  System.out.println(  "T"+this.borrarRecorrido1[pos-1]);
-		  return this.borrarRecorrido1[pos-1];
-	  }
-		  
-	  }else {
-		  
-		  
-		  
-	  }
-	  
-	  return 0;
-	  
-  }
+ 
 
   private int balanceada(double[] m){
     //Hay que determinar cuál es la transición que va a devolver cual(), 
@@ -260,12 +187,7 @@ private Integer[][] contadorIzq = new Integer[3][2];
        
        
     */
-    //int tamano=m.length;
-    //int posicionM=0;
-    //List<ArrayList<Integer>> lista= new ArrayList<ArrayList<Integer>>();
-    /*System.out.println();
-    System.out.println(Arrays.toString(m));
-    System.out.println();*/
+    
     List<ArrayList<Integer>> lista = new ArrayList<>();
     //posicion 0 van izq, posicion 1 van derecho, posicion 2 van ultimo
     int salida=0;
@@ -277,139 +199,62 @@ private Integer[][] contadorIzq = new Integer[3][2];
     		return salida;
     	}
     }
-    
-    
-   
-    /*lista.add(new ArrayList<Integer>());
-    lista.add(new ArrayList<Integer>());
-    lista.add(new ArrayList<Integer>());
-    
-    for (int i = 0; i < m.length; i++){
-      if(m[i] == 1){
-        if(i == 14 || i == 13){
-          //segmento ultimo
-          return i;
-        } else if (i % 2 == 0){
-          //segmentos derechos
-          lista.get(0).add(i);
-        } else if (i == 0) {
-        	
-          lista.get(2).add(i);
-        }
-        else {
-          //segmentos izq
-          lista.get(1).add(i);
-        } 
-      }
-    } */
-    
-    /*System.out.println();
-    for (ArrayList<Integer> sublista : lista) {
-        System.out.println(sublista);
-    }
-    System.out.println();*/
-     //elimina los segmentos que no están sensiblizados (iz, der o ult)
-
-
-    // for (double sensibilizada : m){
-    //   if(m[(int)sensibilizada] == 1){
-    //     if(sensibilizada == 14 || sensibilizada == 0 || sensibilizada == 13){
-    //       lista.get(2).add((int)sensibilizada); //ultima/primera
-    //     }else if(sensibilizada%2==0){
-    //       lista.get(0).add((int)sensibilizada); //derecha
-    //     }else{
-    //       lista.get(1).add((int)sensibilizada); //izquierda
-    //     }
-    //   }
-    // }
-   /* int pos=0;
-    while(pos<lista.size()){ //obtener lista depurada, 
-     
-      if(lista.get(pos).size()==0){
-        lista.remove(pos);
-      }
-      else{
-         pos++;
-      }
-    }
-    
-    /*System.out.println();
-    for (ArrayList<Integer> sublista : lista) {
-        System.out.println("Tamaño lista:" + sublista.size());
-    }
-    System.out.println();*/
-
-    /*Random random = new Random();
-    int listSize =0 ;
-    // System.out.printf("lista.size() %s\n",lista.size());
-    if (lista.size() == 0){
-      listSize = 1;
-    }else{
-      listSize = lista.size();
-    }
-    int eleccionTipoSegmento=random.nextInt(listSize); //[0,list.size())
-    // System.out.printf("eleccionTipoSegmento %s\n",eleccionTipoSegmento);
-    int posTransicion=(lista.get(eleccionTipoSegmento)).size();
-    // System.out.printf("postransicion ANTES %s\n",posTransicion);
-    posTransicion=random.nextInt(posTransicion);
-    // System.out.printf("postransicion DESPUES %s\n",posTransicion);
-    return lista.get(eleccionTipoSegmento).get(posTransicion);*/
-  
  
   }
   
-  private int izquierdaFavorecida(double[] m){
-	  
-    if(m[9] == 1 && m[10] == 1) {
-    	contador_decisiones++;
-        if(Math.random()>0.8){
-          return 10; //Transicion 10
-        }else{
-          return 9; //Transicion 9
-        }
-    }
-    //m[9] = 0;
-    //m[10] = 0;
-    int elegido = balanceada(m);
-
-    return elegido;
+  public int getDecisionT9() {
+	  return decisionT9;
   }
-/*    int tamano=m.size();
-    int posicionM=0;
-    List<ArrayList<int>> lista=new List<ArrayList<int>>();
-    //posicion 0 van izq, posicion 1 van derecho, posicion 2 van ultimo
-    lista.add(new ArrayList<int>());
-    lista.add(new ArrayList<int>());
-    lista.add(new ArrayList<int>());
-    for (double sensibilizada : m){
-      if(m[sensibilizada] == 1){
-        if(sensibilizada == 14 || sensibilizada == 0 || sensibilizada == 13){
-          lista.get(2).add(sensibilizada); //ultima/primera
-        }else if(sensibilizada%2==0){
-          lista.get(0).add(sensibilizada); //derecha
-        }else{
-          lista.get(1).add(sensibilizada); //izquierda
-        }
-      }
+  public int getDecisionT10() {
+	  return decisionT10;
+  }
+ private int izquierdaFavorecida(double[] m) {
+    int elegido = balanceada(m);
+    
+    // Si se elige 9 y se favorece la izquierda
+    if (elegido == 9 && deboFavorecerIzquierda() && multiplesEsperando(m)) {
+        return izquierdaFavorecida(m);
     }
-    //elimina los segmentos que no están sensiblizados (iz, der o ult)
-    int pos=0;
-    while(pos<lista.size()){ //obtener lista depurada, 
-
-      if(lista.get(pos).size()==0){
-        lista.remove(pos);
-      }else{
-         pos++;
-      }
+    
+    // Si se elige 10 y no se favorece la izquierda
+    if (elegido == 10 && !deboFavorecerIzquierda() && multiplesEsperando(m)) {
+        return izquierdaFavorecida(m);
     }
+    
+    return elegido;
+}
 
+  
+  
+  private boolean deboFavorecerIzquierda() {
+    float contador9 = (float) getContadorTransicion(9);
+    float contador10 = (float) getContadorTransicion(10);
 
     
-    if(Math.Random()>0.8){
-      //derecha
+    // Evitar división por cero
+    if (contador9 + contador10 == 0) {
+        return false; // O alguna lógica predeterminada
+    }
 
-    }else{
-      //izquierda
-    }*/
-  
+    return (contador9 / (contador9 + contador10)) <= 0.8;
+}
+
+
+
+  private boolean multiplesEsperando(double[] m){
+	  //es para que no genere stackoverflow 
+    int esperandosensibilizadas = 0;
+     for (int i = 0; i < m.length; i++) {
+      if (m[i] == 1.0) {
+        esperandosensibilizadas++;
+      }
+    }
+    if(esperandosensibilizadas>1){
+      return true;
+    }
+    return false;
+    
+    
+    
+  }
 }

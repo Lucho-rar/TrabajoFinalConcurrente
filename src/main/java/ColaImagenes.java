@@ -1,19 +1,18 @@
 import java.util.ArrayList;
 import java.util.concurrent.*;
 
-
 /*
 * Clase Cola
 *
 * lista: Array de imagenes
 * mutex: Semaforo para sincronizar el acceso a la cola
 */
-public class Cola  {
+public class ColaImagenes  {
   private ArrayList<Imagen> lista;
   private Semaphore mutex;
 
   // constructor
-  public Cola(){
+  public ColaImagenes(){
     lista = new ArrayList<Imagen>();
     mutex = new Semaphore(1);
   }

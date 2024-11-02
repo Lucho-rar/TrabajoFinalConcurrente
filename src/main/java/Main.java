@@ -4,34 +4,26 @@ import java.util.Date;
 import java.time.Instant;
 
 public class Main {
-  // private static final int NUM_HILOS = 14;
 
   public static void main(String[] args) {
 	  
-	  
 	  System.out.println(System.currentTimeMillis());
-    // int contador = 1;
-
     ArrayList<Thread> hilos = new ArrayList<Thread>();
-
     FabricaDeHilos miFabrica = new FabricaDeHilos();
     Politica politica = new Politica();
     Log log = new Log("log.txt", System.currentTimeMillis());
     RedDePetri redp = new RedDePetri(log);
 
-
-    ArrayList<Cola> plazasImagen=new ArrayList<Cola>();
+    ArrayList<ColaImagenes> plazasImagen=new ArrayList<ColaImagenes>();
     for(int i=0;i<11;i++){
-      plazasImagen.add(new Cola());
+      plazasImagen.add(new ColaImagenes());
     }
     // 0  1  2  3  4  5   6   7    8   9  10
     //p0,p2,p4,p6,p8,p10,p12,p14,p15,p16,p17
     
-    // Procesador procesador = new Procesador();
     Monitor miMonitor = new Monitor(redp, politica, log);
 
     GeneradorDeImagenes generadorDeImagenes = new GeneradorDeImagenes("generadorDeImagenes", miMonitor, log, 0);
-    // generadorDeImagenes.setTransicion(0);//transiciones t0
     generadorDeImagenes.setDestino(plazasImagen.get(0));
 
     Receptor receptorIzq = new Receptor("receptorIzq", miMonitor, log, 1);
@@ -119,36 +111,16 @@ public class Main {
     hilos.add(miFabrica.newThread(recortadorDer));
 
     hilos.add(miFabrica.newThread(exportador));
-
-    // Monitor miMonitor=new Monitor(redp, politica, hilos);
-	//miMonitor.setArrayProcesadores(arrayProcesadores);
 	
-	//System.out.println("cantidad hilos: " + hilos.size());
-	
-    hilos.forEach((hilo) -> hilo.start());
-    
-    
-    /*
-     * miMonitor.setHilos(hilos);
-     * 
-     * hilos.forEach((key, value) -> {
-     * value.start();
-     * });
-     */
-
-    /*
-     * for(int i=0; i<hilos.size();i++){
-     * hilos.get(i).start();
-     * }
-     */
-    /*
-     * for(int i = 0; i < NUM_HILOS; i++){
-     * hilos.add(newThread("hilo - " + contador));
-     * contador++;
-     * hilos.get(hilos.size()-1).start();
-     * }
-     */
-
+    hilos.forEach((hilo) -> hilo.start()); 
+   
+    for (Thread hilo : hilos) {
+        try {
+          hilo.join();
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+      System.out.println("Todos los hilos terminaron");
   }
-
 }

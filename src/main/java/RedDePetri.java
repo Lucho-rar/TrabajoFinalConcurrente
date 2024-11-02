@@ -174,14 +174,15 @@ public class RedDePetri {
   
   private Log log;
   
-  private Cola2 colaImagenes;
+  //private Cola2 colaImagenes;
   
   //TimeStamps
   //VectorEsperandoBooleando
   
   private long  timeStamps[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-  private long alfa[]= {20,0,0,20,20,0,0,20,20,0,0,20,20,0,20};
+  private long alfa[]= {10,0,0,10,10,0,0,10,10,0,0,10,10,0,10};
   private long beta[]= {4000,0,0,4000,4000,0,0,4000,4000,0,0,4000,4000,0,4000};
+  private boolean conTiempo=false;
   
   private boolean esperando[]=new boolean[15];
 
@@ -192,6 +193,13 @@ public class RedDePetri {
 	  this.actualizarTimeStamp(null, null);
 	  this.log = log;
     // transicionesSensibilizadas = {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  }
+  
+  public void setConTiempo() {
+	  conTiempo=true;
+  }
+ public void setSinTiempo() {
+	 conTiempo=false;
   }
   
   public Boolean dispararTransicion(int transicion) {
@@ -267,7 +275,7 @@ public class RedDePetri {
 	    	//log.escribirArchivo("tiempo actual:"+tiempoActual+" TiempoTransicion:"+this.timeStamps[transicion]+" Transicion: "+transicion);
 	    	
 	    	if(testVentanaTiempo(tiempoActual,transicion)) {
-	    		log.escribirArchivo("Entre."+" Transicion: "+transicion);
+	    		//log.escribirArchivo("Entre."+" Transicion: "+transicion);
 	    		//está en ventana de tiempo.
 	    		if(!esperando[transicion]) {
 	    			//log.escribirArchivo("llegue al esperando transicion:"+transicion+" hilo: "+Thread.currentThread().getName());
@@ -292,7 +300,7 @@ public class RedDePetri {
 	    		//si es mayor que beta, ya 
 	    		if(antesDeLaVentana(tiempoActual,transicion)) {
 	    			//set esperando
-	    			log.escribirArchivo("antes de la ventana de tiempo "+transicion);
+	    			//log.escribirArchivo("antes de la ventana de tiempo "+transicion);
 	    			setEsperando(transicion);
 	    			long tiempoDormir=this.timeStamps[transicion]+alfa[transicion]-tiempoActual;
 	    			//mutexMonitor.release();
@@ -343,9 +351,15 @@ public class RedDePetri {
 	  //obtiene el instantnow
 	  //tiene que verificar si el tiempo actual está entre el alpha y beta asociado a la transición
 	  
-	  
+	  if(this.conTiempo) {
+		  if(transicion==1||transicion==2||transicion==5||transicion==6||transicion==9||transicion==10||transicion==13) 
+		  {return true;}
+		  return (actual>this.timeStamps[transicion]+alfa[transicion])&&(actual<timeStamps[transicion]+beta[transicion]);
+	  }else {
+		  return true;
+	  }
 	   
-	  return (actual>this.timeStamps[transicion]+alfa[transicion])&&(actual<timeStamps[transicion]+beta[transicion]);
+	
   }
   public void setNuevoTimeStamp(int transicion) {
 	  this.timeStamps[transicion]=System.currentTimeMillis();
@@ -486,7 +500,7 @@ public class RedDePetri {
     return true;
   }
   
-  
+
   public void actualizarContadorInvariante(Imagen imagen){
     try{
      
@@ -582,4 +596,14 @@ public class RedDePetri {
   public double getCantidadTokensPlaza(int plaza) {
 	  return marcadoActualMatrix.getEntry(0, plaza);
   }
+  public int getContadorTotalInvariantes() {
+    int total = 0;
+    for (int i = 0; i < contadorInvariantes[0].length; i++) {
+        total += contadorInvariantes[0][i];
+    }
+    return total;
+  }
+
 }
+
+
