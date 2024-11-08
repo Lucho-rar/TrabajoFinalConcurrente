@@ -16,12 +16,11 @@ public class Politica {
   private ArrayList<Set<Integer>> SegDer = new ArrayList<>();
   
   private Integer[][] contadorIzq = new Integer[3][2];
-  private Integer[][] contadorDer = new Integer[3][2];
-  private ArrayList<Set<Integer>> segUltimo=new ArrayList<Set<Integer>>();
+  private Integer[][] contadorDer = new Integer[3][2]; 
   private Integer[] contadorUltimoSegmento = new Integer[3];
+   private ArrayList<Set<Integer>> segUltimo=new ArrayList<Set<Integer>>();
+  //private  Integer[] borrarRecorrido1= {0,1,3,5,7,9,11,13,14};
   
-  private  Integer[] borrarRecorrido1= {0,1,3,5,7,9,11,13,14};
-  private int pos=0;
   private int contador_decisiones=0;
   private int decisionT9=0;
   private int decisionT10=0;
@@ -29,10 +28,12 @@ public class Politica {
   private  Scanner scanner;
   
   public Politica(){
-	  scanner=new Scanner(System.in);
-	this.conTiempo=elegirTipoTiempo();  
+	  //scanner=new Scanner(System.in);
+	//this.conTiempo=elegirTipoTiempo();  
 	 
-    this.tipoDePolitica = elegirPolitica();
+    //this.tipoDePolitica = elegirPolitica();
+	  
+	  
     //foreach(int i in contadorIzq)i=0;
     for (Integer[] row : contadorIzq) {
       for (int i = 0; i < row.length; i++) {
@@ -66,7 +67,15 @@ public class Politica {
   }
   public boolean getConTiempo() {
 	  return conTiempo;
-  };
+  }
+  
+  public void setConTiempo(boolean t) {
+	  conTiempo=t;
+  }
+  
+  public void setTipoPolitica(int t) {
+	  this.tipoDePolitica=t;
+  }
   
   public int getContador_decisiones() {
 	  return contador_decisiones;
@@ -128,11 +137,12 @@ public class Politica {
 	    System.out.println("2. Sin tiempo \n");
 	    salida = scanner.nextInt();
 	    	    
-	    
+	    System.out.println("mostrar scannertipotiempo:"+salida);
 	    //falta manejo de errores
 	    return salida==1;
 	  }
 
+  
   public int elegirPolitica(){
 	  scanner.reset();
     int salida;
@@ -140,11 +150,12 @@ public class Politica {
     System.out.println("1. Balanceada \n");
     System.out.println("2. Izquierda favorecida \n");
     salida = scanner.nextInt();
-    
-    scanner.close();
+    System.out.println("mostrar scannerpolitica:"+salida);
+    //scanner.close();
     //falta manejo de errores
     return salida;
   }
+
 
   public int cual(double[] m){
 	  
@@ -188,19 +199,50 @@ public class Politica {
        
     */
     
-    List<ArrayList<Integer>> lista = new ArrayList<>();
+    //List<ArrayList<Integer>> lista = new ArrayList<>();
     //posicion 0 van izq, posicion 1 van derecho, posicion 2 van ultimo
     int salida=0;
    
     Random random1 = new Random();
     while(true) {
     	salida=random1.nextInt(15);
-    	if(m[salida]==1) {
+    	/*if(!multiplesEsperando(m) && m[salida]==1) {
     		return salida;
-    	}
+    	}*/
+    	/*
+       if(salida==1 && m[salida]==1&&  multiplesEsperando(m) && !deboFavorecerT1SobreT2(salida)){
+			//return balanceada(m);
+			continue;
+       }
+       if(salida==2 && m[salida]==2 &&  multiplesEsperando(m) && deboFavorecerT1SobreT2(salida)){
+			//return balanceada(m);
+			continue;
+       }
+       if(salida==5 && m[salida]==5 &&  multiplesEsperando(m) && !deboFavorecerT5SobreT6(salida)){
+			continue;
+			//return balanceada(m);
+       }
+       if(salida==6 && m[salida]==6 &&  multiplesEsperando(m) && deboFavorecerT5SobreT6(salida)){
+			//return balanceada(m);
+			continue;
+       }
+       if(salida==9 && m[salida]==9 &&  multiplesEsperando(m) && !deboFavorecerT9SobreT10(salida)){
+			//return balanceada(m);
+    	   continue;
+       }
+       if(salida==10 && m[salida]==10 &&  multiplesEsperando(m) && deboFavorecerT9SobreT10(salida)){
+			//return balanceada(m);
+    	   continue;
+       }
+       */
+       if(m[salida]==1) {
+    		return salida;
+		}
+    	
     }
  
   }
+  
   
   public int getDecisionT9() {
 	  return decisionT9;
@@ -209,16 +251,32 @@ public class Politica {
 	  return decisionT10;
   }
  private int izquierdaFavorecida(double[] m) {
+	 
     int elegido = balanceada(m);
+	
+	/*
+    while ((elegido == 9 && !deboFavorecerIzquierda(elegido) && multiplesEsperando(m)) ||
+           (elegido == 10 && deboFavorecerIzquierda(elegido) && multiplesEsperando(m))) {
+        elegido = balanceada(m);
+    }*/
     
     // Si se elige 9 y se favorece la izquierda
-    if (elegido == 9 && deboFavorecerIzquierda() && multiplesEsperando(m)) {
+    if (elegido == 9 && deboFavorecerIzquierda(elegido) && multiplesEsperando(m)) {
+      if(m[10]==1){ return 10;}
+      else{
+    	 
         return izquierdaFavorecida(m);
+      }
+        
     }
     
     // Si se elige 10 y no se favorece la izquierda
-    if (elegido == 10 && !deboFavorecerIzquierda() && multiplesEsperando(m)) {
+    if (elegido == 10 && !deboFavorecerIzquierda(elegido) && multiplesEsperando(m)) {
+    	if(m[9]==1){return 9;}
+      	else{
+      		 
         return izquierdaFavorecida(m);
+      	}
     }
     
     return elegido;
@@ -226,13 +284,77 @@ public class Politica {
 
   
   
-  private boolean deboFavorecerIzquierda() {
+  private boolean deboFavorecerT1SobreT2(int salida){
+    float contador1 = (float) getContadorTransicion(1);
+    float contador2 = (float) getContadorTransicion(2);
+    
+    
+    // check division por cero
+    if (contador1 + contador2 ==0 ){
+      if (salida ==1 ){
+        return true;
+      }else{
+	      return false;        
+      }
+    }
+    
+    return (contador1 / (contador1 + contador2)) <= 0.5;
+    
+  }
+  
+  
+  private boolean deboFavorecerT5SobreT6(int salida){
+    float contador5 = (float) getContadorTransicion(5);
+    float contador6 = (float) getContadorTransicion(6);
+    
+    
+    //check division por cero
+    if (contador5 + contador6 ==0 ){
+      if (salida == 5){
+        return true;
+      }else{
+        return false;
+      }
+      
+    }
+    
+    return (contador5 / (contador5 + contador6)) <= 0.5;
+    
+    
+  }
+  
+  private boolean deboFavorecerT9SobreT10(int salida){
+    float contador9 = (float) getContadorTransicion(9);
+    float contador10 = (float) getContadorTransicion(10);
+    
+    
+    //check division por cero
+    if (contador9 + contador10 ==0 ){
+      if(salida == 9){
+        return true;
+      }else{
+	      return false;        
+      }
+    }
+    
+    return (contador9 / (contador9 + contador10)) <= 0.5;
+    
+    
+  }
+  
+  
+  
+  
+  private boolean deboFavorecerIzquierda(int salida) {
     float contador9 = (float) getContadorTransicion(9);
     float contador10 = (float) getContadorTransicion(10);
 
     
     // Evitar división por cero
     if (contador9 + contador10 == 0) {
+      if(salida==9){
+        return true;
+      }
         return false; // O alguna lógica predeterminada
     }
 

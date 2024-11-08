@@ -9,13 +9,11 @@ import java.util.concurrent.ThreadFactory;
 public class FabricaDeHilos implements ThreadFactory{
 
   private int counter;
-  
 
   // constructor
   public FabricaDeHilos(){
     counter = 0;
   }
-
 
   // Metodo que retorna el contador
   public int getCounter(){

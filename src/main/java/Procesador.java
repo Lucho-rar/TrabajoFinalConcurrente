@@ -7,8 +7,8 @@ public abstract class Procesador {
   protected Monitor miMonitor;
   protected Log miLog;
   protected int transicion1;
-  protected Cola listaImagenOrigen;
-  protected Cola listaImagenDestino;
+  protected ColaImagenes listaImagenOrigen;
+  protected ColaImagenes listaImagenDestino;
     
 
   public Procesador(String nombre,Monitor monitor, Log log, int transicion){
@@ -32,9 +32,6 @@ public abstract class Procesador {
     return this.nombre_hilo;
   }
 
-  /*public void setTransicion(int posicion){
-    transiciones[posicion] = 1;
-  }*/
   
   public int getTransicion1(){
     return this.transicion1;
@@ -45,10 +42,10 @@ public abstract class Procesador {
   }
   
   
-  public void setOrigen(Cola origen) {
+  public void setOrigen(ColaImagenes origen) {
 	  this.listaImagenOrigen = origen;
   }
-   public void setDestino(Cola destino){
+   public void setDestino(ColaImagenes destino){
       this.listaImagenDestino=destino;
    }
    

@@ -9,6 +9,7 @@ public class AjustadorDeCalidad extends Procesador implements Runnable {
     while(miMonitor.getCorriendo()){
       this.miMonitor.dispararTransicion(this.getTransicion1(), this);
     }
+    
   }
   
 }

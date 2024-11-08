@@ -3,7 +3,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.*;
 
-
 /**
 * Clase Log  
 *
@@ -12,7 +11,6 @@ import java.util.concurrent.*;
 * ruta: Ruta del archivo
 * tLog: Thread que escribe en el archivo
 */
-//CORREGIR!!!!
 public class Log {
   
   private File archivo;
@@ -25,7 +23,6 @@ public class Log {
     this.ruta = ruta;
     this.horaInicial = horaInicial;
     this.crearLog();
-    
   }
   
 
@@ -41,18 +38,6 @@ public class Log {
         e.printStackTrace();
      }
   }
-  
-  // Método para escribir en el log la data de un hilo
-  /*private void escribirLog(Thread hilo) {
-    FileWriter fw = new FileWriter(archivo, true); //agrega al final el nuevo texto cada vez que se llama
-    long horaFinal = System.currentTimeMillis();
-    fw.write("Hilo: " + hilo.getName() + "\n");
-    fw.write("Tiempo de ejecucion: " + (horaFinal - horaInicial) + " ms" + "\n"); 
-    fw.write(); //mas contenido del log a definir: transiciones, etc
-    fw.write("\n");
-    fw.flush();
-    fw.close();
-  }*/
 
 	public void escribirArchivo(String texto){
     try {

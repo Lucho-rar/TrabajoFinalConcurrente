@@ -174,10 +174,6 @@ public class RedDePetri {
   
   private Log log;
   
-  //private Cola2 colaImagenes;
-  
-  //TimeStamps
-  //VectorEsperandoBooleando
   
   private long  timeStamps[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
   private long alfa[]= {10,0,0,10,10,0,0,10,10,0,0,10,10,0,10};
@@ -202,7 +198,8 @@ public class RedDePetri {
 	 conTiempo=false;
   }
   
-  public Boolean dispararTransicion(int transicion) {
+ //ya no se usa éste método disparar
+  public Boolean dispararTransicionOriginal(int transicion) {
     // ODO: REVISAR PARA EL CASO DEL EXPORTADOR YA QUE ESE HILO TIENE ASOCIADO 2
     // TRANSICIONESf
     // ODO: LLAMAR METODO PARA OBTENER TRANSICIONES SENSIBILIZADAS Y VER SI LA QUE
@@ -241,54 +238,30 @@ public class RedDePetri {
      * s: mis transiciones disparadas
      */
   }
+ 
   
-  public Boolean dispararTransicionConTiempo(int transicion, Semaphore mutexMonitor) {
-	 /* String salida="timeStamp={";
-	  for(int i=0;i<this.timeStamps.length;i++) {
-		  salida+=this.timeStamps[i]+",";
-	  }
-	  salida+="}";
-	  log.escribirArchivo(salida);
-	  */
-	    // ODO: REVISAR PARA EL CASO DEL EXPORTADOR YA QUE ESE HILO TIENE ASOCIADO 2
-	    // TRANSICIONES
-	    // ODO: LLAMAR METODO PARA OBTENER TRANSICIONES SENSIBILIZADAS Y VER SI LA QUE
-	    // QUIERO DISPARAR ESTa SENSIBILIZADA
-	    // ODO: EL METODO DEBE DEVOLVER UN VALOR BOOLEANO QUE INDICA SI LA TRANSICION SE
-	    // PUDO DISPARAR O NO
-	    
-	    // ACTUALIZAR EL MARCADO ACTUAL Y ACTUALIZAR LAS TRANSICIONES SENSIBILIZADAS
-
-	    // System.out.printf("transicion a disparar: %d", transicion);
-	    // System.out.println();
-	    // System.out.println();
-		  
+  public Boolean dispararTransicionConTiempo(int transicion, Semaphore mutexMonitor) { 
 		  RealMatrix sensibilizadasCopy;
 		  
-	    if (isSensibilizada(transicion)		) {
+	    if (getContadorTotalInvariantes()<200 && isSensibilizada(transicion)	) {
 	    	
 	      // transicionesSensibilizadas[transicion] = 0; //actualiza el marcado de la
 	      // transicion
-	     // private final RealMatrix matrizIncidenciaEntradaMatrix = MatrixUtils.createRealMatrix(matrizIncidenciaEntrada);
+	    
 	    	long tiempoActual=System.currentTimeMillis();
-	    	
-	    	//log.escribirArchivo("tiempo actual:"+tiempoActual+" TiempoTransicion:"+this.timeStamps[transicion]+" Transicion: "+transicion);
-	    	
+	    		    	
 	    	if(testVentanaTiempo(tiempoActual,transicion)) {
-	    		//log.escribirArchivo("Entre."+" Transicion: "+transicion);
 	    		//está en ventana de tiempo.
 	    		if(!esperando[transicion]) {
-	    			//log.escribirArchivo("llegue al esperando transicion:"+transicion+" hilo: "+Thread.currentThread().getName());
 	    			//setear el nuevo timestamp
 	    			this.setNuevoTimeStamp(transicion);
 	    			RealMatrix misTransicionesDisparadas = MatrixUtils.createRealMatrix(incidencia.getColumnDimension(),1);
-	    		 misTransicionesDisparadas.setEntry(transicion,0,1);
-	    		 sensibilizadasCopy = getTransicionesSensibilizadas();
-	    		 marcadoActualMatrix = marcadoActualMatrix.add(((incidencia.copy()).multiply(misTransicionesDisparadas)).transpose());
-	    		 //hay que actualizar las marcas de tiempo de las transiciones que cambiaron de sensibilización 
-	    		 actualizarTimeStamp( sensibilizadasCopy, this.getTransicionesSensibilizadas());
-	    		
-	    		  return true;	
+	    			misTransicionesDisparadas.setEntry(transicion,0,1);
+	    			sensibilizadasCopy = getTransicionesSensibilizadas();
+	    			marcadoActualMatrix = marcadoActualMatrix.add(((incidencia.copy()).multiply(misTransicionesDisparadas)).transpose());
+	    			//hay que actualizar las marcas de tiempo de las transiciones que cambiaron de sensibilización 
+	    			actualizarTimeStamp( sensibilizadasCopy, this.getTransicionesSensibilizadas());
+	    			return true;	
 	    		}else {
 	    			//está esperando
 	    			return false;
@@ -299,8 +272,6 @@ public class RedDePetri {
 	    		 //si es menor que alfa, seteo esperando en true, lo duermo lo que le falta (timestamp+alfa-ahora). 
 	    		//si es mayor que beta, ya 
 	    		if(antesDeLaVentana(tiempoActual,transicion)) {
-	    			//set esperando
-	    			//log.escribirArchivo("antes de la ventana de tiempo "+transicion);
 	    			setEsperando(transicion);
 	    			long tiempoDormir=this.timeStamps[transicion]+alfa[transicion]-tiempoActual;
 	    			//mutexMonitor.release();
@@ -324,28 +295,25 @@ public class RedDePetri {
 						return false;
 					}
 	    			
-	    			
-	    			
 	    		}else {
 	    			return false;
 	    		}
 	    		//devuelve 
 	    		
 	    	}
-	        
-	        
-	    
 	    }
 
 	    return false;
-	    /*
-	     * mk= mi+W.S
-	     * mk: proximo marcado
-	     * mi: marcado actual
-	     * w: matriz incidencia
-	     * s: mis transiciones disparadas
-	     */
-	  }
+	    
+	     // mk= mi+W.S
+	     // mk: proximo marcado
+	     // mi: marcado actual
+	     // w: matriz incidencia
+	     //s: mis transiciones disparadas
+	     
+  }
+  
+  
   public boolean testVentanaTiempo(long actual,int transicion) {
 	//alfa<ahora-timestamp<beta
 	  //obtiene el instantnow
@@ -396,13 +364,7 @@ public class RedDePetri {
 	public void resetEsperando(int transicion) {
 		this.esperando[transicion]=false;
 	}
-  //setNuevoTimeStamp()
- /* antesDeLaVentana()
-  setEsperando()
-  calculoDeVectorEstado()
-  resetEsperando()
-  actualizaSensibilizado()
-  */
+
 
   public RealMatrix getTransicionesSensibilizadas() {
     RealMatrix transicionesSensibilizadasMatrix = MatrixUtils.createRealMatrix(new double[1][15]);
@@ -417,7 +379,7 @@ public class RedDePetri {
       aux_p = 0;  // aux_p no puede llegar a 19 (plazas) por la condicion del while
     
       while (aux_p < cant_p ) {
-        //System.out.println(aux_p);
+        
             //1-la plaza tiene que ser una plaza de entrada de la transicion
             //2- el marcado actual tiene que ser mayor que el peso del arco de entrada
             if(matrizIncidenciaEntradaMatrix.getEntry(aux_p, aux_t) != 0){
@@ -431,64 +393,17 @@ public class RedDePetri {
             }
 
             aux_p++;
-         /*
-       int numPlazas = incidenciaTotal.getRowDimension();
-
-        // Recorrer todas las plazas para verificar la condición de sensibilización
-        for (int i = 0; i < numPlazas; i++) {
-            double incidencia = incidenciaTotal.getEntry(i, transicion);
-
-            // Si la incidencia es negativa, verificar que el marcado sea suficiente
-            if (incidencia < 0 && marcadoActual[i] < Math.abs(incidencia)) {
-                return false; // No hay suficientes tokens en la plaza P_i para disparar la transición
-            }
-        }
-
-        return true; // Todas las condiciones de sensibilización se cumplen
-          * 
-          * */
-            
-        //System.out.printf("aux_p %d , cant_t %d, cant_p %d, i %d\n\r",aux_p,cant_t,cant_p, i);
-        // System.out.printf("matrizIncidenciaEntradaMatrix.getEntry(i, aux_t) %f\n\r",matrizIncidenciaEntradaMatrix.getEntry(i, aux_t));
-        // System.out.printf("marcadoActualMatrix.getEntry(0, aux_t) %f\n\r",marcadoActualMatrix.getEntry(0, aux_t));
-        
         
       }
-      // System.out.printf("valor aux_p: %d", aux_p);
-      // System.out.println();
+     
      
     }
 
-/*    for (double[] row : transicionesSensibilizadasMatrix.getData()) {  // Obtener cada fila como un array
-        for (double value : row) {  // Recorrer cada valor en la fila
-                System.out.print(value + " ");
-            }
-            // Imprimir una nueva línea después de cada fila
-            System.out.println();
-        }
-        System.out.println();*/
+
 
     return transicionesSensibilizadasMatrix;
   }
-  /*
-  private int proximaTransicion( int invarianteTransicion, int posicionActual) throws Exception{
-   int pos=posicionActual+1;
-   
-   //log.escribirArchivo("El invariante de transición es: " + (invarianteTransicion+1));
-   //log.escribirArchivo("La posición actual es: " + posicionActual);
-
-    while(pos<matrizIvariantesTransicion[invarianteTransicion].length && matrizIvariantesTransicion[invarianteTransicion][pos]!=1){
-      pos++;
-    }
-    
-    if(pos!=matrizIvariantesTransicion[invarianteTransicion].length){
-    	//log.escribirArchivo("La próxima posición es: " + pos);
-    	return pos;
-    }else{
-      //no lo encontró. hay error . no debería entrar aquí. 
-      throw new Exception("error transicion inicial");
-    }
-  }*/
+  
   private boolean comprobarInvariante(int posInvariante,Imagen imagen ){
     ArrayList<Integer> invariante=imagen.getInvariante();
     ///0->2->4->5->7->9->11->13->14->
@@ -521,39 +436,7 @@ public class RedDePetri {
 	    
 	    // Imprimir una nueva línea después de cada fila
 	    log.escribirArchivo("");
-		//Todo actualiza mal el contador de proxima transicion
-      /*for (int i=0; i<contadorInvariantes[0].length;i++){
-          if(transicionDisparada==14 && contadorInvariantes[0][i]==14){
-            //System.out.println("estoy aca");
-            contadorInvariantes[0][i] = proximaTransicion(i, 0);//matrizIvariantesTransicion[i][posicion donde tengo el primer 1]
-            contadorInvariantes[1][i]++; //actualizo el contador de invariante
-          }else if(contadorInvariantes[0][i]==transicionDisparada){
-              //corresponde actualizar el recorrido de la invariante
-              //System.out.println("estoy en el else if");
-              contadorInvariantes[0][i] = proximaTransicion(i, contadorInvariantes[0][i]);
-          }else{
-            //System.out.println("estoy en el else");
-          }
-
-        // Recorremos la matriz utilizando foreach
-        // for (int[] fila : contadorInvariantes) {
-        //     for (int valor : fila) {
-        //         System.out.print(valor + " ");
-        //     }
-        //     // Imprimir una nueva línea después de cada fila
-        //     System.out.println();
-        // }
-
-        // System.out.println();
-      }
-      /*for (double[] row : marcadoActualMatrix.getData()) {  // Obtener cada fila como un array
-          for (double value : row) {  // Recorrer cada valor en la fila
-                System.out.print(value + " ");
-            }
-            // Imprimir una nueva línea después de cada fila
-            System.out.println();
-        }
-        System.out.println();*/
+		
     }
     catch(Exception ex){
       System.err.println("Ocurrió un error inesperado: " + ex.getMessage()); //oDO tratar el try/catch desde la llamada en disparar transicion
@@ -568,11 +451,6 @@ public class RedDePetri {
   }
 
 
-  /*
-   * public double[][] getMarcadoActual(){
-   * return marcadoActual;
-   * }
-   */
   public int getCantidadTransiciones() {
     return incidencia.getColumnDimension();
   }

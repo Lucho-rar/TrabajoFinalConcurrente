@@ -5,13 +5,38 @@ import java.time.Instant;
 
 public class Main {
 
-  public static void main(String[] args) {
+	public static void main(String[] args) {
+		   String ruta="log";
+		   int contador=1;
+	       int numEjecuciones = 50;
+	        for (int i = 1; i <= numEjecuciones; i++) {
+	            try {
+	                System.out.println("Ejecución " + i + ": ");
+	                // Llama al método principal de tu programa
+	                main2(ruta+contador+".txt");
+	                contador++;
+	                // Reemplaza con el nombre de tu clase principal
+	                System.out.println("Completada con éxito.");
+	            } catch(Exception e){
+
+	                System.out.println("Error en la ejecución " + i + ": " + e.getMessage());
+	                break;
+	            }
+	        }
+	}
+	            
+	
+	
+	
+  public static void main2(String ruta) {
 	  
-	  System.out.println(System.currentTimeMillis());
+	
     ArrayList<Thread> hilos = new ArrayList<Thread>();
     FabricaDeHilos miFabrica = new FabricaDeHilos();
     Politica politica = new Politica();
-    Log log = new Log("log.txt", System.currentTimeMillis());
+    politica.setConTiempo(false);
+    politica.setTipoPolitica(1);//2 es izquierda
+    Log log = new Log(ruta, System.currentTimeMillis());
     RedDePetri redp = new RedDePetri(log);
 
     ArrayList<ColaImagenes> plazasImagen=new ArrayList<ColaImagenes>();
@@ -113,10 +138,15 @@ public class Main {
     hilos.add(miFabrica.newThread(exportador));
 	
     hilos.forEach((hilo) -> hilo.start()); 
-   
+    //System.out.println("");
+    int h=0;
     for (Thread hilo : hilos) {
         try {
-          hilo.join();
+        	 System.out.println("join antes: "+h+"nombre"+hilo.getName()+" estado"+hilo.getState().toString());
+          hilo.join(0);
+          
+          System.out.println("join despues: "+h+"nombre"+hilo.getName()+" estado"+hilo.getState().toString());
+          h++;
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
