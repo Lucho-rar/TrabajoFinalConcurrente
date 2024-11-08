@@ -34,8 +34,8 @@ public class Main {
     ArrayList<Thread> hilos = new ArrayList<Thread>();
     FabricaDeHilos miFabrica = new FabricaDeHilos();
     Politica politica = new Politica();
-    politica.setConTiempo(false);
-    politica.setTipoPolitica(1);//2 es izquierda
+    politica.setConTiempo(true);
+    politica.setTipoPolitica(2);//2 es izquierda
     Log log = new Log(ruta, System.currentTimeMillis());
     RedDePetri redp = new RedDePetri(log);
 

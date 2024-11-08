@@ -174,7 +174,7 @@ public class RedDePetri {
   
   private Log log;
   
-  
+  //transiciones temporizadas T0, T3, T4, T7, T8, T11, T12, T14
   private long  timeStamps[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
   private long alfa[]= {10,0,0,10,10,0,0,10,10,0,0,10,10,0,10};
   private long beta[]= {4000,0,0,4000,4000,0,0,4000,4000,0,0,4000,4000,0,4000};

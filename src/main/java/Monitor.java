@@ -74,11 +74,11 @@ public class Monitor {
     		while (k) {
                 if(getCorriendo()) {
                 	k = rdp.dispararTransicionConTiempo(transicion, mutex);
+                	
                 }else {
                 	mutex.release();
                 	return;
-                }
-    			
+    			}
     			if (k) {
 
     				procesador.operar(transicion);
@@ -119,8 +119,9 @@ public class Monitor {
     			}
 
     		}
+                
     		mutex.release();
-        	
+
         
 		
 	}
@@ -139,6 +140,7 @@ public class Monitor {
 	}
 
 	public void contadorInvariantes(Imagen imagen) {
+		 
 		rdp.actualizarContadorInvariante(imagen);
 		if (miPolitica.getContador_decisiones() > 0) {
 			this.log.escribirArchivo("1cantidad de veces que se decidió entre t9 y t10:"
@@ -153,6 +155,11 @@ public class Monitor {
 		}
 		if (rdp.getContadorTotalInvariantes() >= 200) {
 			this.setMatarEjecucion();
+			String salida="";
+			for(int i=0;i<19;i++) {
+				salida+="P("+i+"):"+rdp.getCantidadTokensPlaza(i)+" ";
+			}
+			log.escribirArchivo("Red de Petri "+ salida + "\n");
 			log.escribirArchivo("SA(T1-T3): " + miPolitica.getContadorTransicion(3) + " SB(T2-T4): "
 					+ miPolitica.getContadorTransicion(4) + " SC(T5-T7): " + miPolitica.getContadorTransicion(7)
 					+ " SD(T6-T8): " + miPolitica.getContadorTransicion(8) + " SE(T9-T11): "
