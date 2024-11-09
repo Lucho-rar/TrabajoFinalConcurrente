@@ -74,13 +74,20 @@ public class Monitor {
     		while (k) {
                 if(getCorriendo()) {
                 	k = rdp.dispararTransicionConTiempo(transicion, mutex);
+					/*try {
+						Thread.currentThread().sleep(0, 500);*/
+						//log.escribirArchivo("Dispare transicion: "+transicion+" con m: "+this.getMComoString()+"\n"+" y marcado en plazas: "+rdp.getMarcadoComoString()+"\n");
+					/*} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} */
+                	
                 }else {
                 	mutex.release();
                 	return;
-                }
-    			
+    			}
     			if (k) {
-
+					//log.escribirArchivo("Y pude disparar\n");
     				procesador.operar(transicion);
     				miPolitica.actualizarContadorTransicion(transicion);
 
@@ -113,14 +120,17 @@ public class Monitor {
     					k = false;
     				}
     			} else {
+					//log.escribirArchivo("No pude disparar\n, estado de colas: "+miColaTransiciones.quienesEstanComoString()+"\n");
+					//log.escribirArchivo("esperando: " + rdp.getEsperando()[transicion] + "\n");
     				mutex.release();
     				miColaTransiciones.encolar(transicion);
     				k = true;
     			}
 
     		}
+                
     		mutex.release();
-        	
+
         
 		
 	}
@@ -139,7 +149,9 @@ public class Monitor {
 	}
 
 	public void contadorInvariantes(Imagen imagen) {
+		 
 		rdp.actualizarContadorInvariante(imagen);
+		/*
 		if (miPolitica.getContador_decisiones() > 0) {
 			this.log.escribirArchivo("1cantidad de veces que se decidió entre t9 y t10:"
 					+ this.miPolitica.getContador_decisiones() + " decision9:"
@@ -151,14 +163,30 @@ public class Monitor {
 					+ this.miPolitica.getContador_decisiones() + " decision9:" + miPolitica.getDecisionT9()
 					+ " decision10:" + miPolitica.getDecisionT10());
 		}
+					*/
 		if (rdp.getContadorTotalInvariantes() >= 200) {
+			rdp.logearInvariantes();
 			this.setMatarEjecucion();
+			String salida="";
+			for(int i=0;i<19;i++) {
+				salida+="P("+i+"):"+rdp.getCantidadTokensPlaza(i)+" ";
+			}
+			log.escribirArchivo("Red de Petri "+ salida + "\n");
 			log.escribirArchivo("SA(T1-T3): " + miPolitica.getContadorTransicion(3) + " SB(T2-T4): "
 					+ miPolitica.getContadorTransicion(4) + " SC(T5-T7): " + miPolitica.getContadorTransicion(7)
 					+ " SD(T6-T8): " + miPolitica.getContadorTransicion(8) + " SE(T9-T11): "
 					+ miPolitica.getContadorTransicion(11) + " SF(T10-T12):" + miPolitica.getContadorTransicion(12));
 		}
 
+	}
+
+	public String getMComoString() {
+		String salida = "{";
+		for (int i = 0; i < m.length; i++) {
+			salida += m[i] + ",";
+		}
+		salida += "}";
+		return salida;
 	}
 
 }

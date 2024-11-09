@@ -176,8 +176,8 @@ public class RedDePetri {
   
   
   private long  timeStamps[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-  private long alfa[]= {10,0,0,10,10,0,0,10,10,0,0,10,10,0,10};
-  private long beta[]= {4000,0,0,4000,4000,0,0,4000,4000,0,0,4000,4000,0,4000};
+  private long alfa[]= {1,0,0,1,1,0,0,1,1,0,0,1,1,0,1};
+  private long beta[]= {500000,0,0,50000,50000,0,0,50000,50000,0,0,50000,50000,0,50000};
   private boolean conTiempo=false;
   
   private boolean esperando[]=new boolean[15];
@@ -216,7 +216,7 @@ public class RedDePetri {
 	  RealMatrix sensibilizadasCopy;
 
     if (isSensibilizada(transicion)		) {
-    	log.escribirArchivo("disparé transicion:"+transicion);
+    	//log.escribirArchivo("disparé transicion:"+transicion);
       // transicionesSensibilizadas[transicion] = 0; //actualiza el marcado de la
       // transicion
      // private final RealMatrix matrizIncidenciaEntradaMatrix = MatrixUtils.createRealMatrix(matrizIncidenciaEntrada);
@@ -228,7 +228,7 @@ public class RedDePetri {
         
       return true;
     }
-
+    
     return false;
     /*
      * mk= mi+W.S
@@ -264,7 +264,10 @@ public class RedDePetri {
 	    			return true;	
 	    		}else {
 	    			//está esperando
-	    			return false;
+            if(transicion==0){
+            //  log.escribirArchivo("devolví false porque está esperando");
+            }
+            return false;
 	    		}
 	    		     
 	    		
@@ -292,16 +295,27 @@ public class RedDePetri {
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+            if(transicion==0){
+             // log.escribirArchivo("devolvi false porque hubo una excepción");
+            }
 						return false;
 					}
 	    			
 	    		}else {
+            if(transicion==0){
+
+              //log.escribirArchivo("devolvi false porque no esta antes de la ventana, tiempos: timestamp T0: "+(timeStamps[transicion]+alfa[transicion])+" fin de ventana: "+(timeStamps[transicion]+alfa[transicion])+
+              //"tiempo actual: "+tiempoActual);
+            }
 	    			return false;
 	    		}
 	    		//devuelve 
 	    		
 	    	}
 	    }
+      if(transicion==0){
+        //log.escribirArchivo("devolvi false porque habia terminado o no estaba sensibilizada");
+      }
 
 	    return false;
 	    
@@ -322,7 +336,7 @@ public class RedDePetri {
 	  if(this.conTiempo) {
 		  if(transicion==1||transicion==2||transicion==5||transicion==6||transicion==9||transicion==10||transicion==13) 
 		  {return true;}
-		  return (actual>this.timeStamps[transicion]+alfa[transicion])&&(actual<timeStamps[transicion]+beta[transicion]);
+		  return ((actual>=(this.timeStamps[transicion]+alfa[transicion]))&&(actual<=(timeStamps[transicion]+beta[transicion])));
 	  }else {
 		  return true;
 	  }
@@ -355,7 +369,7 @@ public class RedDePetri {
   }
 
 	public boolean antesDeLaVentana(long actual, int transicion) {
-		return actual<this.timeStamps[transicion]+alfa[transicion];
+		return actual<(this.timeStamps[transicion]+alfa[transicion]);
 	}
 	
 	public void setEsperando(int transicion) {
@@ -414,7 +428,16 @@ public class RedDePetri {
     }
     return true;
   }
-  
+  public void logearInvariantes(){
+    for (int j = 0; j < contadorInvariantes[0].length; j++) {
+      int valor = contadorInvariantes[0][j];
+      String texto = "El invariante: " + (j+1) + " se completó " + valor + " veces.";
+      
+      log.escribirArchivo(texto);
+      
+  }
+  return;
+  }
 
   public void actualizarContadorInvariante(Imagen imagen){
     try{
@@ -426,16 +449,16 @@ public class RedDePetri {
     	  }
       }
       //log.escribirArchivo(imagen.imprimirRecorrido());
-      
+      /* 
 	    for (int j = 0; j < contadorInvariantes[0].length; j++) {
 	        int valor = contadorInvariantes[0][j];
 	        String texto = "El invariante: " + (j+1) + " se completó " + valor + " veces.";
 	        
 	        log.escribirArchivo(texto);
 	    }
-	    
+	    */
 	    // Imprimir una nueva línea después de cada fila
-	    log.escribirArchivo("");
+	    //log.escribirArchivo("");
 		
     }
     catch(Exception ex){
@@ -482,6 +505,16 @@ public class RedDePetri {
     return total;
   }
 
+  public String getMarcadoComoString(){
+    String marcado = "P0: "+getCantidadTokensPlaza(0)+ " P2: "+ getCantidadTokensPlaza(2)+" P4: "+ getCantidadTokensPlaza(4)+" P6: "
+    + getCantidadTokensPlaza(6)+" P8: "+ getCantidadTokensPlaza(8)+" P10: "+ getCantidadTokensPlaza(10)+" P12: "
+    + getCantidadTokensPlaza(12)+" P14: "+ getCantidadTokensPlaza(14)+" P15: "+ getCantidadTokensPlaza(15)+" P16: "+ getCantidadTokensPlaza(16);
+    
+    return marcado;
+  }
+  public boolean[] getEsperando() {
+    return esperando;
+  }
 }
 
 

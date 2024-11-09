@@ -1,12 +1,18 @@
 public class GeneradorDeImagenes extends Procesador implements Runnable{
- 
-  public GeneradorDeImagenes(String nombre_hilo, Monitor monitor, Log log, int transicion){
+ RedDePetri rdp;
+  public GeneradorDeImagenes(String nombre_hilo, Monitor monitor, Log log, int transicion, RedDePetri redp){
     super(nombre_hilo, monitor, log, transicion);
+    this.rdp = redp;
 
   }
   
   public void run(){
-    while(miMonitor.getCorriendo()){
+    try{
+      Thread.sleep(10);}
+      catch(InterruptedException e){
+        throw new RuntimeException(e);
+      }
+    while(miMonitor.getCorriendo() && (rdp.getCantidadTokensPlaza(this.transicion1)<5)){
     	this.miMonitor.dispararTransicion(this.getTransicion1(),this);
     }
   }

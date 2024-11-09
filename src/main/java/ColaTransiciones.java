@@ -73,4 +73,15 @@ public class ColaTransiciones  {
       System.out.println("cant hilos esperando: "+colaTransiciones.get(i).getQueueLength());
     }
   }
+  public String quienesEstanComoString(){
+    String s = "";
+    for(int i = 0; i < 15; i++){
+      if(colaTransiciones.get(i).hasQueuedThreads()){
+        s += "1";
+      }else{
+        s += "0";
+      }
+    }
+    return s;
+  }
 }

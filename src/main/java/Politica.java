@@ -209,35 +209,68 @@ public class Politica {
     	/*if(!multiplesEsperando(m) && m[salida]==1) {
     		return salida;
     	}*/
-    	/*
+    	
        if(salida==1 && m[salida]==1&&  multiplesEsperando(m) && !deboFavorecerT1SobreT2(salida)){
-			//return balanceada(m);
-			continue;
+         if(m[2]==1){
+           return 2;
+         }
+        else{
+         return 1;
        }
-       if(salida==2 && m[salida]==2 &&  multiplesEsperando(m) && deboFavorecerT1SobreT2(salida)){
 			//return balanceada(m);
-			continue;
+			//continue;
        }
-       if(salida==5 && m[salida]==5 &&  multiplesEsperando(m) && !deboFavorecerT5SobreT6(salida)){
-			continue;
+
+       if(salida==2 && m[salida]==1 &&  multiplesEsperando(m) && deboFavorecerT1SobreT2(salida)){
+        if(m[1]==1){
+           return 1;
+         }
+        else{
+         return 2;
+       }
 			//return balanceada(m);
+			//continue;
        }
-       if(salida==6 && m[salida]==6 &&  multiplesEsperando(m) && deboFavorecerT5SobreT6(salida)){
+       if(salida==5 && m[salida]==1 &&  multiplesEsperando(m) && !deboFavorecerT5SobreT6(salida)){
+	    	if(m[6]==1){
+           return 6;
+         }
+        else{
+         return 5;
+       }
+       }
+       if(salida==6 && m[salida]==1 &&  multiplesEsperando(m) && deboFavorecerT5SobreT6(salida)){
+        if(m[5]==1){
+           return 5;
+         }
+        else{
+         return 6;
+       }
 			//return balanceada(m);
-			continue;
+			//continue;
        }
-       if(salida==9 && m[salida]==9 &&  multiplesEsperando(m) && !deboFavorecerT9SobreT10(salida)){
+       if(salida==9 && m[salida]==1 &&  multiplesEsperando(m) && !deboFavorecerT9SobreT10(salida)){
+			if(m[10]==1){
+           return 10;
+         }
+        else{
+         return 9;
+       }
+       }
+       if(salida==10 && m[salida]==1 &&  multiplesEsperando(m) && deboFavorecerT9SobreT10(salida)){
+         	if(m[9]==1){
+          	 return 9;
+	         }
+	        else{
+	         return 10;
+	       }
 			//return balanceada(m);
-    	   continue;
+    	   //continue;
        }
-       if(salida==10 && m[salida]==10 &&  multiplesEsperando(m) && deboFavorecerT9SobreT10(salida)){
-			//return balanceada(m);
-    	   continue;
-       }
-       */
-       if(m[salida]==1) {
+       
+      if(m[salida]==1) {
     		return salida;
-		}
+		  }
     	
     }
  

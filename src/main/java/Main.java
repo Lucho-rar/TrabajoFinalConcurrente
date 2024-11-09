@@ -9,7 +9,10 @@ public class Main {
 		   String ruta="log";
 		   int contador=1;
 	       int numEjecuciones = 50;
+         long tiempoInicial = System.currentTimeMillis();
 	        for (int i = 1; i <= numEjecuciones; i++) {
+            long tiempoActual = System.currentTimeMillis();
+            
 	            try {
 	                System.out.println("Ejecución " + i + ": ");
 	                // Llama al método principal de tu programa
@@ -22,7 +25,11 @@ public class Main {
 	                System.out.println("Error en la ejecución " + i + ": " + e.getMessage());
 	                break;
 	            }
+              long tiempoFinal = System.currentTimeMillis();
+              System.out.println("Tiempo de ejecución: " + (tiempoFinal - tiempoActual)/1000 + "segundos.");
 	        }
+          long tiempoFinal = System.currentTimeMillis();
+          System.out.println("Tiempo promedio de ejecución: " + (tiempoFinal - tiempoInicial) / numEjecuciones/1000 + "segundos.");
 	}
 	            
 	
@@ -34,8 +41,8 @@ public class Main {
     ArrayList<Thread> hilos = new ArrayList<Thread>();
     FabricaDeHilos miFabrica = new FabricaDeHilos();
     Politica politica = new Politica();
-    politica.setConTiempo(false);
-    politica.setTipoPolitica(1);//2 es izquierda
+    politica.setConTiempo(true);
+    politica.setTipoPolitica(2);//2 es izquierda
     Log log = new Log(ruta, System.currentTimeMillis());
     RedDePetri redp = new RedDePetri(log);
 
@@ -48,7 +55,7 @@ public class Main {
     
     Monitor miMonitor = new Monitor(redp, politica, log);
 
-    GeneradorDeImagenes generadorDeImagenes = new GeneradorDeImagenes("generadorDeImagenes", miMonitor, log, 0);
+    GeneradorDeImagenes generadorDeImagenes = new GeneradorDeImagenes("generadorDeImagenes", miMonitor, log, 0, redp);
     generadorDeImagenes.setDestino(plazasImagen.get(0));
 
     Receptor receptorIzq = new Receptor("receptorIzq", miMonitor, log, 1);
