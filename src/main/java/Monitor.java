@@ -74,13 +74,6 @@ public class Monitor {
     		while (k) {
                 if(getCorriendo()) {
                 	k = rdp.dispararTransicionConTiempo(transicion, mutex);
-					/*try {
-						Thread.currentThread().sleep(0, 500);*/
-						//log.escribirArchivo("Dispare transicion: "+transicion+" con m: "+this.getMComoString()+"\n"+" y marcado en plazas: "+rdp.getMarcadoComoString()+"\n");
-					/*} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} */
                 	
                 }else {
                 	mutex.release();
