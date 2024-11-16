@@ -97,6 +97,11 @@ public class Monitor {
     				 * String salida="{"; for(int i=0;i<m.length;i++) { salida+=m[i]+","; }
     				 * salida+="}"; log.escribirArchivo("con tiempo m="+salida);
     				 */
+    				if(this.contadorM(m)==1&&(m[9]==1||m[10]==1)) {
+    					mutex.release();
+    					return;
+    					
+    				}
     				if (recorrer(m)) {
     					/*
     					if (m[14] == 1) {
@@ -136,6 +141,15 @@ public class Monitor {
 		}
 		return false;
 	}
+	public int contadorM(double[] m) {
+		int contador=0;
+		for (int i = 0; i < m.length; i++) {
+			if (m[i] == 1.0) {
+				contador++;
+			}
+		}
+		return contador;
+	}
 
 	public double cantidadTokensPlaza(int plaza) {
 		return rdp.getCantidadTokensPlaza(plaza);
@@ -162,6 +176,7 @@ public class Monitor {
 			this.setMatarEjecucion();
 			String salida="";
 			for(int i=0;i<19;i++) {
+				
 				salida+="P("+i+"):"+rdp.getCantidadTokensPlaza(i)+" ";
 			}
 			log.escribirArchivo("Red de Petri "+ salida + "\n");
@@ -169,6 +184,9 @@ public class Monitor {
 					+ miPolitica.getContadorTransicion(4) + " SC(T5-T7): " + miPolitica.getContadorTransicion(7)
 					+ " SD(T6-T8): " + miPolitica.getContadorTransicion(8) + " SE(T9-T11): "
 					+ miPolitica.getContadorTransicion(11) + " SF(T10-T12):" + miPolitica.getContadorTransicion(12));
+			log.escribirArchivo("secuenciaDisparos="+this.rdp.getSecuenciaDisparos());
+			
+			
 		}
 
 	}

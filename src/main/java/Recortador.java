@@ -7,6 +7,7 @@ public class Recortador extends Procesador implements Runnable {
   @Override
   public void run(){
     while(miMonitor.getCorriendo()){
+    	
       this.miMonitor.dispararTransicion(this.getTransicion1(), this);
     }
   }

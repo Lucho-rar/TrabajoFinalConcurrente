@@ -26,6 +26,9 @@ public class Politica {
   private int decisionT10=0;
   private boolean conTiempo; 
   private  Scanner scanner;
+  private boolean t1_antes_q_t2=true;
+  private boolean t5_antes_q_t6=true;
+  private boolean t9_antes_q_t10=true;
   
   public Politica(){
 	  //scanner=new Scanner(System.in);
@@ -204,79 +207,49 @@ public class Politica {
     int salida=0;
    
     Random random1 = new Random();
-    while(true) {
-    	salida=random1.nextInt(15);
-    	/*if(!multiplesEsperando(m) && m[salida]==1) {
-    		return salida;
-    	}*/
-    	
-       if(salida==1 && m[salida]==1&&  multiplesEsperando(m) && !deboFavorecerT1SobreT2(salida)){
-         if(m[2]==1){
-           return 2;
-         }
-        else{
-         return 1;
-       }
-			//return balanceada(m);
-			//continue;
-       }
-
-       if(salida==2 && m[salida]==1 &&  multiplesEsperando(m) && deboFavorecerT1SobreT2(salida)){
-        if(m[1]==1){
-           return 1;
-         }
-        else{
-         return 2;
-       }
-			//return balanceada(m);
-			//continue;
-       }
-       if(salida==5 && m[salida]==1 &&  multiplesEsperando(m) && !deboFavorecerT5SobreT6(salida)){
-	    	if(m[6]==1){
-           return 6;
-         }
-        else{
-         return 5;
-       }
-       }
-       if(salida==6 && m[salida]==1 &&  multiplesEsperando(m) && deboFavorecerT5SobreT6(salida)){
-        if(m[5]==1){
-           return 5;
-         }
-        else{
-         return 6;
-       }
-			//return balanceada(m);
-			//continue;
-       }
-       if(salida==9 && m[salida]==1 &&  multiplesEsperando(m) && !deboFavorecerT9SobreT10(salida)){
-			if(m[10]==1){
-           return 10;
-         }
-        else{
-         return 9;
-       }
-       }
-       if(salida==10 && m[salida]==1 &&  multiplesEsperando(m) && deboFavorecerT9SobreT10(salida)){
-         	if(m[9]==1){
-          	 return 9;
-	         }
-	        else{
-	         return 10;
-	       }
-			//return balanceada(m);
-    	   //continue;
-       }
-       
-      if(m[salida]==1) {
-    		return salida;
-		  }
-    	
+    if(m[9]==1&&m[10]==0) {
+    	m[9]=0;
+    	 
     }
- 
-  }
-  
-  
+    if(m[9]==0&&m[10]==1) {
+    	m[10]=0;
+    }
+    ArrayList<Integer> mFiltrada = filtrarTransiciones(m);
+    
+    salida=random1.nextInt(mFiltrada.size());
+    
+    if((mFiltrada.get(salida)==1 || mFiltrada.get(salida)==2)&&(m[1]==1&&m[2]==1)){
+      if(t1_antes_q_t2) {
+        t1_antes_q_t2=false;
+        return 1;
+      }else {
+        t1_antes_q_t2=true;
+        return 2;
+      }
+    }
+
+    if((mFiltrada.get(salida)==5 || mFiltrada.get(salida)==6)&&(m[5]==1&&m[6]==1)){
+      if(t5_antes_q_t6) {
+        t5_antes_q_t6=false;
+        return 5;
+      }else {
+        t5_antes_q_t6=true;
+        return 6;
+      }
+    }
+    
+    if((mFiltrada.get(salida)==9 || mFiltrada.get(salida)==10)&&(m[9]==1&&m[10]==1)){
+      if(t9_antes_q_t10) {
+        t9_antes_q_t10=false;
+        return 9;
+      }else {
+        t9_antes_q_t10=true;
+        return 10;
+      }
+    }
+   
+   return mFiltrada.get(salida);
+  } 
   public int getDecisionT9() {
 	  return decisionT9;
   }
@@ -284,35 +257,16 @@ public class Politica {
 	  return decisionT10;
   }
  private int izquierdaFavorecida(double[] m) {
+	 if(m[9]==1&&m[10]==1) {
+		 if(this.deboFavorecerIzquierda(9)) {
+			 return 9;
+		 }else {
+			 return 10;
+		 }
+	 }else {
+		 return  balanceada(m);
+	 }
 	 
-    int elegido = balanceada(m);
-	
-	/*
-    while ((elegido == 9 && !deboFavorecerIzquierda(elegido) && multiplesEsperando(m)) ||
-           (elegido == 10 && deboFavorecerIzquierda(elegido) && multiplesEsperando(m))) {
-        elegido = balanceada(m);
-    }*/
-    
-    // Si se elige 9 y se favorece la izquierda
-    if (elegido == 9 && deboFavorecerIzquierda(elegido) && multiplesEsperando(m)) {
-      if(m[10]==1){ return 10;}
-      else{
-    	 
-        return izquierdaFavorecida(m);
-      }
-        
-    }
-    
-    // Si se elige 10 y no se favorece la izquierda
-    if (elegido == 10 && !deboFavorecerIzquierda(elegido) && multiplesEsperando(m)) {
-    	if(m[9]==1){return 9;}
-      	else{
-      		 
-        return izquierdaFavorecida(m);
-      	}
-    }
-    
-    return elegido;
 }
 
   
@@ -411,5 +365,14 @@ public class Politica {
     
     
     
+  }
+    public ArrayList<Integer> filtrarTransiciones(double[] m){
+    ArrayList<Integer> lista = new ArrayList<>();
+    for (int i = 0; i < m.length; i++) {
+      if (m[i] == 1.0) {
+        lista.add(i);
+      }
+    }
+    return lista;
   }
 }

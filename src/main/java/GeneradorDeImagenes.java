@@ -7,12 +7,13 @@ public class GeneradorDeImagenes extends Procesador implements Runnable{
   }
   
   public void run(){
-    try{
-      Thread.sleep(10);}
+   /* try{
+      Thread.sleep(10);
+      }
       catch(InterruptedException e){
         throw new RuntimeException(e);
-      }
-    while(miMonitor.getCorriendo() && (rdp.getCantidadTokensPlaza(this.transicion1)<5)){
+      }*/
+    while(miMonitor.getCorriendo()){
     	this.miMonitor.dispararTransicion(this.getTransicion1(),this);
     }
   }

@@ -152,7 +152,7 @@ public class RedDePetri {
    * };
    */
   private double[][] marcadoActual = {
-      { 0, 1, 0, 3, 0, 1, 0, 1, 0, 2, 0, 1, 0, 1, 0, 0, 0, 0, 1 } // P0-18
+      { 0, 1, 0, 3, 0, 1, 0, 1, 0, 2, 0, 1, 0, 2, 0, 0, 0, 0, 1 } // P0-18
   };
 
   private double[][] transicionesSensibilizadas = {
@@ -176,9 +176,11 @@ public class RedDePetri {
   
   //transiciones temporizadas T0, T3, T4, T7, T8, T11, T12, T14
   private long  timeStamps[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-  private long alfa[]= {1,0,0,1,1,0,0,1,1,0,0,1,1,0,1};
+  private long alfa[]= { 1, 0, 10, 10, 0, 0, 20, 20, 0, 0, 20, 20, 0, 0,10};
   private long beta[]= {500000,0,0,50000,50000,0,0,50000,50000,0,0,50000,50000,0,50000};
   private boolean conTiempo=false;
+  private String secuenciaDisparos="";
+  private int contadorDisparosTotales=0;
   
   private boolean esperando[]=new boolean[15];
 
@@ -261,6 +263,8 @@ public class RedDePetri {
 	    			marcadoActualMatrix = marcadoActualMatrix.add(((incidencia.copy()).multiply(misTransicionesDisparadas)).transpose());
 	    			//hay que actualizar las marcas de tiempo de las transiciones que cambiaron de sensibilización 
 	    			actualizarTimeStamp( sensibilizadasCopy, this.getTransicionesSensibilizadas());
+	    			secuenciaDisparos+="T"+transicion;
+	    			contadorDisparosTotales++;
 	    			return true;	
 	    		}else {
 	    			//está esperando
@@ -290,6 +294,8 @@ public class RedDePetri {
 		    			marcadoActualMatrix = marcadoActualMatrix.add(((incidencia.copy()).multiply(misTransicionesDisparadas)).transpose());
 		    			//hay que actualizar las marcas de tiempo de las transiciones que cambiaron de sensibilización 
 		    			actualizarTimeStamp( sensibilizadasCopy, this.getTransicionesSensibilizadas());
+		    			secuenciaDisparos+="T"+transicion;
+		    			contadorDisparosTotales++;
 		    			return true;
 						
 					} catch (InterruptedException e) {
@@ -327,7 +333,12 @@ public class RedDePetri {
 	     
   }
   
-  
+  public String getSecuenciaDisparos() {
+	  return secuenciaDisparos;
+  }
+  public int getDisparosTotales() {
+	  return contadorDisparosTotales; 
+  }
   public boolean testVentanaTiempo(long actual,int transicion) {
 	//alfa<ahora-timestamp<beta
 	  //obtiene el instantnow
