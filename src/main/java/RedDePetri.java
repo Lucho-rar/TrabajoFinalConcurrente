@@ -152,7 +152,7 @@ public class RedDePetri {
    * };
    */
   private double[][] marcadoActual = {
-      { 0, 1, 0, 3, 0, 1, 0, 1, 0, 2, 0, 1, 0, 2, 0, 0, 0, 0, 1 } // P0-18
+      { 0, 1, 0, 3, 0, 1, 0, 1, 0, 2, 0, 1, 0, 1, 0, 0, 0, 0, 1 } // P0-18
   };
 
   private double[][] transicionesSensibilizadas = {
@@ -261,6 +261,10 @@ public class RedDePetri {
 	    			misTransicionesDisparadas.setEntry(transicion,0,1);
 	    			sensibilizadasCopy = getTransicionesSensibilizadas();
 	    			marcadoActualMatrix = marcadoActualMatrix.add(((incidencia.copy()).multiply(misTransicionesDisparadas)).transpose());
+            String marcadoAcString = Arrays.toString(marcadoActualMatrix.getRow(0));
+              if (!chequearInvariantesPlaza()){
+                log.escribirArchivo("Error invariantes plaza " + marcadoAcString);
+              }
 	    			//hay que actualizar las marcas de tiempo de las transiciones que cambiaron de sensibilización 
 	    			actualizarTimeStamp( sensibilizadasCopy, this.getTransicionesSensibilizadas());
 	    			secuenciaDisparos+="T"+transicion;
@@ -292,6 +296,10 @@ public class RedDePetri {
 		    			misTransicionesDisparadas.setEntry(transicion,0,1);
 		    			sensibilizadasCopy = getTransicionesSensibilizadas();
 		    			marcadoActualMatrix = marcadoActualMatrix.add(((incidencia.copy()).multiply(misTransicionesDisparadas)).transpose());
+              String marcadoAcString = Arrays.toString(marcadoActualMatrix.getRow(0));
+              if (!chequearInvariantesPlaza()){
+                log.escribirArchivo("Error invariantes plaza " + marcadoAcString);
+              }
 		    			//hay que actualizar las marcas de tiempo de las transiciones que cambiaron de sensibilización 
 		    			actualizarTimeStamp( sensibilizadasCopy, this.getTransicionesSensibilizadas());
 		    			secuenciaDisparos+="T"+transicion;
@@ -525,6 +533,24 @@ public class RedDePetri {
   }
   public boolean[] getEsperando() {
     return esperando;
+  }
+
+  public boolean chequearInvariantesPlaza(){
+   // boolean pInv0 = (getCantidadTokensPlaza(2)+getCantidadTokensPlaza(4)+getCantidadTokensPlaza(6)+getCantidadTokensPlaza(8)+getCantidadTokensPlaza(10)+getCantidadTokensPlaza(12)+getCantidadTokensPlaza(14)+getCantidadTokensPlaza(15)+getCantidadTokensPlaza(16)+getCantidadTokensPlaza(17)) == 1;
+    boolean pInv1 = (getCantidadTokensPlaza(1) + getCantidadTokensPlaza(2)) == 1 ;
+    boolean pInv2 = (getCantidadTokensPlaza(4)+ getCantidadTokensPlaza(5)) == 1 ;
+    boolean pInv3 = (getCantidadTokensPlaza(13 )+ getCantidadTokensPlaza(14) +getCantidadTokensPlaza(15)) == 1 ;
+    boolean pInv4 = (getCantidadTokensPlaza(7) + getCantidadTokensPlaza(8)) == 1 ;
+    boolean pInv5 = (getCantidadTokensPlaza(10) + getCantidadTokensPlaza(11)) == 1 ;
+    boolean pInv6 = (getCantidadTokensPlaza(8) + getCantidadTokensPlaza(9) + getCantidadTokensPlaza(10 ))== 2 ;
+    boolean pInv7 = (getCantidadTokensPlaza(17) + getCantidadTokensPlaza(18)) == 1 ;
+    boolean pInv8 = (getCantidadTokensPlaza(2) + getCantidadTokensPlaza(3) +getCantidadTokensPlaza(4)+getCantidadTokensPlaza(17)) == 3;
+
+    if (  pInv1 && pInv2 && pInv3 && pInv4 && pInv5 && pInv6 && pInv7 && pInv8){
+      return true;
+    }else{
+      return false;
+    }
   }
 }
 
