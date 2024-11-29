@@ -7,8 +7,9 @@ public class Main {
 
 	public static void main(String[] args) {
 		   String ruta="log";
+       String ruta_regex = "regex";
 		   int contador=1;
-	       int numEjecuciones = 50;
+	       int numEjecuciones = 5;
          long tiempoInicial = System.currentTimeMillis();
 	        for (int i = 1; i <= numEjecuciones; i++) {
             long tiempoActual = System.currentTimeMillis();
@@ -16,7 +17,7 @@ public class Main {
 	            try {
 	                System.out.println("Ejecución " + i + ": ");
 	                // Llama al método principal de tu programa
-	                main2(ruta+contador+".txt");
+	                main2(ruta+contador+".txt", ruta_regex+contador+".txt");
 	                contador++;
 	                // Reemplaza con el nombre de tu clase principal
 	                System.out.println("Completada con éxito.");
@@ -35,7 +36,7 @@ public class Main {
 	
 	
 	
-  public static void main2(String ruta) {
+  public static void main2(String ruta, String ruta_regex) {
 	  
 	
     ArrayList<Thread> hilos = new ArrayList<Thread>();
@@ -44,6 +45,7 @@ public class Main {
     politica.setConTiempo(true);
     politica.setTipoPolitica(1);//2 es izquierda
     Log log = new Log(ruta, System.currentTimeMillis());
+    Log log_regex = new Log(ruta_regex, System.currentTimeMillis());
     RedDePetri redp = new RedDePetri(log);
 
     ArrayList<ColaImagenes> plazasImagen=new ArrayList<ColaImagenes>();
@@ -53,7 +55,7 @@ public class Main {
     // 0  1  2  3  4  5   6   7    8   9  10
     //p0,p2,p4,p6,p8,p10,p12,p14,p15,p16,p17
     
-    Monitor miMonitor = new Monitor(redp, politica, log);
+    Monitor miMonitor = new Monitor(redp, politica, log , log_regex);
 
     GeneradorDeImagenes generadorDeImagenes = new GeneradorDeImagenes("generadorDeImagenes", miMonitor, log, 0, redp);
     generadorDeImagenes.setDestino(plazasImagen.get(0));
