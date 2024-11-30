@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-import java.util.concurrent.*;
+import java.util.concurrent.Semaphore;
 
 /*
 * Clase Cola
@@ -7,7 +7,7 @@ import java.util.concurrent.*;
 * lista: Array de imagenes
 * mutex: Semaforo para sincronizar el acceso a la cola
 */
-public class ColaImagenes  {
+public class ColaImagenes {
   private ArrayList<Imagen> lista;
   private Semaphore mutex;
 
@@ -18,11 +18,11 @@ public class ColaImagenes  {
   }
 
   //Método para agregar una imagen a la cola
-  public void encolar(Imagen img, int transicion){
-    try{
+  public void encolar(Imagen img, int transicion) {
+    try {
       mutex.acquire(); //acquire del semaforo
-    }catch (InterruptedException e){
-       System.out.println("error al encolar");
+    } catch(InterruptedException e) {
+      System.out.println("error al encolar");
     }
     img.agregarTransicion(transicion);
     lista.add(img); //agrega a la lista
@@ -30,15 +30,15 @@ public class ColaImagenes  {
   }
   
   //Método para sacar una imagen de la cola
-  public Imagen desencolar(){
+  public Imagen desencolar() {
     try{
       mutex.acquire();  //adquiere el semaforo
-    }catch (InterruptedException e){
-       System.out.println("error al desencolar");
+    } catch(InterruptedException e) {
+      System.out.println("error al desencolar");
     }
-    Imagen img=null;
-    if(!lista.isEmpty()){  // si la lista no esta vacia toma la imagen y la saca de la misma
-      img=lista.get(0);
+    Imagen img = null;
+    if(!lista.isEmpty()) {  // si la lista no esta vacia toma la imagen y la saca de la misma
+      img = lista.get(0);
       lista.remove(0);
     }
     mutex.release(); // release del semaforo
@@ -46,15 +46,16 @@ public class ColaImagenes  {
   }
 
   //Método para saber si la cola esta vacia
-  public boolean estaVacia(){
+  public boolean estaVacia() {
     return lista.isEmpty();
   }
 
   //Método para obtener el tamaño de la cola
-  public int tamano(){
+  public int tamano() {
     return lista.size();
   }
-  public Semaphore getMutex(){
+  
+  public Semaphore getMutex() {
     return mutex;
   }
 }
