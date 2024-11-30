@@ -1,5 +1,4 @@
 import java.util.concurrent.Semaphore;
-
 import org.apache.commons.math3.linear.RealMatrix;
 
 /**
