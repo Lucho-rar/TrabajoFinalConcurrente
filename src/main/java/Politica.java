@@ -18,8 +18,8 @@ public class Politica {
   private Integer[][] contadorIzq = new Integer[3][2];
   private Integer[][] contadorDer = new Integer[3][2]; 
   private Integer[] contadorUltimoSegmento = new Integer[3];
-   private ArrayList<Set<Integer>> segUltimo=new ArrayList<Set<Integer>>();
-  //private  Integer[] borrarRecorrido1= {0,1,3,5,7,9,11,13,14};
+  private ArrayList<Set<Integer>> segUltimo=new ArrayList<Set<Integer>>();
+  
   
   private int contador_decisiones=0;
   private int decisionT9=0;
@@ -31,13 +31,7 @@ public class Politica {
   private boolean t9_antes_q_t10=true;
   
   public Politica(){
-	  //scanner=new Scanner(System.in);
-	//this.conTiempo=elegirTipoTiempo();  
-	 
-    //this.tipoDePolitica = elegirPolitica();
-	  
-	  
-    //foreach(int i in contadorIzq)i=0;
+
     for (Integer[] row : contadorIzq) {
       for (int i = 0; i < row.length; i++) {
         row[i] = 0;

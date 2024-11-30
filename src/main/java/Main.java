@@ -8,34 +8,46 @@ public class Main {
 	public static void main(String[] args) {
 		   String ruta="log";
 		   int contador=1;
-	       int numEjecuciones = 50;
+	       int numEjecuciones = 5;
          long tiempoInicial = System.currentTimeMillis();
+         long tiempoActual;
+         long tiempoFinal;
+         String tiempoEjecucion;
+         String tiempoPromedio;
+         Log log;
+         Log tiempos=new Log("tiempos.txt", tiempoInicial);
 	        for (int i = 1; i <= numEjecuciones; i++) {
-            long tiempoActual = System.currentTimeMillis();
-            
+	        	tiempoActual = System.currentTimeMillis();
+	        	log=new Log(ruta+contador+".txt", tiempoActual);
 	            try {
+	            	tiempos.escribirArchivo("Ejecución " + i + ": ");
 	                System.out.println("Ejecución " + i + ": ");
 	                // Llama al método principal de tu programa
-	                main2(ruta+contador+".txt");
+	                main2(ruta+contador+".txt",log);
 	                contador++;
 	                // Reemplaza con el nombre de tu clase principal
+	                tiempos.escribirArchivo("Completada con éxito.");
 	                System.out.println("Completada con éxito.");
 	            } catch(Exception e){
 
 	                System.out.println("Error en la ejecución " + i + ": " + e.getMessage());
 	                break;
 	            }
-              long tiempoFinal = System.currentTimeMillis();
-              System.out.println("Tiempo de ejecución: " + (tiempoFinal - tiempoActual)/1000 + "segundos.");
+              tiempoFinal = System.currentTimeMillis();
+              tiempoEjecucion="Tiempo de ejecución: " + (tiempoFinal - tiempoActual) + " milisegundos.";
+              tiempos.escribirArchivo(tiempoEjecucion);
+              System.out.println(tiempoEjecucion);
 	        }
-          long tiempoFinal = System.currentTimeMillis();
-          System.out.println("Tiempo promedio de ejecución: " + (tiempoFinal - tiempoInicial) / numEjecuciones/1000 + "segundos.");
+	      tiempoFinal = System.currentTimeMillis();
+	      tiempoPromedio="Tiempo promedio de ejecución: " + (tiempoFinal - tiempoInicial) / numEjecuciones + " milisegundos.";
+	      tiempos.escribirArchivo(tiempoPromedio);
+	      System.out.println(tiempoPromedio);
 	}
 	            
 	
 	
 	
-  public static void main2(String ruta) {
+  public static void main2(String ruta,Log log) {
 	  
 	
     ArrayList<Thread> hilos = new ArrayList<Thread>();
@@ -43,7 +55,7 @@ public class Main {
     Politica politica = new Politica();
     politica.setConTiempo(true);
     politica.setTipoPolitica(1);//2 es izquierda
-    Log log = new Log(ruta, System.currentTimeMillis());
+    //log = new Log(ruta, System.currentTimeMillis());
     RedDePetri redp = new RedDePetri(log);
 
     ArrayList<ColaImagenes> plazasImagen=new ArrayList<ColaImagenes>();
@@ -149,15 +161,15 @@ public class Main {
     int h=0;
     for (Thread hilo : hilos) {
         try {
-        	 System.out.println("join antes: "+h+"nombre"+hilo.getName()+" estado"+hilo.getState().toString());
+        	 //System.out.println("join antes: "+h+"nombre"+hilo.getName()+" estado"+hilo.getState().toString());
           hilo.join(0);
           
-          System.out.println("join despues: "+h+"nombre"+hilo.getName()+" estado"+hilo.getState().toString());
+         // System.out.println("join despues: "+h+"nombre"+hilo.getName()+" estado"+hilo.getState().toString());
           h++;
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
       }
-      System.out.println("Todos los hilos terminaron");
+      //System.out.println("Todos los hilos terminaron");
   }
 }
