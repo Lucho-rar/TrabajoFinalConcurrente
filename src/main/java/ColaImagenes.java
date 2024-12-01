@@ -49,13 +49,4 @@ public class ColaImagenes {
   public boolean estaVacia() {
     return lista.isEmpty();
   }
-
-  //Método para obtener el tamaño de la cola
-  public int tamano() {
-    return lista.size();
-  }
-  
-  public Semaphore getMutex() {
-    return mutex;
-  }
 }

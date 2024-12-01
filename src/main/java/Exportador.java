@@ -6,6 +6,8 @@ public class Exportador extends Procesador implements Runnable {
     super(nombre_hilo, monitor, log,transicion_1);
     transicion2 = transicion_2;
   }
+
+  //TODO: revisar si se puede sacar todo lo de Trans2
   public int getTransicion2(){
     return transicion2;
   }
@@ -23,6 +25,7 @@ public class Exportador extends Procesador implements Runnable {
     }
   }
   
+  //TODO: revisar si se puede sacar todo lo de operar
   @Override
   public void operar(int transicion) {
     if(transicion == transicion1) {
@@ -38,6 +41,7 @@ public class Exportador extends Procesador implements Runnable {
     }
   }
 
+  //TODO: revisar si se puede sacar todo lo de perteneceTransicion
   @Override
   public boolean perteneceTransicion(int transicion) {
     return this.getTransicion1() == transicion || this.transicion2 == transicion;

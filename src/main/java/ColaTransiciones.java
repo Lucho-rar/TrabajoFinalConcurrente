@@ -32,20 +32,6 @@ public class ColaTransiciones {
   public void desencolar(int transicion) {
     colaTransiciones.get(transicion).release();
   }
-
-  //Método para saber si la cola esta vacia
-  public boolean estaVacia() {
-    return lista.length == 0;
-  }
-
-  //Método para obtener el tamaño de la cola
-  public int tamano() {
-    return lista.length;
-  }
-
-  public Semaphore getMutex() {
-    return mutex;
-  }
   
   //Metodo para obtener las transiciones encoladas
   public double[] quienesEstan() {
@@ -64,24 +50,5 @@ public class ColaTransiciones {
     colaTransiciones = new ArrayList<Semaphore>();
     for(int i = 0; i < 15; i++)
       colaTransiciones.add(new Semaphore(0, true));
-  }
-
-  public void mostrarListasEspera() {
-    System.out.println("mostrarlistaespera");
-    for(int i = 0; i < 15; i++){
-      System.out.println("cant hilos esperando: "+colaTransiciones.get(i).getQueueLength());
-    }
-  }
-
-  public String quienesEstanComoString() {
-    String s = "";
-    for(int i = 0; i < 15; i++){
-      if(colaTransiciones.get(i).hasQueuedThreads()) {
-        s += "1";
-      }else{
-        s += "0";
-      }
-    }
-    return s;
   }
 }

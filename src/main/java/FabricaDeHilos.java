@@ -2,7 +2,6 @@ import java.util.concurrent.ThreadFactory;
 
 /**
   * Clase Hilo que implementa Thread Factory
-  * 
   * counter: Contador de hilos
   * name: Nombre del hilo
   */
@@ -15,6 +14,7 @@ public class FabricaDeHilos implements ThreadFactory{
     counter = 0;
   }
 
+  //TODO: revisar si se puede sacar todo lo del counter
   // Metodo que retorna el contador
   public int getCounter() {
     return this.counter;
