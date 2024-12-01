@@ -4,55 +4,61 @@ import java.util.ArrayList;
 public class Main {
 
 	public static void main(String[] args) {
-		String ruta = "log";
-    String ruta_regex = "regex";
-		int contador = 1;
+		String ruta="log";
+    int contador=1;
     int numEjecuciones = 5;
     long tiempoInicial = System.currentTimeMillis();
+    long tiempoActual;
+    long tiempoFinal;
+    String tiempoEjecucion;
+    String tiempoPromedio;
+    Log log;
+    Log tiempos = new Log("tiempos.txt", tiempoInicial);
     for (int i = 1; i <= numEjecuciones; i++) {
-      long tiempoActual = System.currentTimeMillis();
+      tiempoActual = System.currentTimeMillis();
+      log = new Log(ruta + contador + ".txt", tiempoActual);
       try {
-        System.out.println("Ejecución " + i + ": ");
-        // Llama al método principal de tu programa
-        main2(ruta+contador+".txt", ruta_regex+contador+".txt");
-        contador++;
-        // Reemplaza con el nombre de tu clase principal
-        System.out.println("Completada con éxito.");
+        tiempos.escribirArchivo("Ejecución " + i + ": ");
+          System.out.println("Ejecución " + i + ": ");
+          // Llama al método principal de tu programa
+          main2(ruta+contador + ".txt", log);
+          contador++;
+          // Reemplaza con el nombre de tu clase principal
+          tiempos.escribirArchivo("Completada con éxito.");
+          System.out.println("Completada con éxito.");
       } catch(Exception e) {
-        System.out.println("Error en la ejecución " + i + ": " + e.getMessage());
-        break;
+          System.out.println("Error en la ejecución " + i + ": " + e.getMessage());
+          break;
       }
-      long tiempoFinal = System.currentTimeMillis();
-      System.out.println("Tiempo de ejecución: " + (tiempoFinal - tiempoActual)/1000 + "segundos.");
+      tiempoFinal = System.currentTimeMillis();
+      tiempoEjecucion="Tiempo de ejecución: " + (tiempoFinal - tiempoActual) + " milisegundos.";
+      tiempos.escribirArchivo(tiempoEjecucion);
+      System.out.println(tiempoEjecucion);
     }
-    long tiempoFinal = System.currentTimeMillis();
-    System.out.println("Tiempo promedio de ejecución: " + (tiempoFinal - tiempoInicial) / numEjecuciones/1000 + "segundos.");
-	}
-	
-  public static void main2(String ruta, String ruta_regex) {
+    tiempoFinal = System.currentTimeMillis();
+    tiempoPromedio = "Tiempo promedio de ejecución: " + (tiempoFinal - tiempoInicial) / numEjecuciones + " milisegundos.";
+    tiempos.escribirArchivo(tiempoPromedio);
+    System.out.println(tiempoPromedio);
+  }
+
+  public static void main2(String ruta,Log log) {
     ArrayList<Thread> hilos = new ArrayList<Thread>();
     FabricaDeHilos miFabrica = new FabricaDeHilos();
     Politica politica = new Politica();
     politica.setConTiempo(true);
     politica.setTipoPolitica(1);//2 es izquierda
-    Log log = new Log(ruta, System.currentTimeMillis());
-    Log log_regex = new Log(ruta_regex, System.currentTimeMillis());
+    //log = new Log(ruta, System.currentTimeMillis());
     RedDePetri redp = new RedDePetri(log);
-
-    ArrayList<ColaImagenes> plazasImagen=new ArrayList<ColaImagenes>();
-    for(int i=0; i<11; i++) {
+    ArrayList<ColaImagenes> plazasImagen = new ArrayList<ColaImagenes>();
+    for(int i = 0; i<11; i++) {
       plazasImagen.add(new ColaImagenes());
     }
     // 0  1  2  3  4  5   6   7    8   9  10
     //p0,p2,p4,p6,p8,p10,p12,p14,p15,p16,p17
-    
     Monitor miMonitor = new Monitor(redp, politica, log , log_regex);
-
     GeneradorDeImagenes generadorDeImagenes = new GeneradorDeImagenes("generadorDeImagenes", miMonitor, log, 0, redp);
     generadorDeImagenes.setDestino(plazasImagen.get(0));
-
     Receptor receptorIzq = new Receptor("receptorIzq", miMonitor, log, 1);
-    
     // transicion t1
     receptorIzq.setOrigen(plazasImagen.get(0));  //plaza 0
     receptorIzq.setDestino(plazasImagen.get(1)); //plaza 2
@@ -140,14 +146,15 @@ public class Main {
     int h = 0;
     for (Thread hilo : hilos) {
         try {
-          System.out.println("join antes: "+h+"nombre"+hilo.getName()+" estado"+hilo.getState().toString());
+        	 //System.out.println("join antes: "+h+"nombre"+hilo.getName()+" estado"+hilo.getState().toString());
           hilo.join(0);
-          System.out.println("join despues: "+h+"nombre"+hilo.getName()+" estado"+hilo.getState().toString());
+          
+         // System.out.println("join despues: "+h+"nombre"+hilo.getName()+" estado"+hilo.getState().toString());
           h++;
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
       }
-      System.out.println("Todos los hilos terminaron");
+      //System.out.println("Todos los hilos terminaron");
   }
 }

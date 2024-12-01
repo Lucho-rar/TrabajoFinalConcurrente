@@ -168,9 +168,11 @@ public class RedDePetri {
   private Log log;
   
   //transiciones temporizadas T0, T3, T4, T7, T8, T11, T12, T14
-  private long  timeStamps[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  private long alfa[] = {10, 0, 10, 10, 0, 0, 20, 20, 0, 0, 20, 20, 0, 0, 10};
-  private long beta[] = {500000, 0, 0, 50000, 50000, 0, 0, 50000, 50000, 0, 0, 50000, 50000, 0, 50000};
+  private long  timeStamps[]={0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  //private long alfa[] = {10, 0, 0, 10, 10, 0, 0, 20, 20, 0, 0, 20, 20, 0, 10};
+  //private long beta[] = {5000, 0, 0, 5000, 5000, 0, 0, 5000, 5000, 0, 0, 5000, 5000, 0, 5000};
+  private long alfa[] = {5, 0, 0, 5, 5, 0, 0, 10, 10, 0, 0, 10, 10, 0, 5};
+  private long beta[] = {5000, 0, 0, 5000, 5000, 0, 0, 5000, 5000, 0, 0, 5000, 5000, 0, 5000};
   private boolean conTiempo = false;
   private String secuenciaDisparos = "";
   private int contadorDisparosTotales = 0;

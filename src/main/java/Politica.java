@@ -16,21 +16,19 @@ public class Politica {
   private ArrayList<Set<Integer>> SegIzq = new ArrayList<>();
   private ArrayList<Set<Integer>> SegDer = new ArrayList<>();
   private Integer[][] contadorIzq = new Integer[3][2];
-  private Integer[][] contadorDer = new Integer[3][2]; 
+  private Integer[][] contadorDer = new Integer[3][2];
   private Integer[] contadorUltimoSegmento = new Integer[3];
   private ArrayList<Set<Integer>> segUltimo = new ArrayList<Set<Integer>>();
   private int contador_decisiones = 0;
+  private int decisionT9 = 0;
+  private int decisionT10 = 0;
   private boolean conTiempo;
   private  Scanner scanner;
   private boolean t1_antes_q_t2 = true;
   private boolean t5_antes_q_t6 = true;
   private boolean t9_antes_q_t10 = true;
   
-  /**
-   * Constructor de la clase Politica
-   */
-  public Politica() {
-    // Inicialización de contadores y segmentos
+  public Politica(){
     for (Integer[] row : contadorIzq) {
       for (int i = 0; i < row.length; i++) {
         row[i] = 0;
