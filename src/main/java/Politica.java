@@ -18,19 +18,18 @@ public class Politica {
   private Integer[][] contadorIzq = new Integer[3][2];
   private Integer[][] contadorDer = new Integer[3][2]; 
   private Integer[] contadorUltimoSegmento = new Integer[3];
-  private ArrayList<Set<Integer>> segUltimo=new ArrayList<Set<Integer>>();
-  private int contador_decisiones=0;
-  private boolean conTiempo; 
+  private ArrayList<Set<Integer>> segUltimo = new ArrayList<Set<Integer>>();
+  private int contador_decisiones = 0;
+  private boolean conTiempo;
   private  Scanner scanner;
-  private boolean t1_antes_q_t2=true;
-  private boolean t5_antes_q_t6=true;
-  private boolean t9_antes_q_t10=true;
+  private boolean t1_antes_q_t2 = true;
+  private boolean t5_antes_q_t6 = true;
+  private boolean t9_antes_q_t10 = true;
   
   /**
    * Constructor de la clase Politica
    */
-  public Politica(){
-
+  public Politica() {
     // Inicialización de contadores y segmentos
     for (Integer[] row : contadorIzq) {
       for (int i = 0; i < row.length; i++) {
@@ -45,17 +44,14 @@ public class Politica {
     for (int i = 0; i < contadorUltimoSegmento.length; i++) {
         contadorUltimoSegmento[i] = 0;
     }
-  
     // Agrega los segmentos 1 - 3 - 5 - 7 - 9 - 11 a la lista de segmentos izquierdos
     SegIzq.add(new HashSet<>(Arrays.asList(1, 3)));
     SegIzq.add(new HashSet<>(Arrays.asList(5, 7)));
     SegIzq.add(new HashSet<>(Arrays.asList(9, 11)));
-
     // Agrega los segmentos 2 - 4 - 6 - 8 - 10 - 12 a la lista de segmentos derechos
     SegDer.add(new HashSet<>(Arrays.asList(2, 4)));
     SegDer.add(new HashSet<>(Arrays.asList(6, 8)));
     SegDer.add(new HashSet<>(Arrays.asList(10, 12)));
-
     // El ultimo segmento es el 13 - 14
     segUltimo.add(new HashSet<>(Arrays.asList(0, 13, 14)));
   }
@@ -66,7 +62,7 @@ public class Politica {
    * @return true si la política es con tiempo, false si no
    */
   public boolean getConTiempo() {
-	  return conTiempo;
+    return conTiempo;
   }
   
   /**
@@ -75,7 +71,7 @@ public class Politica {
    * @param t booleano que indica si la política es con tiempo o no
    */
   public void setConTiempo(boolean t) {
-	  conTiempo=t;
+    conTiempo=t;
   }
   
   /**
@@ -84,16 +80,15 @@ public class Politica {
    * @param t entero que indica el tipo de política
    */
   public void setTipoPolitica(int t) {
-	  this.tipoDePolitica=t;
+    this.tipoDePolitica=t;
   }
   
   /** 
    * Getter de la cantidad de decisiones tomadas entre las transiciones del anteultimo segmento
-   
    * @return cantidad de decisiones tomadas
    */
   public int getContador_decisiones() { //TODO: revisar si se puede borrar
-	  return contador_decisiones;
+    return contador_decisiones;
   }
   
   /**
@@ -101,8 +96,8 @@ public class Politica {
    * 
    * @param transicion transición a actualizar
    */
-  public void actualizarContadorTransicion(int transicion){
-    switch(transicion){
+  public void actualizarContadorTransicion(int transicion) {
+    switch(transicion) {
       case 0: contadorUltimoSegmento[0]++; break;
       case 1: contadorIzq[0][0]++; break;
       case 2: contadorDer[0][0]++; break;
@@ -128,8 +123,8 @@ public class Politica {
    * @param transicion transición de interés
    * @return cantidad de veces que se disparó la transición
    */
-  public int getContadorTransicion(int transicion){
-    switch(transicion){
+  public int getContadorTransicion(int transicion) {
+    switch(transicion) {
       case 0: return contadorUltimoSegmento[0];
       case 1: return contadorIzq[0][0];
       case 2: return contadorDer[0][0];
@@ -155,17 +150,15 @@ public class Politica {
    * @return true si la ejecución es con tiempo, false si no.
    */
   public boolean elegirTipoTiempo(){
-	    int salida;   
-	    scanner.reset();
-	   
-	    System.out.println("Elige ejecución con o sin tiempo: \n");
-	    System.out.println("1. Con tiempo \n");
-	    System.out.println("2. Sin tiempo \n");
-	    salida = scanner.nextInt();
-	    System.out.println("mostrar scannertipotiempo:"+salida);
-	    
-      return salida==1; //TODO: es siempre con tiempo?
-	  }
+    int salida;
+    scanner.reset();
+    System.out.println("Elige ejecución con o sin tiempo: \n");
+    System.out.println("1. Con tiempo \n");
+    System.out.println("2. Sin tiempo \n");
+    salida = scanner.nextInt();
+    System.out.println("mostrar scannertipotiempo:" + salida);
+    return salida == 1; //TODO: es siempre con tiempo?
+  }
 
   /**
    * Método para elegir la política de disparo
@@ -173,31 +166,30 @@ public class Politica {
    * @return 1 si la política es balanceada, 2 si es izquierda favorecida
    */
   public int elegirPolitica(){
-	  scanner.reset();
+    scanner.reset();
     int salida;
-
     System.out.println("Elige un numero de politica: \n");
     System.out.println("1. Balanceada \n");
     System.out.println("2. Izquierda favorecida \n");
     salida = scanner.nextInt();
-    System.out.println("mostrar scannerpolitica:"+salida);
+    System.out.println("mostrar scannerpolitica:" + salida);
     //TODO: manejo de errores
-    return salida;   
+    return salida;
   }
 
   /**
    * Método que chequea el tipo de política y llama a la función correspondiente
    * 
-   * @param m 
+   * @param m
    * @return return de la función de política correspondiente (balanceada - izquierdaFavorecida)
    */
-  public int cual(double[] m){
-	    switch(tipoDePolitica){
-	        case 1: return  balanceada(m);
-	        case 2: return izquierdaFavorecida(m);
-	      default: return -1;
-	    }
-	  }
+  public int cual(double[] m) {
+    switch(tipoDePolitica) {
+        case 1: return  balanceada(m);
+        case 2: return izquierdaFavorecida(m);
+      default: return -1;
+    }
+  }
 
   /**
    * Método que ejerce la política de disparo balanceada
@@ -211,58 +203,53 @@ public class Politica {
    *  
    * @param m AND de sensibilizadas y no disparadas
   */
-  private int balanceada(double[] m){
-    int salida=0;
-   
+  private int balanceada(double[] m) {
+    int salida = 0;
     Random random1 = new Random();  // Random para elegir transición
-
     // Si T9 o T10 estan en m, me aseguro que estén si o si ambas, sino "filtro" m.
-    if(m[9]==1&&m[10]==0) {
-    	m[9]=0;
+    if (m[9] == 1 && m[10] == 0) {
+      m[9] = 0;
     }
-    if(m[9]==0&&m[10]==1) {
-    	m[10]=0;
+    if (m[9] == 0 && m[10] == 1) {
+      m[10] = 0;
     }
     ArrayList<Integer> mFiltrada = filtrarTransiciones(m);
-    
     // Genero un numero random para elegir una transicion
     salida=random1.nextInt(mFiltrada.size());
-    
     // %50 SEGMENTO A & SEGMENTO B
-    if((mFiltrada.get(salida)==1 || mFiltrada.get(salida)==2)&&(m[1]==1&&m[2]==1)){
-      if(t1_antes_q_t2) {
-        t1_antes_q_t2=false;
+    if ((mFiltrada.get(salida) == 1 || mFiltrada.get(salida) == 2) && (m[1] == 1 && m[2] == 1)) {
+      if (t1_antes_q_t2) {
+        t1_antes_q_t2 = false;
         return 1;
-      }else {
-        t1_antes_q_t2=true;
+      } else {
+        t1_antes_q_t2 = true;
         return 2;
       }
     }
-
     // %50 SEGMENTO C & SEGMENTO D
-    if((mFiltrada.get(salida)==5 || mFiltrada.get(salida)==6)&&(m[5]==1&&m[6]==1)){
-      if(t5_antes_q_t6) {
-        t5_antes_q_t6=false;
+    if ((mFiltrada.get(salida) == 5 || mFiltrada.get(salida) == 6) && (m[5] == 1 && m[6] == 1)) {
+      if (t5_antes_q_t6) {
+        t5_antes_q_t6 = false;
         return 5;
-      }else {
-        t5_antes_q_t6=true;
+      } else {
+        t5_antes_q_t6 = true;
         return 6;
       }
     }
     
     // %50 SEGMENTO E & SEGMENTO F
-    if((mFiltrada.get(salida)==9 || mFiltrada.get(salida)==10)&&(m[9]==1&&m[10]==1)){
+    if ((mFiltrada.get(salida) == 9 || mFiltrada.get(salida) == 10) && (m[9] == 1 && m[10] == 1)) {
       if(t9_antes_q_t10) {
-        t9_antes_q_t10=false;
+        t9_antes_q_t10 = false;
         return 9;
-      }else {
-        t9_antes_q_t10=true;
+      } else {
+        t9_antes_q_t10 = true;
         return 10;
       }
     }
    // Si no hay conflictos, elijo una transición al azar
-   return mFiltrada.get(salida); 
-  } 
+    return mFiltrada.get(salida);
+  }
 
   /**
    * Método que ejerce la política de disparo izquierda favorecida
@@ -276,16 +263,16 @@ public class Politica {
   */
   private int izquierdaFavorecida(double[] m) {
    // Chequeo que T9 y T10 estén sensibilizadas al mismo tiempo
-	 if(m[9]==1&&m[10]==1) {
-		 if(this.deboFavorecerIzquierda(9)) {
-			 return 9;
-		 }else {
-			 return 10;
-		 }
-	 }else { // Sino, llamo a la política balanceada
-		 return  balanceada(m);
-	 }
-}
+    if(m[9] == 1 && m[10] == 1) {
+      if (this.deboFavorecerIzquierda(9)) {
+        return 9;
+      } else {
+        return 10;
+      }
+    }else { // Sino, llamo a la política balanceada
+      return  balanceada(m);
+    }
+  }
   
   /**
    * Método para decidir si favorecer la izquierda o no, segun el %80.
@@ -296,17 +283,15 @@ public class Politica {
   private boolean deboFavorecerIzquierda(int transicion) {
     float contador9 = (float) getContadorTransicion(9);
     float contador10 = (float) getContadorTransicion(10);
-
     // Evitar división por cero
     if (contador9 + contador10 == 0) {
-      if(transicion==9){
+      if(transicion == 9){
         return true;
       }
-        return false; // TODO: ? 
+        return false; // TODO: ?
     }
-
     return (contador9 / (contador9 + contador10)) <= 0.8;
-}
+  }
 
   /**
    * Método que genera una lista con m "filtrada" para el caso de T9 y T10 sensibilizadas al mismo tiempo
@@ -314,7 +299,7 @@ public class Politica {
    * @param m AND de sensibilizadas y no disparadas SIN T9 o T10 
    * @return ArrayList de transiciones sensibilizadas y no disparadas "filtradas"
    */
-  public ArrayList<Integer> filtrarTransiciones(double[] m){
+  public ArrayList<Integer> filtrarTransiciones(double[] m) {
     ArrayList<Integer> lista = new ArrayList<>();
     for (int i = 0; i < m.length; i++) {
       if (m[i] == 1.0) {
@@ -327,17 +312,16 @@ public class Politica {
 
   // TODO: revisar si se puede borrar
   private boolean multiplesEsperando(double[] m){
-	  //es para que no genere stackoverflow 
+	  //es para que no genere stackoverflow
     int esperandosensibilizadas = 0;
-     for (int i = 0; i < m.length; i++) {
+    for (int i = 0; i < m.length; i++) {
       if (m[i] == 1.0) {
         esperandosensibilizadas++;
       }
     }
-    if(esperandosensibilizadas>1){
+    if(esperandosensibilizadas>1) {
       return true;
     }
     return false;
   }
-
 }
