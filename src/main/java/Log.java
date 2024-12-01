@@ -53,6 +53,4 @@ public class Log {
       mutex.release();
     }
   }
-	
-	
 }
