@@ -1,10 +1,9 @@
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.util.concurrent.*;
+import java.util.concurrent.Semaphore;
 
 /**
-* Clase Log  
+* Clase Log
 *
 * archivo: Archivo donde se guarda la información
 * horaInicial: Hora inicial del proceso
@@ -30,16 +29,16 @@ public class Log {
   private void crearLog() {
     archivo = new File(ruta);  //chequea si el archivo existe en la ruta
     try {
-      if (archivo.exists()&& !archivo.isDirectory()){
+      if (archivo.exists() && !archivo.isDirectory()){
         archivo.delete();  //si existe lo borra para que comience de cero
-      } 
+      }
       archivo.createNewFile();  //si no existe lo crea
-     } catch (Exception e) {
-        e.printStackTrace();
-     }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
-	public void escribirArchivo(String texto){
+	public void escribirArchivo(String texto) {
     try {
         mutex.acquire();
         FileWriter fw = new FileWriter(archivo, true); //agrega al final el nuevo texto cada vez que se llama
@@ -47,11 +46,11 @@ public class Log {
         fw.write("\n");
         fw.flush();
         fw.close();
-     } catch (Exception e) {
-        e.printStackTrace();
-     }
-     finally {
-        mutex.release();
-     }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    finally {
+      mutex.release();
+    }
   }
 }

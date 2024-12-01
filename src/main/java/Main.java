@@ -1,44 +1,35 @@
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.time.Instant;
 
 public class Main {
 
 	public static void main(String[] args) {
-		   String ruta="log";
-       String ruta_regex = "regex";
-		   int contador=1;
-	       int numEjecuciones = 5;
-         long tiempoInicial = System.currentTimeMillis();
-	        for (int i = 1; i <= numEjecuciones; i++) {
-            long tiempoActual = System.currentTimeMillis();
-            
-	            try {
-	                System.out.println("Ejecución " + i + ": ");
-	                // Llama al método principal de tu programa
-	                main2(ruta+contador+".txt", ruta_regex+contador+".txt");
-	                contador++;
-	                // Reemplaza con el nombre de tu clase principal
-	                System.out.println("Completada con éxito.");
-	            } catch(Exception e){
-
-	                System.out.println("Error en la ejecución " + i + ": " + e.getMessage());
-	                break;
-	            }
-              long tiempoFinal = System.currentTimeMillis();
-              System.out.println("Tiempo de ejecución: " + (tiempoFinal - tiempoActual)/1000 + "segundos.");
-	        }
-          long tiempoFinal = System.currentTimeMillis();
-          System.out.println("Tiempo promedio de ejecución: " + (tiempoFinal - tiempoInicial) / numEjecuciones/1000 + "segundos.");
+		String ruta = "log";
+    String ruta_regex = "regex";
+		int contador = 1;
+    int numEjecuciones = 5;
+    long tiempoInicial = System.currentTimeMillis();
+    for (int i = 1; i <= numEjecuciones; i++) {
+      long tiempoActual = System.currentTimeMillis();
+      try {
+        System.out.println("Ejecución " + i + ": ");
+        // Llama al método principal de tu programa
+        main2(ruta+contador+".txt", ruta_regex+contador+".txt");
+        contador++;
+        // Reemplaza con el nombre de tu clase principal
+        System.out.println("Completada con éxito.");
+      } catch(Exception e) {
+        System.out.println("Error en la ejecución " + i + ": " + e.getMessage());
+        break;
+      }
+      long tiempoFinal = System.currentTimeMillis();
+      System.out.println("Tiempo de ejecución: " + (tiempoFinal - tiempoActual)/1000 + "segundos.");
+    }
+    long tiempoFinal = System.currentTimeMillis();
+    System.out.println("Tiempo promedio de ejecución: " + (tiempoFinal - tiempoInicial) / numEjecuciones/1000 + "segundos.");
 	}
-	            
-	
-	
 	
   public static void main2(String ruta, String ruta_regex) {
-	  
-	
     ArrayList<Thread> hilos = new ArrayList<Thread>();
     FabricaDeHilos miFabrica = new FabricaDeHilos();
     Politica politica = new Politica();
@@ -49,7 +40,7 @@ public class Main {
     RedDePetri redp = new RedDePetri(log);
 
     ArrayList<ColaImagenes> plazasImagen=new ArrayList<ColaImagenes>();
-    for(int i=0;i<11;i++){
+    for(int i=0; i<11; i++) {
       plazasImagen.add(new ColaImagenes());
     }
     // 0  1  2  3  4  5   6   7    8   9  10
@@ -122,8 +113,7 @@ public class Main {
     exportador.setOrigen(plazasImagen.get(9));	//plaza 16
     exportador.setDestino(plazasImagen.get(10)); //plaza 17
     // transiciones t13 y t14
-	  
-       
+
     hilos.add(miFabrica.newThread(generadorDeImagenes));
 
     hilos.add(miFabrica.newThread(receptorIzq));
@@ -146,14 +136,12 @@ public class Main {
 
     hilos.add(miFabrica.newThread(exportador));
 	
-    hilos.forEach((hilo) -> hilo.start()); 
-    //System.out.println("");
-    int h=0;
+    hilos.forEach((hilo) -> hilo.start());
+    int h = 0;
     for (Thread hilo : hilos) {
         try {
-        	 System.out.println("join antes: "+h+"nombre"+hilo.getName()+" estado"+hilo.getState().toString());
+          System.out.println("join antes: "+h+"nombre"+hilo.getName()+" estado"+hilo.getState().toString());
           hilo.join(0);
-          
           System.out.println("join despues: "+h+"nombre"+hilo.getName()+" estado"+hilo.getState().toString());
           h++;
         } catch (InterruptedException e) {
