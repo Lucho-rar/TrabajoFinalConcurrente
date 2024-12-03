@@ -5,6 +5,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		String ruta="log";
+    String ruta_regex="log_regex";
     int contador=1;
     int numEjecuciones = 5;
     long tiempoInicial = System.currentTimeMillis();
@@ -12,16 +13,17 @@ public class Main {
     long tiempoFinal;
     String tiempoEjecucion;
     String tiempoPromedio;
-    Log log;
+    Log log, log_regex;
     Log tiempos = new Log("tiempos.txt", tiempoInicial);
     for (int i = 1; i <= numEjecuciones; i++) {
       tiempoActual = System.currentTimeMillis();
       log = new Log(ruta + contador + ".txt", tiempoActual);
+      log_regex = new Log(ruta_regex + contador + ".txt", tiempoActual);
       try {
         tiempos.escribirArchivo("Ejecución " + i + ": ");
           System.out.println("Ejecución " + i + ": ");
           // Llama al método principal de tu programa
-          main2(ruta+contador + ".txt", log);
+          main2(ruta+contador + ".txt", log, log_regex);
           contador++;
           // Reemplaza con el nombre de tu clase principal
           tiempos.escribirArchivo("Completada con éxito.");
@@ -41,7 +43,7 @@ public class Main {
     System.out.println(tiempoPromedio);
   }
 
-  public static void main2(String ruta,Log log) {
+  public static void main2(String ruta,Log log, Log log_regex) {
     ArrayList<Thread> hilos = new ArrayList<Thread>();
     FabricaDeHilos miFabrica = new FabricaDeHilos();
     Politica politica = new Politica();
