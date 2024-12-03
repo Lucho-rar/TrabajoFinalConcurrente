@@ -1,0 +1,102 @@
+@startuml
+
+actor "GeneradorDeImagenes" as GeneradorDeImagenes
+actor "Receptor" as Receptor
+
+participant "Monitor" as Monitor
+participant "RedDePetri" as RedDePetri
+participant "Politica" as Politica
+participant "ColaTransiciones" as ColaTransiciones
+participant "Semaphore" as Semaphore
+
+GeneradorDeImagenes -> Monitor: dispararTransicion(transicion, procesador)
+activate GeneradorDeImagenes
+activate Monitor
+Monitor -> Semaphore: acquire()
+activate Semaphore
+Semaphore --> Monitor: return;
+deactivate Semaphore
+critical seccion critica
+  Monitor -> Monitor: k = true
+  loop k==true
+    alt getCorriendo()
+      Monitor -> RedDePetri: dispararTransicionConTiempo(transicion, mutex)
+      activate RedDePetri
+      alt isSensibilizada(transicion)
+        alt testVentanaTiempo(tiempoActual, transicion)
+          alt !esperando[transicion]
+            RedDePetri -> RedDePetri: setNuevoTimeStamp(transicion)
+            RedDePetri -> RedDePetri: getTransicionesSensibilizadas()
+            RedDePetri -> RedDePetri: Actualizamos marcado actual
+            RedDePetri -> RedDePetri: actualizarTimeStamp()
+            RedDePetri -> RedDePetri: Actualizamos secuencia disparos
+            RedDePetri --> Monitor: return true;
+            deactivate RedDePetri
+          else
+            RedDePetri --> Monitor: return false;
+          end
+        end
+      else
+        RedDePetri --> Monitor: return false;
+      end
+    end
+    alt disparo exitoso
+      Monitor -> GeneradorDeImagenes: operar(transicion)
+      GeneradorDeImagenes --> Monitor: return;
+      Monitor -> Politica: actualizarContadorTransicion(transicion)
+      activate Politica
+      Politica --> Monitor: return;
+      deactivate Politica
+      Monitor -> RedDePetri: getTransicionesSensibilizadas()
+      activate  RedDePetri
+      RedDePetri --> Monitor: return sensibilizadas;
+      deactivate RedDePetri
+      Monitor -> ColaTransiciones: quienesEstan()
+      activate ColaTransiciones
+      ColaTransiciones --> Monitor: return colaNoDisparados;
+      deactivate ColaTransiciones
+      Monitor -> Monitor: Se calcula m[]
+      alt m no esta vacio
+        Monitor -> Politica: cual(m)
+        activate Politica
+        Politica -> Politica: balanceada(m)
+        Politica --> Monitor: transicionElegida
+        deactivate Politica
+        Monitor -> ColaTransiciones: desencolar(transicionElegida)
+        activate ColaTransiciones
+        ColaTransiciones -> ColaTransiciones: get(transicionElegida).release()
+        ColaTransiciones --> Monitor: return;
+        deactivate ColaTransiciones
+        Monitor --> GeneradorDeImagenes: return;
+        deactivate GeneradorDeImagenes
+      else
+        Monitor -> Monitor: k = false
+      end
+    else
+      Monitor -> Semaphore: release()
+      activate Semaphore
+      Semaphore --> Monitor: return;
+      deactivate Semaphore
+      Monitor -> ColaTransiciones: encolar(transicion)
+      activate ColaTransiciones
+      ColaTransiciones -> ColaTransiciones: get(transicionElegida).acquire()
+      ColaTransiciones --> Monitor: return;
+      deactivate ColaTransiciones
+      Monitor -> Receptor: Activa hilo
+      activate Receptor
+      deactivate Receptor
+      Monitor -> Monitor: k = true
+    end
+  end
+    Monitor -> Semaphore: release();
+    activate Semaphore
+    Semaphore --> Monitor: return;
+    deactivate Semaphore
+end
+Monitor --> GeneradorDeImagenes: return;
+activate GeneradorDeImagenes
+deactivate GeneradorDeImagenes
+deactivate Monitor
+
+
+@enduml
