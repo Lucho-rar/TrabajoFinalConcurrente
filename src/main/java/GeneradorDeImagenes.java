@@ -1,6 +1,5 @@
 public class GeneradorDeImagenes extends Procesador implements Runnable {
 
-  RedDePetri rdp;
   private int cont=0;
 
   //TODO: no se hace nada con la rdp, sacar?
