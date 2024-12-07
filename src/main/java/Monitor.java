@@ -90,7 +90,7 @@ public class Monitor {
 		while (k) {
 			// Si el sistema no sigue corriendo, se libera el mutex y se retorna 
 			if(getCorriendo()) {
-				k = rdp.dispararTransicionConTiempo(transicion, mutex);
+				k = rdp.dispararTransicionConTiempo(transicion);
 			} else {
 				mutex.release();
 				return;
@@ -159,16 +159,6 @@ public class Monitor {
 	}
 
 	/**
-	 * Método para obtener la cantidad de tokens en una plaza
-	 * 
-	 * @param plaza Número de la plaza
-	 * @return int Cantidad de tokens en la plaza
-	 */
-	public double cantidadTokensPlaza(int plaza) {
-		return rdp.getCantidadTokensPlaza(plaza);
-	}
-
-	/**
 	 * Método para actualizar el contador de invariantes
 	 * 
 	 * @param imagen Imagen a la que se le actualiza el contador de invariantes
@@ -193,19 +183,5 @@ public class Monitor {
 			// Log de Secuencia de disparos para regex
 			log_regex.escribirArchivo(this.rdp.getSecuenciaDisparos());
 		}
-	}
-
-	/**		//TODO: Consulta!
-	 * Método para obtener M en string
-	 * 
-	 * @return String M en string
-	 */
-	public String getMComoString() {
-		String salida = "{";
-		for (int i = 0; i < m.length; i++) {
-			salida += m[i] + ",";
-		}
-		salida += "}";
-		return salida;
 	}
 }

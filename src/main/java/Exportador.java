@@ -6,26 +6,15 @@ public class Exportador extends Procesador implements Runnable {
     super(nombre_hilo, monitor, log,transicion_1);
     transicion2 = transicion_2;
   }
-
-  //TODO: revisar si se puede sacar todo lo de Trans2
-  public int getTransicion2(){
-    return transicion2;
-  }
   
   @Override
   public void run(){
-    try{
-      Thread.sleep(100);
-    } catch(InterruptedException e) {
-      throw new RuntimeException(e);
-    }
     while(miMonitor.getCorriendo()) {
       this.miMonitor.dispararTransicion(this.getTransicion1(), this);
       this.miMonitor.dispararTransicion(transicion2, this);
     }
   }
   
-  //TODO: revisar si se puede sacar todo lo de operar
   @Override
   public void operar(int transicion) {
     if(transicion == transicion1) {
@@ -39,11 +28,5 @@ public class Exportador extends Procesador implements Runnable {
         miLog.escribirArchivo("Error Exportador. Lista Destino no tiene imagenes");
       }
     }
-  }
-
-  //TODO: revisar si se puede sacar todo lo de perteneceTransicion
-  @Override
-  public boolean perteneceTransicion(int transicion) {
-    return this.getTransicion1() == transicion || this.transicion2 == transicion;
   }
 }

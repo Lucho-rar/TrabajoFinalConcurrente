@@ -14,12 +14,6 @@ public class FabricaDeHilos implements ThreadFactory{
     counter = 0;
   }
 
-  //TODO: revisar si se puede sacar todo lo del counter
-  // Metodo que retorna el contador
-  public int getCounter() {
-    return this.counter;
-  }
-
   // Metodo que crea un nuevo hilo
   @Override
   public Thread newThread(Runnable r) {
