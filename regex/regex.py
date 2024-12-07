@@ -20,11 +20,11 @@ def procesar_archivo(archivo):
 
     # Verificar el resultado
     if linea_actual[0] == "":
-        print("PROCESO COMPLETADO EXITOSAMENTE")
+        print("PROCES COOMPLETADO EXITOSAMENTE")
     else:
         print("OCURRIÓ UN ERROR")
 
 # Abrir el archivo de entrada
-nombre_archivo = "log_test_regex.txt"  # Archivo de registro
+nombre_archivo = "regex1.txt"  # Archivo de registro
 with open(nombre_archivo, "r") as archivo_log:
     procesar_archivo(archivo_log)
