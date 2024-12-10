@@ -90,14 +90,13 @@ public class Monitor {
 		while (k) {
 			// Si el sistema no sigue corriendo, se libera el mutex y se retorna 
 			if(getCorriendo()) {
-				k = rdp.dispararTransicionConTiempo(transicion, mutex);
+				k = rdp.dispararTransicionConTiempo(transicion, procesador);
 			} else {
 				mutex.release();
 				return;
 			}
 			// Si se pudo disparar la transición, opero. Si no, encolo la transición y seteo k en false
 			if (k) {
-				procesador.operar(transicion);	// Se opera la transición
 				miPolitica.actualizarContadorTransicion(transicion);  // Actualizo el contador de transiciones
 				sensibilizadas = rdp.getTransicionesSensibilizadas(); // Obtengo las transiciones sensibilizadas
 				colaNoDisparados = miColaTransiciones.quienesEstan(); // Obtengo las transiciones no disparadas - encoladas 
@@ -159,16 +158,6 @@ public class Monitor {
 	}
 
 	/**
-	 * Método para obtener la cantidad de tokens en una plaza
-	 * 
-	 * @param plaza Número de la plaza
-	 * @return int Cantidad de tokens en la plaza
-	 */
-	public double cantidadTokensPlaza(int plaza) {
-		return rdp.getCantidadTokensPlaza(plaza);
-	}
-
-	/**
 	 * Método para actualizar el contador de invariantes
 	 * 
 	 * @param imagen Imagen a la que se le actualiza el contador de invariantes
@@ -193,19 +182,5 @@ public class Monitor {
 			// Log de Secuencia de disparos para regex
 			log_regex.escribirArchivo(this.rdp.getSecuenciaDisparos());
 		}
-	}
-
-	/**		//TODO: Consulta!
-	 * Método para obtener M en string
-	 * 
-	 * @return String M en string
-	 */
-	public String getMComoString() {
-		String salida = "{";
-		for (int i = 0; i < m.length; i++) {
-			salida += m[i] + ",";
-		}
-		salida += "}";
-		return salida;
 	}
 }

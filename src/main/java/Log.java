@@ -13,14 +13,12 @@ import java.util.concurrent.Semaphore;
 public class Log {
   
   private File archivo;
-  private long horaInicial;
   private String ruta;
   private Semaphore mutex = new Semaphore(1);
   
   //constructor
-  public Log(String ruta, long horaInicial){
+  public Log(String ruta){
     this.ruta = ruta;
-    this.horaInicial = horaInicial;
     this.crearLog();
   }
   

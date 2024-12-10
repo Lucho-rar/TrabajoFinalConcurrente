@@ -6,11 +6,6 @@ public class CargaDeImagenes extends Procesador implements Runnable {
 
   @Override
   public void run() {
-    try {
-      Thread.sleep(100);
-    } catch(InterruptedException e) {
-      throw new RuntimeException(e);
-    }
     while(miMonitor.getCorriendo()) {
       this.miMonitor.dispararTransicion(this.getTransicion1(), this);
     }

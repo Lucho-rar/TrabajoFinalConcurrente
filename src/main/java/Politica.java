@@ -19,9 +19,6 @@ public class Politica {
   private Integer[][] contadorDer = new Integer[3][2];
   private Integer[] contadorUltimoSegmento = new Integer[3];
   private ArrayList<Set<Integer>> segUltimo = new ArrayList<Set<Integer>>();
-  private int contador_decisiones = 0;
-  private int decisionT9 = 0;
-  private int decisionT10 = 0;
   private boolean conTiempo;
   private  Scanner scanner;
   private boolean t1_antes_q_t2 = true;
@@ -79,14 +76,6 @@ public class Politica {
    */
   public void setTipoPolitica(int t) {
     this.tipoDePolitica=t;
-  }
-  
-  /** 
-   * Getter de la cantidad de decisiones tomadas entre las transiciones del anteultimo segmento
-   * @return cantidad de decisiones tomadas
-   */
-  public int getContador_decisiones() { //TODO: revisar si se puede borrar
-    return contador_decisiones;
   }
   
   /**
@@ -297,7 +286,7 @@ public class Politica {
    * @param m AND de sensibilizadas y no disparadas SIN T9 o T10 
    * @return ArrayList de transiciones sensibilizadas y no disparadas "filtradas"
    */
-  public ArrayList<Integer> filtrarTransiciones(double[] m) {
+  private ArrayList<Integer> filtrarTransiciones(double[] m) {
     ArrayList<Integer> lista = new ArrayList<>();
     for (int i = 0; i < m.length; i++) {
       if (m[i] == 1.0) {
@@ -305,21 +294,5 @@ public class Politica {
       }
     }
     return lista;
-}
-
-
-  // TODO: revisar si se puede borrar
-  private boolean multiplesEsperando(double[] m){
-	  //es para que no genere stackoverflow
-    int esperandosensibilizadas = 0;
-    for (int i = 0; i < m.length; i++) {
-      if (m[i] == 1.0) {
-        esperandosensibilizadas++;
-      }
-    }
-    if(esperandosensibilizadas>1) {
-      return true;
-    }
-    return false;
   }
 }

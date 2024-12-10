@@ -25,17 +25,9 @@ public abstract class Procesador {
   public void setNombreHilo(String nombre) {
     this.nombre_hilo = nombre;
   }
-
-  public String getNombreHilo() {
-    return this.nombre_hilo;
-  }
   
   public int getTransicion1() {
     return this.transicion1;
-  }
-
-  public boolean perteneceTransicion(int transicion) {
-    return this.transicion1 == transicion;
   }
   
   public void setOrigen(ColaImagenes origen) {

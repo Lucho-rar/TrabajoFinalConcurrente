@@ -9,12 +9,10 @@ import java.util.concurrent.Semaphore;
 */
 public class ColaTransiciones {
   private double[] lista;
-  private Semaphore mutex;
   private ArrayList<Semaphore> colaTransiciones;
 
   // constructor
   public ColaTransiciones() {
-    mutex = new Semaphore(1);
     lista = new double[15];
     inicializarColaTransiciones();
   }
@@ -46,7 +44,7 @@ public class ColaTransiciones {
     return lista;
   }
   
-  public void inicializarColaTransiciones() {
+  private void inicializarColaTransiciones() {
     colaTransiciones = new ArrayList<Semaphore>();
     for(int i = 0; i < 15; i++)
       colaTransiciones.add(new Semaphore(0, true));
