@@ -142,6 +142,8 @@ class FabricaDeHilos {
   + newThread(Runnable r): Thread
 }
 
+interface Runnable{}
+
 package "Procesadores"{
   class GeneradorDeImagenes
   class Receptor
@@ -162,7 +164,7 @@ Main *-- Monitor
 Main *-- Procesadores
 Main ..> Thread
 Procesadores --|> Procesador
-Procesadores ..> Thread
+Procesadores ..> Runnable
 Monitor o-- RedDePetri
 Monitor o-- Politica
 Monitor *-- ColaTransiciones
