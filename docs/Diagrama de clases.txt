@@ -100,7 +100,7 @@ class Log {
   + escribirArchivo(String texto)
 }
 
-class Procesador {
+abstract class Procesador {
   - String nombre
   - String nombre_hilo
   - Monitor miMonitor
