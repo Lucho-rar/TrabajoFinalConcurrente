@@ -30,6 +30,8 @@ critical seccion critica
             RedDePetri -> RedDePetri: Actualizamos marcado actual
             RedDePetri -> RedDePetri: actualizarTimeStamp()
             RedDePetri -> RedDePetri: Actualizamos secuencia disparos
+            RedDePetri -> GeneradorDeImagenes: operar(transicion)
+            GeneradorDeImagenes --> RedDePetri: return;
             RedDePetri --> Monitor: return true;
             deactivate RedDePetri
           else
@@ -41,8 +43,6 @@ critical seccion critica
       end
     end
     alt disparo exitoso
-      Monitor -> GeneradorDeImagenes: operar(transicion)
-      GeneradorDeImagenes --> Monitor: return;
       Monitor -> Politica: actualizarContadorTransicion(transicion)
       activate Politica
       Politica --> Monitor: return;
@@ -82,7 +82,7 @@ critical seccion critica
       ColaTransiciones -> ColaTransiciones: get(transicionElegida).acquire()
       ColaTransiciones --> Monitor: return;
       deactivate ColaTransiciones
-      Monitor -> Receptor: Activa hilo
+      Monitor -> Receptor: Se activa hilo
       activate Receptor
       deactivate Receptor
       Monitor -> Monitor: k = true
