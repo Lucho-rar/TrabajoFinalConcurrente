@@ -90,14 +90,13 @@ public class Monitor {
 		while (k) {
 			// Si el sistema no sigue corriendo, se libera el mutex y se retorna 
 			if(getCorriendo()) {
-				k = rdp.dispararTransicionConTiempo(transicion);
+				k = rdp.dispararTransicionConTiempo(transicion, procesador);
 			} else {
 				mutex.release();
 				return;
 			}
 			// Si se pudo disparar la transición, opero. Si no, encolo la transición y seteo k en false
 			if (k) {
-				procesador.operar(transicion);	// Se opera la transición
 				miPolitica.actualizarContadorTransicion(transicion);  // Actualizo el contador de transiciones
 				sensibilizadas = rdp.getTransicionesSensibilizadas(); // Obtengo las transiciones sensibilizadas
 				colaNoDisparados = miColaTransiciones.quienesEstan(); // Obtengo las transiciones no disparadas - encoladas 

@@ -156,7 +156,7 @@ public class RedDePetri {
     conTiempo = false;
   }
   
-  public Boolean dispararTransicionConTiempo(int transicion) {
+  public Boolean dispararTransicionConTiempo(int transicion, Procesador procesador) {
 		RealMatrix sensibilizadasCopy;
 		if (getContadorTotalInvariantes() < 200 && isSensibilizada(transicion)	) {
 		    long tiempoActual = System.currentTimeMillis();
@@ -176,6 +176,7 @@ public class RedDePetri {
 		        //hay que actualizar las marcas de tiempo de las transiciones que cambiaron de sensibilización 
 		        actualizarTimeStamp( sensibilizadasCopy, this.getTransicionesSensibilizadas());
 		        secuenciaDisparos += "T" + transicion;
+            procesador.operar(transicion);
 		        return true;
 		      } else {
 		        //está esperando
@@ -204,6 +205,7 @@ public class RedDePetri {
 			          //hay que actualizar las marcas de tiempo de las transiciones que cambiaron de sensibilización 
 			          actualizarTimeStamp( sensibilizadasCopy, this.getTransicionesSensibilizadas());
 			          secuenciaDisparos+="T"+transicion;
+                procesador.operar(transicion);
 			          return true;
 					} catch(InterruptedException e) {
 			          // TODO Auto-generated catch block
