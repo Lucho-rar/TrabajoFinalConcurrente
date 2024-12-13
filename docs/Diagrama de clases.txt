@@ -2,7 +2,7 @@
 
 class Main {
   + main()
-  + ejecucion(String ruta,Log log, Log log_regex)
+  + ejecucion(String ruta,Log log, Log log_regex, boolean conTiempo, int tipoPolitica)
 }
 
 class Monitor {
@@ -43,7 +43,9 @@ class RedDePetri {
   - boolean conTiempo
   - String secuenciaDisparos
   - boolean[] esperando
+  - final int invariantesMax
   + RedDePetri(Log log)
+  + getInvariantesMax(): int
   + setConTiempo()
   + setSinTiempo()
   + dispararTransicionConTiempo(int transicion, Semaphore mutexMonitor): Boolean
@@ -59,6 +61,7 @@ class RedDePetri {
   + actualizarContadorInvariante(Imagen imagen)
   + getCantidadTokensPlaza(int plaza): double
   + getContadorTotalInvariantes(): int
+  + getCantidadPlazasRdP(): int
 }
 
 class Politica {
@@ -70,7 +73,6 @@ class Politica {
   - Integer[] contadorUltimoSegmento
   - ArrayList<Set<Integer>> segUltimo
   - boolean conTiempo
-  - Scanner scanner
   - boolean t1_antes_q_t2
   - boolean t5_antes_q_t6
   - boolean t9_antes_q_t10
@@ -80,8 +82,6 @@ class Politica {
   + setTipoPolitica(int t)
   + actualizarContadorTransicion(int transicion)
   + getContadorTransicion(int transicion): int
-  + elegirTipoTiempo(): boolean
-  + elegirPolitica(): int
   + cual(double[] m): int
 }
 
