@@ -1,138 +1,137 @@
-
-//import java.util.concurrent.*;
-//import org.apache.commons.math3.linear.MatrixUtils;
-import java.util.Collection;
-import java.util.Set;
 import java.util.concurrent.Semaphore;
-import java.util.ArrayList;
 
 import org.apache.commons.math3.linear.RealMatrix;
 
 /**
- * Clase Monitor
+ *  Clase Monitor
+ * 
+ * Esta clase se encarga de controlar el flujo de la red de petri
+ * 
  */
 public class Monitor {
 
-	private RedDePetri rdp;
-	private Politica miPolitica;
+	private RedDePetri rdp; // Red de Petri
+	private Politica miPolitica; // Política de disparo
+	private ColaTransiciones miColaTransiciones; // Cola de transiciones
+	private Semaphore mutex; // Mutex
+	private RealMatrix sensibilizadas; // Transiciones sensibilizadas
+	private double[] colaNoDisparados; // No disparados
+	private double[] m; // AND de sensibilizadas y no disparados
+	private Log log; // Log
+	private Log log_regex; // Log para regex
+	private boolean corriendo; // Boolean para saber si el sistema sigue ejecutandose
 
-	private ColaTransiciones miColaTransiciones;
+	/**
+	 * Constructor de la clase Monitor
+	 * 
+	 * @param redp Red de Petri
+	 * @param mp Política de disparo
+	 * @param log Log
+	 */
 
-	private Semaphore mutex;
-
-	private RealMatrix sensibilizadas;
-	private double[] colaNoDisparados;
-	private double[] m; // t0
-
-	private Log log;
-	private boolean corriendo;
-
-	public Monitor(RedDePetri redp, Politica mp, Log log) {
+	public Monitor(RedDePetri redp, Politica mp, Log log, Log log_regex) {
+		// Inicialización de variables y objetos
 		rdp = redp;
 		miPolitica = mp;
-
 		miColaTransiciones = new ColaTransiciones();
 		m = new double[15];
 		mutex = new Semaphore(1, false);
 		this.log = log;
+		this.log_regex = log_regex;
+		
+		// Chequeo si la politica es con o sin tiempo
 		if (miPolitica.getConTiempo()) {
 			rdp.setConTiempo();
 		} else {
 			rdp.setSinTiempo();
 		}
 		corriendo = true;
-
 	}
 
+	/**
+	 * Método de finalización de ejecución del sistema
+	 *
+	 * Se fija si el sistema sigue corriendo y si no, desencola las transiciones que quedaron en la cola.
+	 */
 	public void setMatarEjecucion() {
-		
 		corriendo = false;
-		double[] saliendo=this.miColaTransiciones.quienesEstan();
-		for (int i=0;i<saliendo.length;i++) {
-			if(saliendo[i]==1) {
+		double[] saliendo = this.miColaTransiciones.quienesEstan();
+		for (int i = 0; i < saliendo.length; i++) {
+			if(saliendo[i] == 1) {
 				this.miColaTransiciones.desencolar(i);
 			}
 		}
-		
 	}
 
+	/**
+	 * Getter de la variable corriendo
+	 * 
+	 * @return True si el sistema sigue corriendo, False si no
+	 */
 	public boolean getCorriendo() {
 		return corriendo;
 	}
 
+	/**
+	 * Método para disparar una transición en la red de petri
+	 * 
+	 * @param transicion Transición a disparar
+	 * @param procesador Hilo que dispara la transición
+	 */
 	public void dispararTransicion(int transicion, Procesador procesador) {
-        
-        	try {
-    			mutex.acquire();
-    		} catch (InterruptedException e) {
-    			throw new RuntimeException(e);
-    		}
-
-    		int transicionElegida;
-    		Boolean k = true;
-
-    		while (k) {
-                if(getCorriendo()) {
-                	k = rdp.dispararTransicionConTiempo(transicion, mutex);
-                	
-                }else {
-                	mutex.release();
-                	return;
-    			}
-    			if (k) {
-					//log.escribirArchivo("Y pude disparar\n");
-    				procesador.operar(transicion);
-    				miPolitica.actualizarContadorTransicion(transicion);
-
-    				sensibilizadas = rdp.getTransicionesSensibilizadas();
-
-    				colaNoDisparados = miColaTransiciones.quienesEstan();
-
-    				for (int i = 0; i < colaNoDisparados.length; i++) {
-    					// Aplicar la operación AND a cada elemento en la fila correspondiente
-    					m[i] = (sensibilizadas.getEntry(0, i) == 1.0 && colaNoDisparados[i] == 1.0) ? 1.0 : 0.0;
-    				}
-
-    				/*
-    				 * String salida="{"; for(int i=0;i<m.length;i++) { salida+=m[i]+","; }
-    				 * salida+="}"; log.escribirArchivo("con tiempo m="+salida);
-    				 */
-    				if(this.contadorM(m)==1&&(m[9]==1||m[10]==1)) {
-    					mutex.release();
-    					return;
-    					
-    				}
-    				if (recorrer(m)) {
-    					/*
-    					if (m[14] == 1) {
-    						transicionElegida = 14;
-    						log.escribirArchivo("Elegí la transición 14");
-    					} else {*/
-    					transicionElegida = miPolitica.cual(m); // esto nos debería entregar un entero
-    					//}
-
-    					miColaTransiciones.desencolar(transicionElegida);
-    					// mutex.release();
-    					return;
-    				} else {
-    					k = false;
-    				}
-    			} else {
-					//log.escribirArchivo("No pude disparar\n, estado de colas: "+miColaTransiciones.quienesEstanComoString()+"\n");
-					//log.escribirArchivo("esperando: " + rdp.getEsperando()[transicion] + "\n");
-    				mutex.release();
-    				miColaTransiciones.encolar(transicion);
-    				k = true;
-    			}
-
-    		}
-                
-    		mutex.release();
-
-        
-		
+			// Intenta adquirir el mutex
+		try {
+			mutex.acquire();
+		} catch(InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+		int transicionElegida; // Transición elegida
+    	Boolean k = true; // Boolean para saber si se pudo disparar la transición
+		while (k) {
+			// Si el sistema no sigue corriendo, se libera el mutex y se retorna 
+			if(getCorriendo()) {
+				k = rdp.dispararTransicionConTiempo(transicion, procesador);
+			} else {
+				mutex.release();
+				return;
+			}
+			// Si se pudo disparar la transición, opero. Si no, encolo la transición y seteo k en false
+			if (k) {
+				miPolitica.actualizarContadorTransicion(transicion);  // Actualizo el contador de transiciones
+				sensibilizadas = rdp.getTransicionesSensibilizadas(); // Obtengo las transiciones sensibilizadas
+				colaNoDisparados = miColaTransiciones.quienesEstan(); // Obtengo las transiciones no disparadas - encoladas 
+				// Realiza la AND de sensibilizadas y no disparados
+				for (int i = 0; i < colaNoDisparados.length; i++) {
+					m[i] = (sensibilizadas.getEntry(0, i) == 1.0 && colaNoDisparados[i] == 1.0) ? 1.0 : 0.0;
+				}
+				// Si M solo contiene una transición sensibilizada y es la 9 o la 10, se libera el mutex y se retorna 
+				if(this.contadorM(m) == 1 && (m[9] == 1 || m[10] == 1)) {
+					mutex.release();
+					return;
+				}
+				// Me fijo si hay alguna transición en M. Si hay, llamo a la política para que elija una y la desencolo. Si no, seteo k en false
+				if (recorrer(m)) {
+					transicionElegida = miPolitica.cual(m); 
+					miColaTransiciones.desencolar(transicionElegida);
+					return;
+				} else {
+					k = false;
+				}
+			} else {
+				mutex.release();
+				miColaTransiciones.encolar(transicion);
+				k = true;
+			}
+		}
+		mutex.release();
 	}
 
+	/**
+	 * Método para recorrer m y ver si tiene alguna transición para poder disparar
+	 * 
+	 * @param m Vector de transiciones sensibilizadas y no disparadas
+	 * @return True si hay alguna transición para disparar, False si no
+	*/
 	public boolean recorrer(double[] m) {
 		for (int i = 0; i < m.length; i++) {
 			if (m[i] == 1.0) {
@@ -141,8 +140,15 @@ public class Monitor {
 		}
 		return false;
 	}
+
+	/**
+	 * Método para contar la cantidad de transiciones sensibilizadas y no disparadas - Size de M
+	 * 
+	 * @param m Vector de transiciones sensibilizadas y no disparadas
+	 * @return Cantidad de transiciones sensibilizadas y no disparadas
+	*/
 	public int contadorM(double[] m) {
-		int contador=0;
+		int contador = 0;
 		for (int i = 0; i < m.length; i++) {
 			if (m[i] == 1.0) {
 				contador++;
@@ -151,53 +157,30 @@ public class Monitor {
 		return contador;
 	}
 
-	public double cantidadTokensPlaza(int plaza) {
-		return rdp.getCantidadTokensPlaza(plaza);
-	}
-
+	/**
+	 * Método para actualizar el contador de invariantes
+	 * 
+	 * @param imagen Imagen a la que se le actualiza el contador de invariantes
+	 */
 	public void contadorInvariantes(Imagen imagen) {
-		 
-		rdp.actualizarContadorInvariante(imagen);
-		/*
-		if (miPolitica.getContador_decisiones() > 0) {
-			this.log.escribirArchivo("1cantidad de veces que se decidió entre t9 y t10:"
-					+ this.miPolitica.getContador_decisiones() + " decision9:"
-					+ ((float) miPolitica.getDecisionT9() / (float) miPolitica.getContador_decisiones()) * 100 + "%"
-					+ " decision10:"
-					+ ((float) miPolitica.getDecisionT10() / (float) miPolitica.getContador_decisiones()) * 100 + "%");
-		} else {
-			this.log.escribirArchivo("2cantidad de veces que se decidió entre t9 y t10:"
-					+ this.miPolitica.getContador_decisiones() + " decision9:" + miPolitica.getDecisionT9()
-					+ " decision10:" + miPolitica.getDecisionT10());
-		}
-					*/
-		if (rdp.getContadorTotalInvariantes() >= 200) {
-			rdp.logearInvariantes();
-			this.setMatarEjecucion();
-			String salida="";
-			for(int i=0;i<19;i++) {
-				
-				salida+="P("+i+"):"+rdp.getCantidadTokensPlaza(i)+" ";
+		rdp.actualizarContadorInvariante(imagen); // Actualiza el contador de invariantes en la red de petri
+		// Limite para X ejecuciones (200 por consigna)
+		if (rdp.getContadorTotalInvariantes() >= rdp.getInvariantesMax()) {
+			rdp.logearInvariantes(); //Loguea los invariantes
+			this.setMatarEjecucion(); // Finaliza la ejecución del sistema
+			String salida = "";
+			// Log de Plazas
+			for(int i = 0; i < rdp.getCantidadPlazasRdP(); i++) {
+				salida += "P(" + i + "):" + rdp.getCantidadTokensPlaza(i) + " ";
 			}
-			log.escribirArchivo("Red de Petri "+ salida + "\n");
+			log.escribirArchivo("Red de Petri " + salida + "\n");
+			// Log de Transiciones por segmento
 			log.escribirArchivo("SA(T1-T3): " + miPolitica.getContadorTransicion(3) + " SB(T2-T4): "
-					+ miPolitica.getContadorTransicion(4) + " SC(T5-T7): " + miPolitica.getContadorTransicion(7)
-					+ " SD(T6-T8): " + miPolitica.getContadorTransicion(8) + " SE(T9-T11): "
-					+ miPolitica.getContadorTransicion(11) + " SF(T10-T12):" + miPolitica.getContadorTransicion(12));
-			log.escribirArchivo("secuenciaDisparos="+this.rdp.getSecuenciaDisparos());
-			
-			
+				+ miPolitica.getContadorTransicion(4) + " SC(T5-T7): " + miPolitica.getContadorTransicion(7)
+				+ " SD(T6-T8): " + miPolitica.getContadorTransicion(8) + " SE(T9-T11): "
+				+ miPolitica.getContadorTransicion(11) + " SF(T10-T12):" + miPolitica.getContadorTransicion(12));
+			// Log de Secuencia de disparos para regex
+			log_regex.escribirArchivo(this.rdp.getSecuenciaDisparos());
 		}
-
 	}
-
-	public String getMComoString() {
-		String salida = "{";
-		for (int i = 0; i < m.length; i++) {
-			salida += m[i] + ",";
-		}
-		salida += "}";
-		return salida;
-	}
-
 }

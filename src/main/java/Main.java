@@ -1,77 +1,88 @@
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.time.Instant;
+import java.util.Scanner;
+
 
 public class Main {
 
 	public static void main(String[] args) {
-		   String ruta="log";
-		   int contador=1;
-	       int numEjecuciones = 5;
-         long tiempoInicial = System.currentTimeMillis();
-         long tiempoActual;
-         long tiempoFinal;
-         String tiempoEjecucion;
-         String tiempoPromedio;
-         Log log;
-         Log tiempos=new Log("tiempos.txt", tiempoInicial);
-	        for (int i = 1; i <= numEjecuciones; i++) {
-	        	tiempoActual = System.currentTimeMillis();
-	        	log=new Log(ruta+contador+".txt", tiempoActual);
-	            try {
-	            	tiempos.escribirArchivo("Ejecución " + i + ": ");
-	                System.out.println("Ejecución " + i + ": ");
-	                // Llama al método principal de tu programa
-	                main2(ruta+contador+".txt",log);
-	                contador++;
-	                // Reemplaza con el nombre de tu clase principal
-	                tiempos.escribirArchivo("Completada con éxito.");
-	                System.out.println("Completada con éxito.");
-	            } catch(Exception e){
-
-	                System.out.println("Error en la ejecución " + i + ": " + e.getMessage());
-	                break;
-	            }
-              tiempoFinal = System.currentTimeMillis();
-              tiempoEjecucion="Tiempo de ejecución: " + (tiempoFinal - tiempoActual) + " milisegundos.";
-              tiempos.escribirArchivo(tiempoEjecucion);
-              System.out.println(tiempoEjecucion);
-	        }
+		String ruta="log";
+	    String ruta_regex="log_regex";
+	    int contador=1;
+	    int numEjecuciones = 5;
+	    long tiempoInicial = System.currentTimeMillis();
+	    long tiempoActual;
+	    long tiempoFinal;
+	    String tiempoEjecucion;
+	    String tiempoPromedio;
+	    Log log, log_regex;
+	    Log tiempos = new Log("tiempos.txt");
+	    int tipoPolitica=elegirPolitica();
+	    for (int i = 1; i <= numEjecuciones; i++) {
+	      tiempoActual = System.currentTimeMillis();
+	      log = new Log(ruta + contador + ".txt");
+	      log_regex = new Log(ruta_regex + contador + ".txt");
+	      try {
+	        tiempos.escribirArchivo("Ejecución " + i + ": ");
+	          System.out.println("Ejecución " + i + ": ");
+	          // Llama al método principal de tu programa
+	          ejecucion(ruta+contador + ".txt", log, log_regex,true, tipoPolitica );
+	          contador++;
+	          // Reemplaza con el nombre de tu clase principal
+	          tiempos.escribirArchivo("Completada con éxito.");
+	          System.out.println("Completada con éxito.");
+	      } catch(Exception e) {
+	          System.out.println("Error en la ejecución " + i + ": " + e.getMessage());
+	          break;
+	      }
 	      tiempoFinal = System.currentTimeMillis();
-	      tiempoPromedio="Tiempo promedio de ejecución: " + (tiempoFinal - tiempoInicial) / numEjecuciones + " milisegundos.";
-	      tiempos.escribirArchivo(tiempoPromedio);
-	      System.out.println(tiempoPromedio);
-	}
-	            
-	
-	
-	
-  public static void main2(String ruta,Log log) {
-	  
-	
+	      tiempoEjecucion="Tiempo de ejecución: " + (tiempoFinal - tiempoActual) + " milisegundos.";
+	      tiempos.escribirArchivo(tiempoEjecucion);
+	      System.out.println(tiempoEjecucion);
+	    }
+	    tiempoFinal = System.currentTimeMillis();
+	    tiempoPromedio = "Tiempo promedio de ejecución: " + (tiempoFinal - tiempoInicial) / numEjecuciones + " milisegundos.";
+	    tiempos.escribirArchivo(tiempoPromedio);
+	    System.out.println(tiempoPromedio);
+  }
+ private static int elegirPolitica(){
+	 Scanner scanner =new Scanner(System.in);
+	   
+	    int salida;
+	    do { 
+		    scanner.reset();
+		    System.out.print("\033[H\033[2J");
+		    System.out.flush();
+		    System.out.println("Elige un numero de politica: \n");
+		    System.out.println("1. Balanceada \n");
+		    System.out.println("2. Izquierda favorecida \n");
+		    salida = scanner.nextInt();
+		    if(!(salida==1||salida==2)){
+		      System.out.println("Elección incorrecta. Vuelva a elegir política. \n");
+		      
+		    }
+	    } while(!(salida==1||salida==2));
+	    scanner.close();
+	    return salida;
+	  }
+
+  public static void ejecucion(String ruta,Log log, Log log_regex, boolean conTiempo, int tipoPolitica) {
     ArrayList<Thread> hilos = new ArrayList<Thread>();
     FabricaDeHilos miFabrica = new FabricaDeHilos();
     Politica politica = new Politica();
-    politica.setConTiempo(true);
-    politica.setTipoPolitica(1);//2 es izquierda
-    //log = new Log(ruta, System.currentTimeMillis());
+    politica.setConTiempo(conTiempo);
+    politica.setTipoPolitica(tipoPolitica);//2 es izquierda
     RedDePetri redp = new RedDePetri(log);
-
-    ArrayList<ColaImagenes> plazasImagen=new ArrayList<ColaImagenes>();
-    for(int i=0;i<11;i++){
+    ArrayList<ColaImagenes> plazasImagen = new ArrayList<ColaImagenes>();
+    for(int i = 0; i<11; i++) {
       plazasImagen.add(new ColaImagenes());
     }
     // 0  1  2  3  4  5   6   7    8   9  10
     //p0,p2,p4,p6,p8,p10,p12,p14,p15,p16,p17
-    
-    Monitor miMonitor = new Monitor(redp, politica, log);
-
-    GeneradorDeImagenes generadorDeImagenes = new GeneradorDeImagenes("generadorDeImagenes", miMonitor, log, 0, redp);
+    Monitor miMonitor = new Monitor(redp, politica, log , log_regex);
+    GeneradorDeImagenes generadorDeImagenes = new GeneradorDeImagenes("generadorDeImagenes", miMonitor, log, 0);
     generadorDeImagenes.setDestino(plazasImagen.get(0));
-
     Receptor receptorIzq = new Receptor("receptorIzq", miMonitor, log, 1);
-    
     // transicion t1
     receptorIzq.setOrigen(plazasImagen.get(0));  //plaza 0
     receptorIzq.setDestino(plazasImagen.get(1)); //plaza 2
@@ -132,8 +143,7 @@ public class Main {
     exportador.setOrigen(plazasImagen.get(9));	//plaza 16
     exportador.setDestino(plazasImagen.get(10)); //plaza 17
     // transiciones t13 y t14
-	  
-       
+
     hilos.add(miFabrica.newThread(generadorDeImagenes));
 
     hilos.add(miFabrica.newThread(receptorIzq));
@@ -156,20 +166,16 @@ public class Main {
 
     hilos.add(miFabrica.newThread(exportador));
 	
-    hilos.forEach((hilo) -> hilo.start()); 
-    //System.out.println("");
-    int h=0;
+    hilos.forEach((hilo) -> hilo.start());
+
     for (Thread hilo : hilos) {
+    	//Para asegurarse de que todos los hilos terminen antes de finalizar la ejecución
         try {
-        	 //System.out.println("join antes: "+h+"nombre"+hilo.getName()+" estado"+hilo.getState().toString());
           hilo.join(0);
-          
-         // System.out.println("join despues: "+h+"nombre"+hilo.getName()+" estado"+hilo.getState().toString());
-          h++;
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
       }
-      //System.out.println("Todos los hilos terminaron");
+      
   }
 }
