@@ -120,7 +120,6 @@ abstract class Procesador {
 
 class ColaImagenes {
   - ArrayList<Imagen> lista
-  - Semaphore mutex
   + ColaImagenes()
   + encolar(Imagen img, int transicion)
   + desencolar(): Imagen
@@ -175,7 +174,6 @@ RedDePetri o-- Log
 Procesador o-- Log
 Procesador *-- ColaImagenes
 ColaImagenes o-- Imagen
-ColaImagenes --> Semaphore
 ColaTransiciones --> Semaphore
 FabricaDeHilos ..> ThreadFactory
 Log --> Semaphore
