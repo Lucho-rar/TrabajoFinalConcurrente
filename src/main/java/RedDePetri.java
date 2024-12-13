@@ -5,14 +5,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
-/**
- * Clase Red de Petri a representar
- * 
- * - Real Matrix - double[][] matrizIncidencia
- * - int[] marcadoInicial
- * - int[] marcadoActual
- * - int[] transicionesSensibilizadas
- */
+
 public class RedDePetri {
 	
   private double[][] matrizIncidenciaEntrada = {//W-
@@ -60,28 +53,7 @@ public class RedDePetri {
       { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 }, // P17
       { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 } // P18
   };
-  /*
-    // T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14
-    { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  // P0
-    { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  // P1
-    { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  // P2
-    { 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },  // P3
-    { 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  // P4
-    { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  // P5
-    { 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  // P6
-    { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },  // P7
-    { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  // P8
-    { 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0 },  // P9
-    { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 },  // P10
-    { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 },  // P11
-    { 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0 },  // P12
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0 },  // P13
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },  // P14
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 },  // P15
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0 },  // P16
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 },  // P17
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }   // P18
-*/
+  
 
   private int[][] matrizIvariantesTransicion = {
        //T0->T1->T3->T5->T7->T9->T11->T13->T14
@@ -132,22 +104,22 @@ public class RedDePetri {
   
   //transiciones temporizadas T0, T3, T4, T7, T8, T11, T12, T14
   private long[]  timeStamps={0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  //private long alfa[] = {10, 0, 0, 10, 10, 0, 0, 20, 20, 0, 0, 20, 20, 0, 10};
-  //private long beta[] = {5000, 0, 0, 5000, 5000, 0, 0, 5000, 5000, 0, 0, 5000, 5000, 0, 5000};
   private long[] alfa = {5, 0, 0, 5, 5, 0, 0, 10, 10, 0, 0, 10, 10, 0, 5};
   private long[] beta = {5000, 0, 0, 5000, 5000, 0, 0, 5000, 5000, 0, 0, 5000, 5000, 0, 5000};
   private boolean conTiempo = false;
   private String secuenciaDisparos = "";
   private boolean[] esperando = new boolean[15];
+  private final int invariantesMax=200;
   
   public RedDePetri(Log log) {
-	  //establecer timestamp inicial
-	  //llamar al método setNuevoTimeStamp()
     Arrays.fill(esperando, false);
     this.actualizarTimeStamp(null, null);
     this.log = log;
   }
   
+  public int getInvariantesMax() {
+	  return invariantesMax;
+  }
   public void setConTiempo() {
     conTiempo = true;
   }
@@ -156,59 +128,49 @@ public class RedDePetri {
     conTiempo = false;
   }
   
+  private void disparar(int transicion, Procesador procesador) {
+	  RealMatrix sensibilizadasCopy;
+	  RealMatrix misTransicionesDisparadas = MatrixUtils.createRealMatrix(incidencia.getColumnDimension(),1);
+	  misTransicionesDisparadas.setEntry(transicion,0,1);
+	  sensibilizadasCopy = getTransicionesSensibilizadas();
+	  marcadoActualMatrix = marcadoActualMatrix.add(((incidencia.copy()).multiply(misTransicionesDisparadas)).transpose());
+	  String marcadoAcString = Arrays.toString(marcadoActualMatrix.getRow(0));
+	  if (!chequearInvariantesPlaza()){
+		  log.escribirArchivo("Error invariantes plaza " + marcadoAcString);
+	  }
+	  //hay que actualizar las marcas de tiempo de las transiciones que cambiaron de sensibilización 
+	  actualizarTimeStamp( sensibilizadasCopy, this.getTransicionesSensibilizadas());
+	  secuenciaDisparos += "T" + transicion;
+    procesador.operar(transicion);
+  }
+
   public Boolean dispararTransicionConTiempo(int transicion, Procesador procesador) {
-		RealMatrix sensibilizadasCopy;
-		if (getContadorTotalInvariantes() < 200 && isSensibilizada(transicion)	) {
+		
+		if (getContadorTotalInvariantes() < invariantesMax && isSensibilizada(transicion)	) {
 		    long tiempoActual = System.currentTimeMillis();
 		    if(testVentanaTiempo(tiempoActual, transicion)) {
 		      //está en ventana de tiempo.
 		      if(!esperando[transicion]) {
 			    			//setear el nuevo timestamp
 		        this.setNuevoTimeStamp(transicion);
-		        RealMatrix misTransicionesDisparadas = MatrixUtils.createRealMatrix(incidencia.getColumnDimension(),1);
-		        misTransicionesDisparadas.setEntry(transicion,0,1);
-		        sensibilizadasCopy = getTransicionesSensibilizadas();
-		        marcadoActualMatrix = marcadoActualMatrix.add(((incidencia.copy()).multiply(misTransicionesDisparadas)).transpose());
-		        String marcadoAcString = Arrays.toString(marcadoActualMatrix.getRow(0));
-		        if (!chequearInvariantesPlaza()){
-		          log.escribirArchivo("Error invariantes plaza " + marcadoAcString);
-		        }
-		        //hay que actualizar las marcas de tiempo de las transiciones que cambiaron de sensibilización 
-		        actualizarTimeStamp( sensibilizadasCopy, this.getTransicionesSensibilizadas());
-		        secuenciaDisparos += "T" + transicion;
-            procesador.operar(transicion);
+		        disparar(transicion,procesador);
 		        return true;
 		      } else {
 		        //está esperando
-		        if (transicion == 0){
-		        //  log.escribirArchivo("devolví false porque está esperando");
-		        }
 		        return false;
 		      }
 		    } else {
-			    		//si es menor que alfa, seteo esperando en true, lo duermo lo que le falta (timestamp+alfa-ahora). 
-			    		//si es mayor que beta, ya
+	    		//si es menor que alfa, seteo esperando en true, lo duermo lo que le falta (timestamp+alfa-ahora). 
+	    		//si es mayor que beta, ya
 			      if(antesDeLaVentana(tiempoActual,transicion)) {
 			        setEsperando(transicion);
 			        long tiempoDormir = this.timeStamps[transicion] + alfa[transicion] - tiempoActual;
 			        try {
 			          TimeUnit.MILLISECONDS.sleep(tiempoDormir);
 			          resetEsperando(transicion);
-			          RealMatrix misTransicionesDisparadas = MatrixUtils.createRealMatrix(incidencia.getColumnDimension(),1);
-			          misTransicionesDisparadas.setEntry(transicion,0,1);
-			          sensibilizadasCopy = getTransicionesSensibilizadas();
-			          marcadoActualMatrix = marcadoActualMatrix.add(((incidencia.copy()).multiply(misTransicionesDisparadas)).transpose());
-			          String marcadoAcString = Arrays.toString(marcadoActualMatrix.getRow(0));
-			          if (!chequearInvariantesPlaza()){
-			            log.escribirArchivo("Error invariantes plaza " + marcadoAcString);
-			          }
-			          //hay que actualizar las marcas de tiempo de las transiciones que cambiaron de sensibilización 
-			          actualizarTimeStamp( sensibilizadasCopy, this.getTransicionesSensibilizadas());
-			          secuenciaDisparos+="T"+transicion;
-                procesador.operar(transicion);
+			          disparar(transicion, procesador);
 			          return true;
 					} catch(InterruptedException e) {
-			          // TODO Auto-generated catch block
 			          e.printStackTrace();
 			          return false;
 					}
@@ -370,5 +332,9 @@ public class RedDePetri {
     } else {
       return false;
     }
+  }
+
+  public int getCantidadPlazasRdP(){
+    return incidencia.getRowDimension();
   }
 }

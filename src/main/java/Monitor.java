@@ -105,7 +105,7 @@ public class Monitor {
 					m[i] = (sensibilizadas.getEntry(0, i) == 1.0 && colaNoDisparados[i] == 1.0) ? 1.0 : 0.0;
 				}
 				// Si M solo contiene una transición sensibilizada y es la 9 o la 10, se libera el mutex y se retorna 
-				if(this.contadorM(m) == 1 && (m[9] == 1 || m[10] == 1)) { //TODO: Consulta!
+				if(this.contadorM(m) == 1 && (m[9] == 1 || m[10] == 1)) {
 					mutex.release();
 					return;
 				}
@@ -165,12 +165,12 @@ public class Monitor {
 	public void contadorInvariantes(Imagen imagen) {
 		rdp.actualizarContadorInvariante(imagen); // Actualiza el contador de invariantes en la red de petri
 		// Limite para X ejecuciones (200 por consigna)
-		if (rdp.getContadorTotalInvariantes() >= 200) {
+		if (rdp.getContadorTotalInvariantes() >= rdp.getInvariantesMax()) {
 			rdp.logearInvariantes(); //Loguea los invariantes
 			this.setMatarEjecucion(); // Finaliza la ejecución del sistema
 			String salida = "";
 			// Log de Plazas
-			for(int i = 0; i < 19; i++) {
+			for(int i = 0; i < rdp.getCantidadPlazasRdP(); i++) {
 				salida += "P(" + i + "):" + rdp.getCantidadTokensPlaza(i) + " ";
 			}
 			log.escribirArchivo("Red de Petri " + salida + "\n");

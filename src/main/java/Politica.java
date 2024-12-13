@@ -2,7 +2,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
-import java.util.Scanner;
 import java.util.Set;
 
 /**
@@ -20,7 +19,7 @@ public class Politica {
   private Integer[] contadorUltimoSegmento = new Integer[3];
   private ArrayList<Set<Integer>> segUltimo = new ArrayList<Set<Integer>>();
   private boolean conTiempo;
-  private  Scanner scanner;
+  
   private boolean t1_antes_q_t2 = true;
   private boolean t5_antes_q_t6 = true;
   private boolean t9_antes_q_t10 = true;
@@ -131,38 +130,7 @@ public class Politica {
     }
   }
   
-  /**
-   * Método para elegir si la ejecución es con o sin tiempo
-   * 
-   * @return true si la ejecución es con tiempo, false si no.
-   */
-  public boolean elegirTipoTiempo(){
-    int salida;
-    scanner.reset();
-    System.out.println("Elige ejecución con o sin tiempo: \n");
-    System.out.println("1. Con tiempo \n");
-    System.out.println("2. Sin tiempo \n");
-    salida = scanner.nextInt();
-    System.out.println("mostrar scannertipotiempo:" + salida);
-    return salida == 1; //TODO: es siempre con tiempo?
-  }
-
-  /**
-   * Método para elegir la política de disparo
-   * 
-   * @return 1 si la política es balanceada, 2 si es izquierda favorecida
-   */
-  public int elegirPolitica(){
-    scanner.reset();
-    int salida;
-    System.out.println("Elige un numero de politica: \n");
-    System.out.println("1. Balanceada \n");
-    System.out.println("2. Izquierda favorecida \n");
-    salida = scanner.nextInt();
-    System.out.println("mostrar scannerpolitica:" + salida);
-    //TODO: manejo de errores
-    return salida;
-  }
+  
 
   /**
    * Método que chequea el tipo de política y llama a la función correspondiente
@@ -275,7 +243,7 @@ public class Politica {
       if(transicion == 9){
         return true;
       }
-        return false; // TODO: ?
+      return false;
     }
     return (contador9 / (contador9 + contador10)) <= 0.8;
   }

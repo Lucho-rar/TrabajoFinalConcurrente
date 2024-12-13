@@ -1,5 +1,7 @@
 
 import java.util.ArrayList;
+import java.util.Scanner;
+
 
 public class Main {
 
@@ -15,6 +17,7 @@ public class Main {
 	    String tiempoPromedio;
 	    Log log, log_regex;
 	    Log tiempos = new Log("tiempos.txt");
+	    int tipoPolitica=elegirPolitica();
 	    for (int i = 1; i <= numEjecuciones; i++) {
 	      tiempoActual = System.currentTimeMillis();
 	      log = new Log(ruta + contador + ".txt");
@@ -23,7 +26,7 @@ public class Main {
 	        tiempos.escribirArchivo("Ejecución " + i + ": ");
 	          System.out.println("Ejecución " + i + ": ");
 	          // Llama al método principal de tu programa
-	          ejecucion(ruta+contador + ".txt", log, log_regex);
+	          ejecucion(ruta+contador + ".txt", log, log_regex,true, tipoPolitica );
 	          contador++;
 	          // Reemplaza con el nombre de tu clase principal
 	          tiempos.escribirArchivo("Completada con éxito.");
@@ -42,14 +45,33 @@ public class Main {
 	    tiempos.escribirArchivo(tiempoPromedio);
 	    System.out.println(tiempoPromedio);
   }
+ private static int elegirPolitica(){
+	 Scanner scanner =new Scanner(System.in);
+	   
+	    int salida;
+	    do { 
+		    scanner.reset();
+		    System.out.print("\033[H\033[2J");
+		    System.out.flush();
+		    System.out.println("Elige un numero de politica: \n");
+		    System.out.println("1. Balanceada \n");
+		    System.out.println("2. Izquierda favorecida \n");
+		    salida = scanner.nextInt();
+		    if(!(salida==1||salida==2)){
+		      System.out.println("Elección incorrecta. Vuelva a elegir política. \n");
+		      
+		    }
+	    } while(!(salida==1||salida==2));
+	    scanner.close();
+	    return salida;
+	  }
 
-  public static void ejecucion(String ruta,Log log, Log log_regex) {
+  public static void ejecucion(String ruta,Log log, Log log_regex, boolean conTiempo, int tipoPolitica) {
     ArrayList<Thread> hilos = new ArrayList<Thread>();
     FabricaDeHilos miFabrica = new FabricaDeHilos();
     Politica politica = new Politica();
-    politica.setConTiempo(true);
-    politica.setTipoPolitica(1);//2 es izquierda
-    //log = new Log(ruta, System.currentTimeMillis());
+    politica.setConTiempo(conTiempo);
+    politica.setTipoPolitica(tipoPolitica);//2 es izquierda
     RedDePetri redp = new RedDePetri(log);
     ArrayList<ColaImagenes> plazasImagen = new ArrayList<ColaImagenes>();
     for(int i = 0; i<11; i++) {
@@ -147,11 +169,13 @@ public class Main {
     hilos.forEach((hilo) -> hilo.start());
 
     for (Thread hilo : hilos) {
+    	//Para asegurarse de que todos los hilos terminen antes de finalizar la ejecución
         try {
           hilo.join(0);
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
       }
+      
   }
 }
