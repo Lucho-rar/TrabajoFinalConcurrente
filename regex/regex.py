@@ -14,17 +14,17 @@ def procesar_archivo(archivo):
             linea_actual[0].strip()
         )
         linea_actual = resultado
-
+        
         if linea_actual[1] == 0:  # Si no hubo cambios, salir del bucle
             break
 
     # Verificar el resultado
     if linea_actual[0] == "":
-        print("PROCES COOMPLETADO EXITOSAMENTE")
+        print("LAS TRANSICIONES DE LOS INVARIANTES CORRECTAS PARA: " + archivo.name)
     else:
-        print("OCURRIÓ UN ERROR")
+        print("ERROR EN LA VALIDACIÓN DE INVARIANTES PARA: " + archivo.name)
 
 # Abrir el archivo de entrada
-nombre_archivo = "regex1.txt"  # Archivo de registro
+nombre_archivo = "log_regex1.txt"  # Archivo de registro
 with open(nombre_archivo, "r") as archivo_log:
     procesar_archivo(archivo_log)
