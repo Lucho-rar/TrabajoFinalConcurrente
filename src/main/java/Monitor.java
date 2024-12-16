@@ -23,7 +23,6 @@ public class Monitor {
 
 	/**
 	 * Constructor de la clase Monitor
-	 * 
 	 * @param redp Red de Petri
 	 * @param mp Política de disparo
 	 * @param log Log
@@ -74,7 +73,6 @@ public class Monitor {
 
 	/**
 	 * Método para disparar una transición en la red de petri
-	 * 
 	 * @param transicion Transición a disparar
 	 * @param procesador Hilo que dispara la transición
 	 */
@@ -128,7 +126,6 @@ public class Monitor {
 
 	/**
 	 * Método para recorrer m y ver si tiene alguna transición para poder disparar
-	 * 
 	 * @param m Vector de transiciones sensibilizadas y no disparadas
 	 * @return True si hay alguna transición para disparar, False si no
 	*/
@@ -143,7 +140,6 @@ public class Monitor {
 
 	/**
 	 * Método para contar la cantidad de transiciones sensibilizadas y no disparadas - Size de M
-	 * 
 	 * @param m Vector de transiciones sensibilizadas y no disparadas
 	 * @return Cantidad de transiciones sensibilizadas y no disparadas
 	*/
@@ -159,7 +155,6 @@ public class Monitor {
 
 	/**
 	 * Método para actualizar el contador de invariantes
-	 * 
 	 * @param imagen Imagen a la que se le actualiza el contador de invariantes
 	 */
 	public void contadorInvariantes(Imagen imagen) {

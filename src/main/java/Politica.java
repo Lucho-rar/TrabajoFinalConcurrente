@@ -6,11 +6,9 @@ import java.util.Set;
 
 /**
  * Clase Politica
- * 
  * Esta clase se encarga de controlar la política de disparo de la red de petri
  */
 public class Politica {
-
   private int tipoDePolitica;
   private ArrayList<Set<Integer>> SegIzq = new ArrayList<>();
   private ArrayList<Set<Integer>> SegDer = new ArrayList<>();
@@ -52,7 +50,6 @@ public class Politica {
 
   /**
    * Getter de la variable conTiempo
-   * 
    * @return true si la política es con tiempo, false si no
    */
   public boolean getConTiempo() {
@@ -61,25 +58,22 @@ public class Politica {
   
   /**
    * Setter de la variable conTiempo
-   * 
    * @param t booleano que indica si la política es con tiempo o no
    */
   public void setConTiempo(boolean t) {
-    conTiempo=t;
+    conTiempo = t;
   }
   
   /**
    * Setter de la variable tipoDePolitica
-   * 
    * @param t entero que indica el tipo de política
    */
   public void setTipoPolitica(int t) {
-    this.tipoDePolitica=t;
+    this.tipoDePolitica = t;
   }
   
   /**
    * Actualiza el contador de transiciones
-   * 
    * @param transicion transición a actualizar
    */
   public void actualizarContadorTransicion(int transicion) {
@@ -105,7 +99,7 @@ public class Politica {
 
   /**
    * Getter del contador de una transicion 
-   * 
+   *
    * @param transicion transición de interés
    * @return cantidad de veces que se disparó la transición
    */
@@ -129,12 +123,9 @@ public class Politica {
       default: return 0;
     }
   }
-  
-  
 
   /**
    * Método que chequea el tipo de política y llama a la función correspondiente
-   * 
    * @param m
    * @return return de la función de política correspondiente (balanceada - izquierdaFavorecida)
    */
@@ -148,14 +139,14 @@ public class Politica {
 
   /**
    * Método que ejerce la política de disparo balanceada
-   * 
+   *
    * La política consiste en ejercer el %50 entre los segmentos de la parte izquierda y derecha. Para ello:
-   * 
+   *
    * - En las transiciones que definen cada segmento opuesto y que están sensibilizadas al mismo tiempo 
    *   (por ejemplo T1 y T2 para segmento A y B), se marca cual se eligió en la decisión anterior para luego elegir la otra.
    * - Si no hay "conflictos" (transiciones de segmentos opuestos sensibilizadas al mismo tiempo), se elige una transición al azar.
    * - También se vuelve a asegurar que para el caso de T9 y T10, si solo una está sensibilizada, la quita de m.
-   *  
+   *
    * @param m AND de sensibilizadas y no disparadas
   */
   private int balanceada(double[] m) {
@@ -250,8 +241,7 @@ public class Politica {
 
   /**
    * Método que genera una lista con m "filtrada" para el caso de T9 y T10 sensibilizadas al mismo tiempo
-   * 
-   * @param m AND de sensibilizadas y no disparadas SIN T9 o T10 
+   * @param m AND de sensibilizadas y no disparadas SIN T9 o T10
    * @return ArrayList de transiciones sensibilizadas y no disparadas "filtradas"
    */
   private ArrayList<Integer> filtrarTransiciones(double[] m) {

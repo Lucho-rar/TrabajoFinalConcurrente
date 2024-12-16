@@ -1,5 +1,4 @@
 public abstract class Procesador {
-
   protected String nombre;
   protected String nombre_hilo;
   protected Monitor miMonitor;
@@ -34,7 +33,7 @@ public abstract class Procesador {
     this.listaImagenOrigen = origen;
   }
   
-  public void setDestino(ColaImagenes destino){
+  public void setDestino(ColaImagenes destino) {
     this.listaImagenDestino = destino;
   }
 

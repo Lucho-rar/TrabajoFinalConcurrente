@@ -103,13 +103,13 @@ public class RedDePetri {
   private Log log;
   
   //transiciones temporizadas T0, T3, T4, T7, T8, T11, T12, T14
-  private long[]  timeStamps={0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  private long[]  timeStamps = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   private long[] alfa = {5, 0, 0, 5, 5, 0, 0, 10, 10, 0, 0, 10, 10, 0, 5};
   private long[] beta = {5000, 0, 0, 5000, 5000, 0, 0, 5000, 5000, 0, 0, 5000, 5000, 0, 5000};
   private boolean conTiempo = false;
   private String secuenciaDisparos = "";
   private boolean[] esperando = new boolean[15];
-  private final int invariantesMax=200;
+  private final int invariantesMax = 200;
   
   public RedDePetri(Log log) {
     Arrays.fill(esperando, false);
@@ -118,7 +118,7 @@ public class RedDePetri {
   }
   
   public int getInvariantesMax() {
-	  return invariantesMax;
+    return invariantesMax;
   }
   public void setConTiempo() {
     conTiempo = true;
@@ -129,55 +129,54 @@ public class RedDePetri {
   }
   
   private void disparar(int transicion, Procesador procesador) {
-	  RealMatrix sensibilizadasCopy;
-	  RealMatrix misTransicionesDisparadas = MatrixUtils.createRealMatrix(incidencia.getColumnDimension(),1);
-	  misTransicionesDisparadas.setEntry(transicion,0,1);
-	  sensibilizadasCopy = getTransicionesSensibilizadas();
-	  marcadoActualMatrix = marcadoActualMatrix.add(((incidencia.copy()).multiply(misTransicionesDisparadas)).transpose());
-	  String marcadoAcString = Arrays.toString(marcadoActualMatrix.getRow(0));
-	  if (!chequearInvariantesPlaza()){
-		  log.escribirArchivo("Error invariantes plaza " + marcadoAcString);
-	  }
-	  //hay que actualizar las marcas de tiempo de las transiciones que cambiaron de sensibilización 
-	  actualizarTimeStamp( sensibilizadasCopy, this.getTransicionesSensibilizadas());
-	  secuenciaDisparos += "T" + transicion;
+    RealMatrix sensibilizadasCopy;
+    RealMatrix misTransicionesDisparadas = MatrixUtils.createRealMatrix(incidencia.getColumnDimension(),1);
+    misTransicionesDisparadas.setEntry(transicion,0,1);
+    sensibilizadasCopy = getTransicionesSensibilizadas();
+    marcadoActualMatrix = marcadoActualMatrix.add(((incidencia.copy()).multiply(misTransicionesDisparadas)).transpose());
+    String marcadoAcString = Arrays.toString(marcadoActualMatrix.getRow(0));
+    if (!chequearInvariantesPlaza()){
+      log.escribirArchivo("Error invariantes plaza " + marcadoAcString);
+    }
+    //hay que actualizar las marcas de tiempo de las transiciones que cambiaron de sensibilización 
+    actualizarTimeStamp( sensibilizadasCopy, this.getTransicionesSensibilizadas());
+    secuenciaDisparos += "T" + transicion;
     procesador.operar(transicion);
   }
 
   public Boolean dispararTransicionConTiempo(int transicion, Procesador procesador) {
-		
 		if (getContadorTotalInvariantes() < invariantesMax && isSensibilizada(transicion)	) {
-		    long tiempoActual = System.currentTimeMillis();
-		    if(testVentanaTiempo(tiempoActual, transicion)) {
-		      //está en ventana de tiempo.
-		      if(!esperando[transicion]) {
-			    			//setear el nuevo timestamp
-		        this.setNuevoTimeStamp(transicion);
-		        disparar(transicion,procesador);
-		        return true;
-		      } else {
-		        //está esperando
-		        return false;
-		      }
-		    } else {
-	    		//si es menor que alfa, seteo esperando en true, lo duermo lo que le falta (timestamp+alfa-ahora). 
-	    		//si es mayor que beta, ya
-			      if(antesDeLaVentana(tiempoActual,transicion)) {
-			        setEsperando(transicion);
-			        long tiempoDormir = this.timeStamps[transicion] + alfa[transicion] - tiempoActual;
-			        try {
-			          TimeUnit.MILLISECONDS.sleep(tiempoDormir);
-			          resetEsperando(transicion);
-			          disparar(transicion, procesador);
-			          return true;
-					} catch(InterruptedException e) {
-			          e.printStackTrace();
-			          return false;
-					}
-			      } else {
-			          return false;
-			        }
-		      }
+      long tiempoActual = System.currentTimeMillis();
+      if(testVentanaTiempo(tiempoActual, transicion)) {
+        //está en ventana de tiempo.
+        if(!esperando[transicion]) {
+              //setear el nuevo timestamp
+          this.setNuevoTimeStamp(transicion);
+          disparar(transicion,procesador);
+          return true;
+        } else {
+          //está esperando
+          return false;
+        }
+      } else {
+        //si es menor que alfa, seteo esperando en true, lo duermo lo que le falta (timestamp+alfa-ahora). 
+        //si es mayor que beta, ya
+          if(antesDeLaVentana(tiempoActual,transicion)) {
+            setEsperando(transicion);
+            long tiempoDormir = this.timeStamps[transicion] + alfa[transicion] - tiempoActual;
+            try {
+              TimeUnit.MILLISECONDS.sleep(tiempoDormir);
+              resetEsperando(transicion);
+              disparar(transicion, procesador);
+              return true;
+        } catch(InterruptedException e) {
+              e.printStackTrace();
+              return false;
+        }
+          } else {
+              return false;
+            }
+        }
 		}
     return false;
      // mk= mi+W.S
@@ -192,14 +191,14 @@ public class RedDePetri {
   }
 
   public boolean testVentanaTiempo(long actual, int transicion) {
-	//alfa<ahora-timestamp<beta
+	  //alfa<ahora-timestamp<beta
 	  //obtiene el instantnow
 	  //tiene que verificar si el tiempo actual está entre el alpha y beta asociado a la transición
-    if(this.conTiempo) {
+    if (this.conTiempo) {
       if(transicion == 1 || transicion == 2 || transicion == 5 || transicion == 6 || transicion == 9 || transicion == 10 || transicion == 13)
-        {return true;}
+        { return true; }
       return ((actual >= (this.timeStamps[transicion] + alfa[transicion])) && (actual <= (timeStamps[transicion] + beta[transicion])));
-    }else {
+    } else {
       return true;
     }
   }
@@ -334,7 +333,7 @@ public class RedDePetri {
     }
   }
 
-  public int getCantidadPlazasRdP(){
+  public int getCantidadPlazasRdP() {
     return incidencia.getRowDimension();
   }
 }
