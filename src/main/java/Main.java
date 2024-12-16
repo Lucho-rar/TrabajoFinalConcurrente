@@ -6,6 +6,7 @@ import java.util.Scanner;
 public class Main {
 
   public static void main(String[] args) {
+    int tipoPolitica = elegirPolitica();
 		String ruta = "log";
     String ruta_regex = "log_regex";
     int contador = 1;
@@ -17,7 +18,6 @@ public class Main {
     String tiempoPromedio;
     Log log, log_regex;
     Log tiempos = new Log("tiempos.txt");
-    int tipoPolitica = elegirPolitica();
     for (int i = 1; i <= numEjecuciones; i++) {
       tiempoActual = System.currentTimeMillis();
       log = new Log(ruta + contador + ".txt");
