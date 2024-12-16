@@ -17,11 +17,10 @@ public class Log {
   private Semaphore mutex = new Semaphore(1);
   
   //constructor
-  public Log(String ruta){
+  public Log(String ruta) {
     this.ruta = ruta;
     this.crearLog();
   }
-  
 
   // Método para crear el log
   private void crearLog() {
