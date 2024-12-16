@@ -143,6 +143,8 @@ class FabricaDeHilos {
 
 interface Runnable{}
 
+interface ThreadFactory{}
+
 package "Procesadores"{
   class GeneradorDeImagenes
   class Receptor
