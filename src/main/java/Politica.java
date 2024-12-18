@@ -1,8 +1,5 @@
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
 
 /**
  * Clase Politica
@@ -10,42 +7,17 @@ import java.util.Set;
  */
 public class Politica {
   private int tipoDePolitica;
-  private ArrayList<Set<Integer>> SegIzq = new ArrayList<>();
-  private ArrayList<Set<Integer>> SegDer = new ArrayList<>();
-  private Integer[][] contadorIzq = new Integer[3][2];
-  private Integer[][] contadorDer = new Integer[3][2];
-  private Integer[] contadorUltimoSegmento = new Integer[3];
-  private ArrayList<Set<Integer>> segUltimo = new ArrayList<Set<Integer>>();
+
   private boolean conTiempo;
   
   private boolean t1_antes_q_t2 = true;
   private boolean t5_antes_q_t6 = true;
   private boolean t9_antes_q_t10 = true;
   
-  public Politica(){
-    for (Integer[] row : contadorIzq) {
-      for (int i = 0; i < row.length; i++) {
-        row[i] = 0;
-      }
-    }
-    for (Integer[] row : contadorDer) {
-      for (int i = 0; i < row.length; i++) {
-          row[i] = 0;
-      }
-    }
-    for (int i = 0; i < contadorUltimoSegmento.length; i++) {
-        contadorUltimoSegmento[i] = 0;
-    }
-    // Agrega los segmentos 1 - 3 - 5 - 7 - 9 - 11 a la lista de segmentos izquierdos
-    SegIzq.add(new HashSet<>(Arrays.asList(1, 3)));
-    SegIzq.add(new HashSet<>(Arrays.asList(5, 7)));
-    SegIzq.add(new HashSet<>(Arrays.asList(9, 11)));
-    // Agrega los segmentos 2 - 4 - 6 - 8 - 10 - 12 a la lista de segmentos derechos
-    SegDer.add(new HashSet<>(Arrays.asList(2, 4)));
-    SegDer.add(new HashSet<>(Arrays.asList(6, 8)));
-    SegDer.add(new HashSet<>(Arrays.asList(10, 12)));
-    // El ultimo segmento es el 13 - 14
-    segUltimo.add(new HashSet<>(Arrays.asList(0, 13, 14)));
+  private RedDePetri rdp;
+  
+  public Politica(RedDePetri rdp){
+    this.rdp = rdp;
   }
 
   /**
@@ -72,57 +44,6 @@ public class Politica {
     this.tipoDePolitica = t;
   }
   
-  /**
-   * Actualiza el contador de transiciones
-   * @param transicion transición a actualizar
-   */
-  public void actualizarContadorTransicion(int transicion) {
-    switch(transicion) {
-      case 0: contadorUltimoSegmento[0]++; break;
-      case 1: contadorIzq[0][0]++; break;
-      case 2: contadorDer[0][0]++; break;
-      case 3: contadorIzq[0][1]++; break;
-      case 4: contadorDer[0][1]++; break;
-      case 5: contadorIzq[1][0]++; break;
-      case 6: contadorDer[1][0]++; break;
-      case 7: contadorIzq[1][1]++; break;
-      case 8: contadorDer[1][1]++; break;
-      case 9: contadorIzq[2][0]++; break;
-      case 10: contadorDer[2][0]++; break;
-      case 11: contadorIzq[2][1]++; break;
-      case 12: contadorDer[2][1]++; break;
-      case 13: contadorUltimoSegmento[1]++; break;
-      case 14: contadorUltimoSegmento[2]++; break;
-      default: break;
-    }
-  }
-
-  /**
-   * Getter del contador de una transicion 
-   *
-   * @param transicion transición de interés
-   * @return cantidad de veces que se disparó la transición
-   */
-  public int getContadorTransicion(int transicion) {
-    switch(transicion) {
-      case 0: return contadorUltimoSegmento[0];
-      case 1: return contadorIzq[0][0];
-      case 2: return contadorDer[0][0];
-      case 3: return contadorIzq[0][1];
-      case 4: return contadorDer[0][1];
-      case 5: return contadorIzq[1][0];
-      case 6: return contadorDer[1][0];
-      case 7: return contadorIzq[1][1];
-      case 8: return contadorDer[1][1];
-      case 9: return contadorIzq[2][0];
-      case 10: return contadorDer[2][0];
-      case 11: return contadorIzq[2][1];
-      case 12: return contadorDer[2][1];
-      case 13: return contadorUltimoSegmento[1];
-      case 14: return contadorUltimoSegmento[2];
-      default: return 0;
-    }
-  }
 
   /**
    * Método que chequea el tipo de política y llama a la función correspondiente
@@ -227,8 +148,8 @@ public class Politica {
    * @return true si se favorece la izquierda, false si no.
    */
   private boolean deboFavorecerIzquierda(int transicion) {
-    float contador9 = (float) getContadorTransicion(9);
-    float contador10 = (float) getContadorTransicion(10);
+    float contador9 = (float) rdp.getContadorTransicion(9);
+    float contador10 = (float) rdp.getContadorTransicion(10);
     // Evitar división por cero
     if (contador9 + contador10 == 0) {
       if(transicion == 9){

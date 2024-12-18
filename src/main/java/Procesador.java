@@ -4,14 +4,17 @@ public abstract class Procesador {
   protected Monitor miMonitor;
   protected Log miLog;
   protected int transicion1;
+  protected int transicion2;
   protected ColaImagenes listaImagenOrigen;
   protected ColaImagenes listaImagenDestino;
+  protected static int invCompletados=0;
 
-  public Procesador(String nombre, Monitor monitor, Log log, int transicion) {
+  public Procesador(String nombre, Monitor monitor, Log log, int transicion_1, int transicion_2) {
     this.miLog = log;
     this.miMonitor = monitor;
     this.nombre = nombre;
-    this.transicion1 = transicion;
+    this.transicion1 = transicion_1;
+    this.transicion2 = transicion_2;
     this.nombre_hilo = "";
     listaImagenOrigen = null;
     listaImagenDestino = null;
@@ -29,6 +32,18 @@ public abstract class Procesador {
     return this.transicion1;
   }
   
+  public int getTransicion2(){
+    return this.transicion2;
+  }
+  public void invCompletado() {
+	  invCompletados++;
+	  
+  }
+  public boolean getCorriendo() {
+	  return invCompletados<200;
+  }
+ 
+  /*
   public void setOrigen(ColaImagenes origen) {
     this.listaImagenOrigen = origen;
   }
@@ -44,4 +59,5 @@ public abstract class Procesador {
       miLog.escribirArchivo("Error. Lista origen vacía transicion:"+transicion+" hilo: "+Thread.currentThread().getName());
     }
   }
+  */
 }
