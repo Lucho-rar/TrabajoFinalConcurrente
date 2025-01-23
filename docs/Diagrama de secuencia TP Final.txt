@@ -19,7 +19,7 @@ deactivate Semaphore
 critical seccion critica
   Monitor -> Monitor: k = true
   loop k==true
-    alt getCorriendo()
+    alt no se completaron los 200 invariantes
       Monitor -> RedDePetri: dispararTransicionConTiempo(transicion, mutex)
       activate RedDePetri
       alt isSensibilizada(transicion)
