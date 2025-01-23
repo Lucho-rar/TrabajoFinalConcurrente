@@ -9,7 +9,7 @@ participant "Politica" as Politica
 participant "ColaTransiciones" as ColaTransiciones
 participant "Semaphore" as Semaphore
 
-GeneradorDeImagenes -> Monitor: dispararTransicion(transicion, procesador)
+GeneradorDeImagenes -> Monitor: dispararTransicion(transicion)
 activate GeneradorDeImagenes
 activate Monitor
 Monitor -> Semaphore: acquire()
@@ -25,13 +25,11 @@ critical seccion critica
       alt isSensibilizada(transicion)
         alt testVentanaTiempo(tiempoActual, transicion)
           alt !esperando[transicion]
-            RedDePetri -> RedDePetri: setNuevoTimeStamp(transicion)
             RedDePetri -> RedDePetri: getTransicionesSensibilizadas()
             RedDePetri -> RedDePetri: Actualizamos marcado actual
             RedDePetri -> RedDePetri: actualizarTimeStamp()
             RedDePetri -> RedDePetri: Actualizamos secuencia disparos
-            RedDePetri -> GeneradorDeImagenes: operar(transicion)
-            GeneradorDeImagenes --> RedDePetri: return;
+            RedDePetri -> RedDePetri: setNuevoTimeStamp(transicion)
             RedDePetri --> Monitor: return true;
             deactivate RedDePetri
           else
