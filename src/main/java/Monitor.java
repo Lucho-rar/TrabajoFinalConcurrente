@@ -17,6 +17,7 @@ public class Monitor {
 	private RealMatrix sensibilizadas; // Transiciones sensibilizadas
 	private double[] colaNoDisparados; // No disparados
 	private double[] m; // AND de sensibilizadas y no disparados
+	private boolean matar=true;
 		
 	/**
 	 * Constructor de la clase Monitor
@@ -46,15 +47,18 @@ public class Monitor {
 	 *
 	 * Se fija si el sistema sigue corriendo y si no, desencola las transiciones que quedaron en la cola.
 	 */
-	/*private void setMatarEjecucion() {
-		corriendo = false;
+	private void setMatarEjecucion() {
+		
+		if(matar) {
 		double[] saliendo = this.miColaTransiciones.quienesEstan();
 		for (int i = 0; i < saliendo.length; i++) {
 			if(saliendo[i] == 1) {
 				this.miColaTransiciones.desencolar(i);
 			}
 		}
-	}*/
+		matar = false;
+		}
+	}
 
 	/**
 	 * Getter de la variable corriendo
@@ -78,12 +82,20 @@ public class Monitor {
 			throw new RuntimeException(e);
 		}
 		int transicionElegida; // Transición elegida
+		
     	Boolean k = true; // Boolean para saber si se pudo disparar la transición
 		while (k) {
 			// Si el sistema no sigue corriendo, se libera el mutex y se retorna 
-			if(rdp.getContadorTotalInvariantes() < rdp.getInvariantesMax()) {
+			if(rdp.getInvCompletados() < rdp.getInvariantesMax()) {
 				k = rdp.dispararTransicionConTiempo(transicion, mutex);
+				
 			} else {
+				setMatarEjecucion();
+				/*String sal="";
+				for(int i=0;i< miColaTransiciones.quienesEstan().length;i++) {
+					sal+=miColaTransiciones.quienesEstan()[i];
+				}
+				rdp.getLog().escribirArchivo(sal);*/
 				mutex.release();
 				return;
 			}
@@ -97,14 +109,15 @@ public class Monitor {
 					m[i] = (sensibilizadas.getEntry(0, i) == 1.0 && colaNoDisparados[i] == 1.0) ? 1.0 : 0.0;
 				}
 				
-				/*
+				
 				// Si M solo contiene una transición sensibilizada y es la 9 o la 10, se libera el mutex y se retorna 
 				if(this.contadorM(m) == 1 && (m[9] == 1 || m[10] == 1)) {
 					mutex.release();
 					return;
 				}
-				*/
+				
 				// Me fijo si hay alguna transición en M. Si hay, llamo a la política para que elija una y la desencolo. Si no, seteo k en false
+			
 				if (recorrer(m)) {
 					transicionElegida = miPolitica.cual(m); 
 					miColaTransiciones.desencolar(transicionElegida);
@@ -140,7 +153,7 @@ public class Monitor {
 	 * @param m Vector de transiciones sensibilizadas y no disparadas
 	 * @return Cantidad de transiciones sensibilizadas y no disparadas
 	*/
-	/*private int contadorM(double[] m) {
+	private int contadorM(double[] m) {
 		int contador = 0;
 		for (int i = 0; i < m.length; i++) {
 			if (m[i] == 1.0) {
@@ -148,5 +161,5 @@ public class Monitor {
 			}
 		}
 		return contador;
-	}*/
+	}
 }

@@ -82,6 +82,7 @@ public class Politica {
     }
     ArrayList<Integer> mFiltrada = filtrarTransiciones(m);
     // Genero un numero random para elegir una transicion
+    //System.out.println(mFiltrada.size());
     salida=random1.nextInt(mFiltrada.size());
     // %50 SEGMENTO A & SEGMENTO B
     if ((mFiltrada.get(salida) == 1 || mFiltrada.get(salida) == 2) && (m[1] == 1 && m[2] == 1)) {

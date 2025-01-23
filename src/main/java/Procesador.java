@@ -5,19 +5,21 @@ public abstract class Procesador {
   protected Log miLog;
   protected int transicion1;
   protected int transicion2;
-  protected ColaImagenes listaImagenOrigen;
-  protected ColaImagenes listaImagenDestino;
-  protected static int invCompletados=0;
+  //protected ColaImagenes listaImagenOrigen;
+  //protected ColaImagenes listaImagenDestino;
+  //protected static int invCompletados=0;
+  protected RedDePetri rdp;
 
-  public Procesador(String nombre, Monitor monitor, Log log, int transicion_1, int transicion_2) {
+  public Procesador(String nombre, Monitor monitor, Log log, RedDePetri r, int transicion_1, int transicion_2) {
     this.miLog = log;
     this.miMonitor = monitor;
     this.nombre = nombre;
     this.transicion1 = transicion_1;
     this.transicion2 = transicion_2;
     this.nombre_hilo = "";
-    listaImagenOrigen = null;
-    listaImagenDestino = null;
+    rdp=r;
+    //listaImagenOrigen = null;
+    //listaImagenDestino = null;
   }
   
   public String getNombre() {
@@ -35,12 +37,10 @@ public abstract class Procesador {
   public int getTransicion2(){
     return this.transicion2;
   }
-  public void invCompletado() {
-	  invCompletados++;
-	  
-  }
+  
   public boolean getCorriendo() {
-	  return invCompletados<200;
+	  //System.out.println("invcompletados:"+rdp.getInvCompletados());
+	  return rdp.getInvCompletados()<=200;
   }
  
   /*

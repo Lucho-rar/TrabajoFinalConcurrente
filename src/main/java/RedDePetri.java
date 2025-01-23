@@ -108,12 +108,13 @@ public class RedDePetri {
   private Log log_regex;
   //transiciones temporizadas T0, T3, T4, T7, T8, T11, T12, T14
   private long[]  timeStamps = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  private long[] alfa = {5, 0, 0, 5, 5, 0, 0, 10, 10, 0, 0, 10, 10, 0, 5};
-  private long[] beta = {5000, 0, 0, 5000, 5000, 0, 0, 5000, 5000, 0, 0, 5000, 5000, 0, 5000};
+  private long[] alfa = {10, 0, 0, 10, 10, 0, 0, 20, 20, 0, 0, 20, 20, 0, 10};
+  private long[] beta = {500, 0, 0, 500, 500, 0, 0, 500, 500, 0, 0, 500, 500, 0, 500};
   private boolean conTiempo = false;
   private String secuenciaDisparos = "";
   private boolean[] esperando = new boolean[15];
   private final int invariantesMax = 200;
+  private int invCompletados = 0;
   
   public RedDePetri(Log log, Log log_regex) {
     for (Integer[] row : contadorIzq) {
@@ -164,14 +165,16 @@ public class RedDePetri {
   }
 
   public Boolean dispararTransicionConTiempo(int transicion, Semaphore mutex) {
-		if (getContadorTotalInvariantes() < invariantesMax && isSensibilizada(transicion)	) {
+	  //this.log.escribirArchivo("voy a intentar disparar transicion"+transicion);
+		if (this.invCompletados < invariantesMax && isSensibilizada(transicion)	) {
       long tiempoActual = System.currentTimeMillis();
       if(testVentanaTiempo(tiempoActual, transicion)) {
         //está en ventana de tiempo.
-        if(!hayEsperando()) {
+        if(!hayEsperando()) { 
           //setear el nuevo timestamp
           this.setNuevoTimeStamp(transicion);
           disparar(transicion);
+          
           return true;
         } else {
           //está esperando
@@ -443,6 +446,33 @@ public class RedDePetri {
 			log_regex.escribirArchivo(this.getSecuenciaDisparos());
 		}
 	}
+	
+	public void escribirSecuenciaDisparo() {
+		log_regex.escribirArchivo(this.getSecuenciaDisparos());
+		String salida = "";
+		// Log de Plazas
+		for(int i = 0; i < this.getCantidadPlazasRdP(); i++) {
+			salida += "P(" + i + "):" + this.getCantidadTokensPlaza(i) + " ";
+		}
+		log.escribirArchivo("Red de Petri " + salida + "\n");
+		// Log de Transiciones por segmento
+		log.escribirArchivo("SA(T1-T3): " + this.getContadorTransicion(3) + " SB(T2-T4): "
+		+ this.getContadorTransicion(4) + " SC(T5-T7): " + this.getContadorTransicion(7)
+		+ " SD(T6-T8): " + this.getContadorTransicion(8) + " SE(T9-T11): "
+		+ this.getContadorTransicion(11) + " SF(T10-T12):" + this.getContadorTransicion(12));
+	}
+	
+	public void invCompletado() {
+	  invCompletados++;
+  }
+  	
+  public int getInvCompletados(){
+    return invCompletados;
+  }
+  
+  /*public Log getLog() {
+	  return this.log;
+  }*/
 }
 
 

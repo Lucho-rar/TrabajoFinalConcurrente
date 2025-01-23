@@ -10,7 +10,7 @@ public class Main {
 		String ruta = "log";
     String ruta_regex = "log_regex";
     int contador = 1;
-    int numEjecuciones = 5;
+    int numEjecuciones = 1;
     long tiempoInicial = System.currentTimeMillis();
     long tiempoActual;
     long tiempoFinal;
@@ -78,7 +78,7 @@ public class Main {
     // 0  1  2  3  4  5   6   7    8   9  10
     //p0,p2,p4,p6,p8,p10,p12,p14,p15,p16,p17
     Monitor miMonitor = new Monitor(redp, politica);
-    GeneradorDeImagenes generadorDeImagenes = new GeneradorDeImagenes("generadorDeImagenes", miMonitor, log, 0);
+    GeneradorDeImagenes generadorDeImagenes = new GeneradorDeImagenes("generadorDeImagenes", miMonitor, log, redp, 0, -1);
     //generadorDeImagenes.setDestino(plazasImagen.get(0));
     /*
     Receptor receptorIzq = new Receptor("receptorIzq", miMonitor, log, 1);
@@ -90,11 +90,11 @@ public class Main {
     receptorDer.setDestino(plazasImagen.get(2)); //plaza 4
     */
     // transicion t2
-    CargaDeImagenes cargaDeImagenesIzq = new CargaDeImagenes("cargaDeImagenesIzq", miMonitor, log, 1, 3);
+    CargaDeImagenes cargaDeImagenesIzq = new CargaDeImagenes("cargaDeImagenesIzq", miMonitor, log, redp, 1, 3);
    	//cargaDeImagenesIzq.setOrigen(plazasImagen.get(1)); //plaza 2
     //cargaDeImagenesIzq.setDestino(plazasImagen.get(3)); //plaza 6
     // transicion t3
-    CargaDeImagenes cargaDeImagenesDer = new CargaDeImagenes("cargaDeImagenesDer", miMonitor, log, 2, 4);
+    CargaDeImagenes cargaDeImagenesDer = new CargaDeImagenes("cargaDeImagenesDer", miMonitor, log, redp, 2, 4);
     //cargaDeImagenesDer.setOrigen(plazasImagen.get(2)); //plaza 4
     //cargaDeImagenesDer.setDestino(plazasImagen.get(3)); //plaza 6
     // transicion t4
@@ -108,11 +108,11 @@ public class Main {
     transferirAjustadorDer.setDestino(plazasImagen.get(5));		//plaza 10
     */
     // transicion t6
-    AjustadorDeCalidad ajustadorDeCalidadIzq = new AjustadorDeCalidad("ajustadorDeCalidadIzq", miMonitor, log, 5, 7);
+    AjustadorDeCalidad ajustadorDeCalidadIzq = new AjustadorDeCalidad("ajustadorDeCalidadIzq", miMonitor, log, redp, 5, 7);
     // transicion t7
     //ajustadorDeCalidadIzq.setOrigen(plazasImagen.get(4));		//plaza 8
     //ajustadorDeCalidadIzq.setDestino(plazasImagen.get(6));		//plaza 12
-    AjustadorDeCalidad ajustadorDeCalidadDer = new AjustadorDeCalidad("ajustadorDeCalidadDer", miMonitor, log, 6, 8);
+    AjustadorDeCalidad ajustadorDeCalidadDer = new AjustadorDeCalidad("ajustadorDeCalidadDer", miMonitor, log, redp, 6, 8);
     // transicion t8
     //ajustadorDeCalidadDer.setOrigen(plazasImagen.get(5));		//plaza 10
     //ajustadorDeCalidadDer.setDestino(plazasImagen.get(6));		//plaza 12
@@ -128,15 +128,15 @@ public class Main {
     transferirRecortadorDer.setOrigen(plazasImagen.get(6));		//plaza 12
     transferirRecortadorDer.setDestino(plazasImagen.get(8)); 	//plaza 15
     */
-    Recortador recortadorIzq = new Recortador("recortadorIzq", miMonitor, log, 9, 11);
+    Recortador recortadorIzq = new Recortador("recortadorIzq", miMonitor, log, redp, 9, 11);
     // transicion t11
     //recortadorIzq.setOrigen(plazasImagen.get(7));	//plaza 14
     //recortadorIzq.setDestino(plazasImagen.get(9));	//plaza 16
-    Recortador recortadorDer = new Recortador("recortadorDer", miMonitor, log, 10, 12);
+    Recortador recortadorDer = new Recortador("recortadorDer", miMonitor, log, redp, 10, 12);
     // transicion t12
     //recortadorDer.setOrigen(plazasImagen.get(8));	//plaza 15
     //recortadorDer.setDestino(plazasImagen.get(9));	//plaza 16
-    Exportador exportador = new Exportador("exportador", miMonitor, log, 13, 14, redp);
+    Exportador exportador = new Exportador("exportador", miMonitor, log, redp, 13, 14);
     //exportador.setOrigen(plazasImagen.get(9));	//plaza 16
     //exportador.setDestino(plazasImagen.get(10)); //plaza 17
     // transiciones t13 y t14
@@ -159,6 +159,7 @@ public class Main {
     for (Thread hilo : hilos) {
     	//Para asegurarse de que todos los hilos terminen antes de finalizar la ejecución
       try {
+    	//log.escribirArchivo("hilo "+hilo.getName()+" estado:"+hilo.getState());  
         hilo.join(0);
       } catch (InterruptedException e) {
         e.printStackTrace();
