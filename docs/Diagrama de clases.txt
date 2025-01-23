@@ -13,30 +13,26 @@ class Monitor {
   - RealMatrix sensibilizadas
   - double[] colaNoDisparados
   - double[] m
-  - Log log
-  - Log log_regex
-  - boolean corriendo
-  + Monitor(RedDePetri redp, Politica mp, Log log, Log log_regex)
-  + setMatarEjecucion()
-  + getCorriendo(): boolean
-  + dispararTransicion(int transicion, Procesador procesador)
-  + recorrer(double[] m): boolean
-  + contadorM(double[] m): int
-  + contadorInvariantes(Imagen imagen)
+  - boolean matarEjecucion
+  + Monitor(RedDePetri redp, Politica mp)
+  + dispararTransicion(int transicion)
 }
 
 class RedDePetri {
+  - Integer[][] contadorIzq
+  - Integer[][] contadorDer
+  - Integer[] contadorUltimoSegmento
   - double[][] matrizIncidenciaEntrada
   - double[][] matrizIncidenciaSalida
-  - int[][] matrizIvariantesTransicion
   - double[][] marcadoActual
   - double[][] transicionesSensibilizadas
-  - int[][] contadorInvariantes
   - RealMatrix matrizIncidenciaEntradaMatrix
   - RealMatrix matrizIncidenciaSalidaMatrix
+  - RealMatrix incidencia
   - RealMatrix marcadoActualMatrix
   - RealMatrix transicionesSensibilizadasMatrix
   - Log log
+  - Log log_regex
   - long[] timeStamps
   - long[] alfa
   - long[] beta
@@ -44,52 +40,33 @@ class RedDePetri {
   - String secuenciaDisparos
   - boolean[] esperando
   - final int invariantesMax
-  + RedDePetri(Log log)
+  - int invCompletados
+  + RedDePetri(Log log, Log log_regex)
+  + setAlfa(int pos, int valor)
   + getInvariantesMax(): int
   + setConTiempo()
   + setSinTiempo()
   + dispararTransicionConTiempo(int transicion, Semaphore mutexMonitor): Boolean
-  + getSecuenciaDisparos(): String
-  + testVentanaTiempo(long actual, int transicion): boolean
-  + setNuevoTimeStamp(int transicion)
-  + actualizarTimeStamp(RealMatrix previoDisparo, RealMatrix posteriorDisparo)
-  + antesDeLaVentana(long actual, int transicion): boolean
-  + setEsperando(int transicion)
-  + resetEsperando(int transicion)
   + getTransicionesSensibilizadas(): RealMatrix
-  + logearInvariantes()
-  + actualizarContadorInvariante(Imagen imagen)
-  + getCantidadTokensPlaza(int plaza): double
-  + getContadorTotalInvariantes(): int
-  + getCantidadPlazasRdP(): int
-}
+  + actualizarContadorTransicion(int transicion)
+  + getContadorTransicion(int transicion)
+  + escribirLog()
+  + invCompletado()
+  + getInvCompletados(): int
+  }
 
 class Politica {
   - int tipoDePolitica
-  - ArrayList<Set<Integer>> SegIzq
-  - ArrayList<Set<Integer>> SegDer
-  - Integer[][] contadorIzq
-  - Integer[][] contadorDer
-  - Integer[] contadorUltimoSegmento
-  - ArrayList<Set<Integer>> segUltimo
   - boolean conTiempo
   - boolean t1_antes_q_t2
   - boolean t5_antes_q_t6
   - boolean t9_antes_q_t10
-  + Politica()
+  - RedDePetri rdp
+  + Politica(RedDePetri rdp)
   + getConTiempo(): boolean
   + setConTiempo(boolean t)
   + setTipoPolitica(int t)
-  + actualizarContadorTransicion(int transicion)
-  + getContadorTransicion(int transicion): int
   + cual(double[] m): int
-}
-
-class Imagen {
-  - ArrayList<Integer> recorridoInvariante
-  + Imagen()
-  + agregarTransicion(int transicion)
-  + getInvariante(): ArrayList<Integer>
 }
 
 class Log {
@@ -106,24 +83,14 @@ abstract class Procesador {
   - Monitor miMonitor
   - Log miLog
   - int transicion1
-  - ColaImagenes listaImagenOrigen
-  - ColaImagenes listaImagenDestino
-  + Procesador(String nombre, Monitor monitor, Log log, int transicion)
+  - int transicion2
+  - RedDePetri rdp
+  + Procesador(String nombre, Monitor monitor, Log log, RedDePetri r, int transicion_1, int transicion_2)
   + getNombre(): String
   + setNombreHilo(String nombre)
   + getTransicion1(): int
-  + perteneceTransicion(int transicion): boolean
-  + setOrigen(ColaImagenes origen)
-  + setDestino(ColaImagenes destino)
-  + operar(int transicion)
-}
-
-class ColaImagenes {
-  - ArrayList<Imagen> lista
-  + ColaImagenes()
-  + encolar(Imagen img, int transicion)
-  + desencolar(): Imagen
-  + estaVacia(): boolean
+  + getTransicion2(): int
+  + getCorriendo(): boolean
 }
 
 class ColaTransiciones {
@@ -147,11 +114,8 @@ interface ThreadFactory{}
 
 package "Procesadores"{
   class GeneradorDeImagenes
-  class Receptor
   class CargaDeImagenes
-  class TransferirAjustador
   class AjustadorDeCalidad
-  class TransferirRecortador
   class Recortador
   class Exportador
 }
@@ -160,22 +124,19 @@ Main *-- Log
 Main *-- FabricaDeHilos
 Main *-- Politica
 Main *-- RedDePetri
-Main *-- ColaImagenes
 Main *-- Monitor
 Main *-- Procesadores
 Main ..> Thread
 Procesadores --|> Procesador
 Procesadores ..> Runnable
-Monitor o-- RedDePetri
+Monitor --> Semaphore
 Monitor o-- Politica
 Monitor *-- ColaTransiciones
-Monitor o-- Log
-Monitor o-- Procesador
-Monitor --> Semaphore
+Monitor o-- RedDePetri
 RedDePetri o-- Log
 Procesador o-- Log
-Procesador *-- ColaImagenes
-ColaImagenes o-- Imagen
+Procesador o-- Monitor
+Procesador o-- RedDePetri
 ColaTransiciones --> Semaphore
 FabricaDeHilos ..> ThreadFactory
 Log --> Semaphore
