@@ -14,23 +14,6 @@ public class Exportador extends Procesador implements Runnable {
       this.miMonitor.dispararTransicion(this.getTransicion2());
       rdp.invCompletado();
     }
-    rdp.escribirSecuenciaDisparo();
-    
+    rdp.escribirLog();
   }
-  /*
-  @Override
-  public void operar(int transicion) {
-    if(transicion == transicion1) {
-      super.operar(transicion);
-    } else {
-      if(!this.listaImagenDestino.estaVacia()) {
-        Imagen aux = this.listaImagenDestino.desencolar();
-        aux.agregarTransicion(transicion2);
-        this.miMonitor.contadorInvariantes(aux);
-      } else {
-        miLog.escribirArchivo("Error Exportador. Lista Destino no tiene imagenes");
-      }
-    }
-  }
-  */
 }

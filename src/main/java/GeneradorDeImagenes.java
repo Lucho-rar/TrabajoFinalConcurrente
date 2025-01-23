@@ -12,10 +12,4 @@ public class GeneradorDeImagenes extends Procesador implements Runnable {
       this.miMonitor.dispararTransicion(this.getTransicion1());
     }
   }
-  /*
-  @Override
-  public void operar(int transicion) {
-    this.listaImagenDestino.encolar(new Imagen(), this.getTransicion1());
-  }
-  */
 }

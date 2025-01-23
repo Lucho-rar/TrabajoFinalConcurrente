@@ -9,8 +9,6 @@ public class CargaDeImagenes extends Procesador implements Runnable {
     while(getCorriendo()) {
       this.miMonitor.dispararTransicion(this.getTransicion1());
       this.miMonitor.dispararTransicion(this.getTransicion2());
-      
     }
-    
   }
 }

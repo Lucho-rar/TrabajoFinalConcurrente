@@ -6,12 +6,9 @@ public class AjustadorDeCalidad extends Procesador implements Runnable {
   
   @Override
   public void run() {
-	 // int cont=0;
     while(getCorriendo()) {
       this.miMonitor.dispararTransicion(this.getTransicion1());
       this.miMonitor.dispararTransicion(this.getTransicion2());
-      //System.out.println("ajustadorCalidad:"+cont);
-      //cont++;
     }
   }
 }

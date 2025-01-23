@@ -66,23 +66,16 @@ public class Politica {
    * - En las transiciones que definen cada segmento opuesto y que están sensibilizadas al mismo tiempo 
    *   (por ejemplo T1 y T2 para segmento A y B), se marca cual se eligió en la decisión anterior para luego elegir la otra.
    * - Si no hay "conflictos" (transiciones de segmentos opuestos sensibilizadas al mismo tiempo), se elige una transición al azar.
-   * - También se vuelve a asegurar que para el caso de T9 y T10, si solo una está sensibilizada, la quita de m.
    *
    * @param m AND de sensibilizadas y no disparadas
   */
   private int balanceada(double[] m) {
     int salida = 0;
     Random random1 = new Random();  // Random para elegir transición
-    // Si T9 o T10 estan en m, me aseguro que estén si o si ambas, sino "filtro" m.
-    if (m[9] == 1 && m[10] == 0) {
-      m[9] = 0;
-    }
-    if (m[9] == 0 && m[10] == 1) {
-      m[10] = 0;
-    }
+ 
     ArrayList<Integer> mFiltrada = filtrarTransiciones(m);
     // Genero un numero random para elegir una transicion
-    //System.out.println(mFiltrada.size());
+    
     salida=random1.nextInt(mFiltrada.size());
     // %50 SEGMENTO A & SEGMENTO B
     if ((mFiltrada.get(salida) == 1 || mFiltrada.get(salida) == 2) && (m[1] == 1 && m[2] == 1)) {
@@ -163,7 +156,7 @@ public class Politica {
 
   /**
    * Método que genera una lista con m "filtrada" para el caso de T9 y T10 sensibilizadas al mismo tiempo
-   * @param m AND de sensibilizadas y no disparadas SIN T9 o T10
+   * @param m AND de sensibilizadas y no disparadas 
    * @return ArrayList de transiciones sensibilizadas y no disparadas "filtradas"
    */
   private ArrayList<Integer> filtrarTransiciones(double[] m) {

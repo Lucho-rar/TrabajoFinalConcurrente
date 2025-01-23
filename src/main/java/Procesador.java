@@ -5,9 +5,6 @@ public abstract class Procesador {
   protected Log miLog;
   protected int transicion1;
   protected int transicion2;
-  //protected ColaImagenes listaImagenOrigen;
-  //protected ColaImagenes listaImagenDestino;
-  //protected static int invCompletados=0;
   protected RedDePetri rdp;
 
   public Procesador(String nombre, Monitor monitor, Log log, RedDePetri r, int transicion_1, int transicion_2) {
@@ -18,8 +15,6 @@ public abstract class Procesador {
     this.transicion2 = transicion_2;
     this.nombre_hilo = "";
     rdp=r;
-    //listaImagenOrigen = null;
-    //listaImagenDestino = null;
   }
   
   public String getNombre() {
@@ -39,25 +34,8 @@ public abstract class Procesador {
   }
   
   public boolean getCorriendo() {
-	  //System.out.println("invcompletados:"+rdp.getInvCompletados());
+	  
 	  return rdp.getInvCompletados()<=200;
   }
  
-  /*
-  public void setOrigen(ColaImagenes origen) {
-    this.listaImagenOrigen = origen;
-  }
-  
-  public void setDestino(ColaImagenes destino) {
-    this.listaImagenDestino = destino;
-  }
-
-  public void operar(int transicion) {
-    if(!this.listaImagenOrigen.estaVacia()) {
-      this.listaImagenDestino.encolar(this.listaImagenOrigen.desencolar(),transicion);
-    }else {
-      miLog.escribirArchivo("Error. Lista origen vacía transicion:"+transicion+" hilo: "+Thread.currentThread().getName());
-    }
-  }
-  */
 }

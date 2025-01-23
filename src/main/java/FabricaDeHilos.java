@@ -9,7 +9,7 @@ public class FabricaDeHilos implements ThreadFactory{
 
   private int counter;
 
-  // constructor
+  //Constructor
   public FabricaDeHilos() {
     counter = 0;
   }

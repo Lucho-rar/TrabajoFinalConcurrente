@@ -1,5 +1,4 @@
 import java.util.concurrent.Semaphore;
-
 import org.apache.commons.math3.linear.RealMatrix;
 
 /**
@@ -17,13 +16,13 @@ public class Monitor {
 	private RealMatrix sensibilizadas; // Transiciones sensibilizadas
 	private double[] colaNoDisparados; // No disparados
 	private double[] m; // AND de sensibilizadas y no disparados
-	private boolean matar=true;
+	private boolean matarEjecucion=true;
 		
 	/**
 	 * Constructor de la clase Monitor
 	 * @param redp Red de Petri
 	 * @param mp Política de disparo
-	 * @param log Log
+	 
 	 */
 
 	public Monitor(RedDePetri redp, Politica mp) {
@@ -48,37 +47,27 @@ public class Monitor {
 	 * Se fija si el sistema sigue corriendo y si no, desencola las transiciones que quedaron en la cola.
 	 */
 	private void setMatarEjecucion() {
-		
-		if(matar) {
+		if(matarEjecucion) {
 		double[] saliendo = this.miColaTransiciones.quienesEstan();
 		for (int i = 0; i < saliendo.length; i++) {
 			if(saliendo[i] == 1) {
 				this.miColaTransiciones.desencolar(i);
 			}
 		}
-		matar = false;
+		matarEjecucion = false;
 		}
 	}
 
 	/**
-	 * Getter de la variable corriendo
-	 * 
-	 * @return True si el sistema sigue corriendo, False si no
-	 */
-	/*private boolean getCorriendo() {
-		return corriendo;
-	}*/
-
-	/**
 	 * Método para disparar una transición en la red de petri
 	 * @param transicion Transición a disparar
-	 * @param procesador Hilo que dispara la transición
+	
 	 */
 	public void dispararTransicion(int transicion) {
 			// Intenta adquirir el mutex
 		try {
 			mutex.acquire();
-		} catch(InterruptedException e) {
+		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		}
 		int transicionElegida; // Transición elegida
@@ -91,15 +80,10 @@ public class Monitor {
 				
 			} else {
 				setMatarEjecucion();
-				/*String sal="";
-				for(int i=0;i< miColaTransiciones.quienesEstan().length;i++) {
-					sal+=miColaTransiciones.quienesEstan()[i];
-				}
-				rdp.getLog().escribirArchivo(sal);*/
 				mutex.release();
 				return;
 			}
-			// Si se pudo disparar la transición, opero. Si no, encolo la transición y seteo k en false
+			// Si se pudo disparar la transición, busco prox transicion a disparar. Si no, encolo la transición y seteo k en false
 			if (k) {
 				rdp.actualizarContadorTransicion(transicion);  // Actualizo el contador de transiciones
 				sensibilizadas = rdp.getTransicionesSensibilizadas(); // Obtengo las transiciones sensibilizadas
@@ -108,16 +92,7 @@ public class Monitor {
 				for (int i = 0; i < colaNoDisparados.length; i++) {
 					m[i] = (sensibilizadas.getEntry(0, i) == 1.0 && colaNoDisparados[i] == 1.0) ? 1.0 : 0.0;
 				}
-				
-				
-				// Si M solo contiene una transición sensibilizada y es la 9 o la 10, se libera el mutex y se retorna 
-				if(this.contadorM(m) == 1 && (m[9] == 1 || m[10] == 1)) {
-					mutex.release();
-					return;
-				}
-				
 				// Me fijo si hay alguna transición en M. Si hay, llamo a la política para que elija una y la desencolo. Si no, seteo k en false
-			
 				if (recorrer(m)) {
 					transicionElegida = miPolitica.cual(m); 
 					miColaTransiciones.desencolar(transicionElegida);
@@ -146,20 +121,5 @@ public class Monitor {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Método para contar la cantidad de transiciones sensibilizadas y no disparadas - Size de M
-	 * @param m Vector de transiciones sensibilizadas y no disparadas
-	 * @return Cantidad de transiciones sensibilizadas y no disparadas
-	*/
-	private int contadorM(double[] m) {
-		int contador = 0;
-		for (int i = 0; i < m.length; i++) {
-			if (m[i] == 1.0) {
-				contador++;
-			}
-		}
-		return contador;
 	}
 }
