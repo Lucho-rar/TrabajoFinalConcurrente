@@ -41,10 +41,10 @@ critical seccion critica
       end
     end
     alt disparo exitoso
-      Monitor -> Politica: actualizarContadorTransicion(transicion)
-      activate Politica
-      Politica --> Monitor: return;
-      deactivate Politica
+      Monitor -> RedDePetri: actualizarContadorTransicion(transicion)
+      activate RedDePetri
+      RedDePetri --> Monitor: return;
+      deactivate RedDePetri
       Monitor -> RedDePetri: getTransicionesSensibilizadas()
       activate  RedDePetri
       RedDePetri --> Monitor: return sensibilizadas;
