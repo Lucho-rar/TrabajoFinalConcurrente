@@ -2,7 +2,7 @@
 
 class Main {
   + main()
-  + ejecucion(String ruta,Log log, Log log_regex, boolean conTiempo, int tipoPolitica)
+  + ejecucion(Log log, Log log_regex, boolean conTiempo, int tipoPolitica)
 }
 
 class Monitor {

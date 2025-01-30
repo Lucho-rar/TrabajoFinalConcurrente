@@ -6,9 +6,8 @@ import java.util.concurrent.Semaphore;
 * Clase Log
 *
 * archivo: Archivo donde se guarda la información
-* horaInicial: Hora inicial del proceso
 * ruta: Ruta del archivo
-* tLog: Thread que escribe en el archivo
+* mutex: Semaforo para escribir en el log
 */
 public class Log {
   
