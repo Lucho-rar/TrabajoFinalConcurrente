@@ -1,30 +1,77 @@
-import fileinput
 import re
 
-# Función para procesar usando expresiones regulares
+# *** Se agregan los invariantes ya que post-correciones no se cuentan en las ejecuciones en Java.
+# Lista de invariantes
+invariantes = {
+    "T0T1T3T5T7T9T11T13T14": 0,
+    "T0T1T3T5T7T10T12T13T14": 0,
+    "T0T1T3T6T8T9T11T13T14": 0,
+    "T0T1T3T6T8T10T12T13T14": 0,
+    "T0T2T4T5T7T9T11T13T14": 0,
+    "T0T2T4T5T7T10T12T13T14": 0,
+    "T0T2T4T6T8T9T11T13T14": 0,
+    "T0T2T4T6T8T10T12T13T14": 0
+}
+
+# Se separa la regex para más claridad, siguiendo el patrón de la regex original
+regex = (
+    r"(?P<S0>T0)(?P<PT0>(?:T\d+)*?)"
+    r"(?:(?P<S1>T1)(?P<PT1>(?:T\d+)*?)(?P<S3>T3)|(?P<S2>T2)(?P<PT2>(?:T\d+)*?)(?P<S4>T4))"
+    r"(?P<PT3T4>(?:T\d+)*?)"
+    r"(?:(?P<S5>T5)(?P<PT5>(?:T\d+)*?)(?P<S7>T7)|(?P<S6>T6)(?P<PT6>(?:T\d+)*?)(?P<S8>T8))"
+    r"(?P<PT7T8>(?:T\d+)*?)"
+    r"(?:(?P<S10>T10)(?P<PT10>(?:T\d+)*?)(?P<S12>T12)|(?P<S9>T9)(?P<PT9>(?:T\d+)*?)(?P<S11>T11))"
+    r"(?P<PT11T12>(?:T\d+)*?)(?P<S13>T13)(?P<PT13>(?:T\d+)*?)(?P<S14>T14)(?P<PT14>(?:T\d+)*?)"
+)
+
+# Patrón de grupos para reemplazo
+grupos = (
+    "#\\g<S0>\\g<S1>\\g<S3>\\g<S2>\\g<S4>\\g<S5>\\g<S7>\\g<S6>\\g<S8>\\g<S10>\\g<S12>\\g<S9>\\g<S11>\\g<S13>\\g<S14>"
+    "#\\g<PT0>\\g<PT1>\\g<PT2>\\g<PT3T4>\\g<PT5>\\g<PT6>\\g<PT7T8>\\g<PT9>\\g<PT10>\\g<PT11T12>\\g<PT13>\\g<PT14>"
+)
+
+# Funcion anterior para procesar el archivo 
 def procesar_archivo(archivo):
-    linea_actual = [archivo.readline(), 0]  # Leer la primera línea
-    while True:  # Bucle de procesamiento
-        # Aplicar la expresión regular y realizar reemplazos
-        resultado = re.subn(
-            r'T0((?:T(?:\d+))*?)(?:(?:T1((?:T(?:\d+))*?)T3)|(?:T2((?:T(?:\d+))*?)T4))((?:T(?:\d+))*?)'
-            r'(?:(?:T5((?:T(?:\d+))*?)T7)|(?:T6((?:T(?:\d+))*?)T8))((?:T(?:\d+))*?)'
-            r'(?:(?:T10((?:T(?:\d+))*?)T12)|(?:T9((?:T(?:\d+))*?)T11))((?:T(?:\d+))*?)T13((?:T(?:\d+))*?)T14',
-            r'\g<1>\g<2>\g<3>\g<4>\g<5>\g<6>\g<7>\g<8>\g<9>\g<10>\g<11>',
-            linea_actual[0].strip()
-        )
-        linea_actual = resultado
-        
-        if linea_actual[1] == 0:  # Si no hubo cambios, salir del bucle
-            break
+    """
+    Procesa el archivo de log para validar transiciones y contar invariantes.
+    """
+    linea = archivo.readline().strip()
+    resultado = re.subn(regex, grupos, linea)
 
-    # Verificar el resultado
-    if linea_actual[0] == "":
-        print("LAS TRANSICIONES DE LOS INVARIANTES CORRECTAS PARA: " + archivo.name)
+    while resultado[1] > 0: 
+        transiciones_restantes = contar_invariantes(resultado[0])
+        resultado = re.subn(regex, grupos, transiciones_restantes)
+
+    # Validar el resultado final
+    if resultado[0]:
+        print("ERROR EN LA VALIDACIÓN DE INVARIANTES PARA: ", archivo.name)
     else:
-        print("ERROR EN LA VALIDACIÓN DE INVARIANTES PARA: " + archivo.name)
+        print("LAS TRANSICIONES DE LOS INVARIANTES CORRECTAS PARA: ", archivo.name)
 
-# Abrir el archivo de entrada
-nombre_archivo = "log_regex1.txt"  # Archivo de registro
-with open(nombre_archivo, "r") as archivo_log:
-    procesar_archivo(archivo_log)
+    # Mostrar el conteo de invariantes
+    print("\nContador de invariantes:")
+    for i, (invariante, conteo) in enumerate(invariantes.items(), start=1):
+        print(f"El invariante {i} se completó: {conteo} veces.")
+
+def contar_invariantes(resultado):
+    """
+    Procesa el resultado de la sustitución para contar invariantes y devolver transiciones no coincidentes.
+    """
+    transiciones = resultado.split("#")
+    transiciones_restantes = ""
+
+    for transicion in transiciones:
+        if not transicion:
+            continue
+        if transicion in invariantes:
+            invariantes[transicion] += 1
+        else:
+            transiciones_restantes += transicion
+
+    return transiciones_restantes
+
+# Ejecutar el procesamiento del archivo
+if __name__ == "__main__":
+    nombre_archivo = "log_regex5.txt"  # Archivo de registro
+    with open(nombre_archivo, "r") as archivo_log:
+        procesar_archivo(archivo_log)
