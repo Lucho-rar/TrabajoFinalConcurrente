@@ -53,6 +53,19 @@ def procesar_archivo(archivo):
     for i, (invariante, conteo) in enumerate(invariantes.items(), start=1):
         print(f"El invariante {i} se completó: {conteo} veces.")
 
+    print(f"\nSegmento A(T1-T3): {invariantes_por_indice(0)[1] + invariantes_por_indice(1)[1] + invariantes_por_indice(2)[1] + invariantes_por_indice(3)[1]}")
+    print(f"Segmento B(T2-T4): {invariantes_por_indice(4)[1] + invariantes_por_indice(5)[1] + invariantes_por_indice(6)[1] + invariantes_por_indice(7)[1]}")
+    print(f"Segmento C(T5-T7): {invariantes_por_indice(0)[1] + invariantes_por_indice(1)[1] + invariantes_por_indice(4)[1] + invariantes_por_indice(5)[1]}")
+    print(f"Segmento D(T6-T8): {invariantes_por_indice(2)[1] + invariantes_por_indice(3)[1] + invariantes_por_indice(6)[1] + invariantes_por_indice(7)[1]}")
+    print(f"Segmento E(T9-T11): {invariantes_por_indice(0)[1] + invariantes_por_indice(2)[1] + invariantes_por_indice(4)[1] + invariantes_por_indice(6)[1]}")
+    print(f"Segmento F(T10-T12): {invariantes_por_indice(1)[1] + invariantes_por_indice(3)[1] + invariantes_por_indice(5)[1] + invariantes_por_indice(7)[1]}")
+    print(f"Segmento G(T13-T14): {invariantes_por_indice(0)[1] + invariantes_por_indice(1)[1] +invariantes_por_indice(2)[1] + invariantes_por_indice(3)[1] + invariantes_por_indice(4)[1] + invariantes_por_indice(5)[1] + invariantes_por_indice(6)[1] + invariantes_por_indice(7)[1]}")
+
+def invariantes_por_indice(indice):
+    """
+    Devuelve el invariante correspondiente al índice.
+    """
+    return list(invariantes.items())[indice]
 def contar_invariantes(resultado):
     """
     Procesa el resultado de la sustitución para contar invariantes y devolver transiciones no coincidentes.
@@ -72,6 +85,6 @@ def contar_invariantes(resultado):
 
 # Ejecutar el procesamiento del archivo
 if __name__ == "__main__":
-    nombre_archivo = "log_regex5.txt"  # Archivo de registro
+    nombre_archivo = "log_regex1.txt"  # Archivo de registro
     with open(nombre_archivo, "r") as archivo_log:
         procesar_archivo(archivo_log)
