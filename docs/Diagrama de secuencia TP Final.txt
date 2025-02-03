@@ -1,7 +1,7 @@
 @startuml
 
 actor "GeneradorDeImagenes" as GeneradorDeImagenes
-actor "Receptor" as Receptor
+actor "CargaDeImagenes" as CargaDeImagenes
 
 participant "Monitor" as Monitor
 participant "RedDePetri" as RedDePetri
@@ -80,9 +80,9 @@ critical seccion critica
       ColaTransiciones -> ColaTransiciones: get(transicionElegida).acquire()
       ColaTransiciones --> Monitor: return;
       deactivate ColaTransiciones
-      Monitor -> Receptor: Se activa hilo
-      activate Receptor
-      deactivate Receptor
+      Monitor -> CargaDeImagenes: Se activa hilo
+      activate CargaDeImagenes
+      deactivate CargaDeImagenes
       Monitor -> Monitor: k = true
     end
   end
