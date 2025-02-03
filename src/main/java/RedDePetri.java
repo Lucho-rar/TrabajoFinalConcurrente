@@ -77,7 +77,7 @@ public class RedDePetri {
   //transiciones temporizadas T0, T3, T4, T7, T8, T11, T12, T14
   private long[]  timeStamps = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   private long[] alfa = {10, 0, 0, 10, 10, 0, 0, 20, 20, 0, 0, 20, 20, 0, 10};
-  private long[] beta = {500, 0, 0, 500, 500, 0, 0, 500, 500, 0, 0, 500, 500, 0, 500};
+  private long[] beta = {500,0,0,500,500,0,0,500,500,0,0,500,500,0,500};
   private boolean conTiempo = false;
   private String secuenciaDisparos = "";
   private boolean[] esperando = new boolean[15];
@@ -139,7 +139,7 @@ public class RedDePetri {
       long tiempoActual = System.currentTimeMillis();
       if(testVentanaTiempo(tiempoActual, transicion)) {
         //está en ventana de tiempo.
-        if(!hayEsperando()) {
+        if(!hayEsperando(transicion)) {
           disparar(transicion);
           //setear el nuevo timestamp
           this.setNuevoTimeStamp(transicion);
@@ -159,8 +159,11 @@ public class RedDePetri {
             TimeUnit.MILLISECONDS.sleep(tiempoDormir);
             mutex.acquire();
             resetEsperando(transicion);
-            disparar(transicion);
-            return true;
+            if (this.invCompletados < invariantesMax && isSensibilizada(transicion)	) {
+              disparar(transicion);
+              return true;
+            }
+            return false;
           } catch(InterruptedException e) {
             e.printStackTrace();
             return false;
@@ -217,13 +220,8 @@ public class RedDePetri {
 		return actual < (this.timeStamps[transicion] + alfa[transicion]);
 	}
 	
-  private boolean hayEsperando(){
-    for (int i = 0 ; i < 15 ; i++){
-      if (esperando[i] == true ){
-        return true;
-      }
-    }
-    return false;
+  private boolean hayEsperando(int transicion){
+    return esperando[transicion];
   }
   private void setEsperando(int transicion) {
 		this.esperando[transicion] = true;
